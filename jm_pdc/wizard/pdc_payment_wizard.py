@@ -13,7 +13,7 @@ class Attachment(models.Model):
 
 class PDC_wizard(models.Model):
     _name = "pdc.wizard"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _description = "PDC Wizard"
 
     #pdc only be allowed to delete in draft state
