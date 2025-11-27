@@ -37,7 +37,7 @@
         </field>
     </record>
     <!-- PDC Form Wizard -->
-    <record id="sh_pdc_payment_form_view" model="ir.ui.view">
+    <!-- <record id="sh_pdc_payment_form_view" model="ir.ui.view">
         <field name="name">sh.pdc.wizard</field>
         <field name="model">pdc.wizard</field>
         <field name="arch" type="xml">
@@ -91,6 +91,67 @@
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"  />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record> -->
+
+    <record id="sh_pdc_payment_form_view" model="ir.ui.view">
+        <field name="name">sh.pdc.wizard</field>
+        <field name="model">pdc.wizard</field>
+        <field name="arch" type="xml">
+            <form string="PDC Payment" class="o_xxl_form_view">
+                <header>
+                    <button name="action_register" class="oe_highlight" invisible="state not in ('draft')" string="Register" type="object" />
+                    <button name="action_returned" class="oe_highlight" invisible="state not in ('registered')" string="Return" type="object" />
+                    <button name="action_deposited" class="oe_highlight" invisible="state not in ('registered','returned','bounced')" string="Deposit" type="object" />
+                    <button name="action_bounced" class="oe_highlight" invisible="state not in ('deposited')" string="Bounce" type="object" />
+                    <button name="action_done" class="oe_highlight" invisible="state not in ('deposited')" string="Done" type="object" />
+                    <button name="action_set_draft" class="oe_highlight" invisible="state not in ('registered','cancel')" string="Reset to Draft" type="object" />
+                    <button name="action_cancel" class="oe_highlight" invisible="state == 'cancel'" string="Cancel" type="object" />
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet class="oe_form_sheet_width">
+                    <div name="button_box" class="oe_button_box">
+                        <button name="open_attachments" class="oe_stat_button" icon="fa-cloud-upload" type="object" string="Attachments"></button>
+                        <button name="open_journal_items" class="oe_stat_button" icon="fa-list" type="object" string="Journal Items"></button>
+                        <button name="open_journal_entry" class="oe_stat_button" icon="fa-list" type="object" string="Journal Entry"></button>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="name" readonly="1" />
+                            <field name="payment_type"  widget="radio" readonly="state not in ['draft', 'bounced', 'returned']"/>
+                            <field name="currency_id" invisible="1" />
+                            <field name="partner_id" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name='company_id' invisible="1"/>
+                            <field name="payment_amount" widget="monetary" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="reference" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="journal_id" options="{'no_create':1,'no_create_edit':1}" readonly="state not in ['draft', 'bounced', 'returned']" />
+                        </group>
+                        <group>
+                            <field name="payment_date" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="due_date" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="memo" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="agent" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="bank_id" readonly="state not in ['draft', 'bounced', 'returned']" />
+                            <field name="done_date"/>
+                        </group>
+                    </group>
+                    <notebook style="max-height: 50vh; overflow-y: auto;">
+                        <page string="Invoices/Bills">
+                            <field name="account_move_ids" invisible="1"/>
+                            <field name="invoice_ids" domain="[('id','in',account_move_ids)]" readonly="state not in ['draft', 'bounced', 'returned']" style="max-height: 300px; overflow-y: auto;"/>
+                        </page>
+                        <page string="Attachments">
+                            <field name="attachment_ids" widget="many2many_binary" style="max-height: 300px; overflow-y: auto;"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
                     <field name="activity_ids" />
                     <field name="message_ids" />
                 </div>
