@@ -159,12 +159,12 @@
         <field name="name">PDC</field>
         <field name="res_model">pdc.wizard</field>
         <field name="view_mode">list,form</field>
-        <field
+        <!-- <field
             name="view_ids"
             eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'list', 'view_id': ref('sh_pdc_tree_form')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('sh_pdc_payment_form_view')})]"
-        />
+        /> -->
     </record>
     <!-- PDC Menu -->
 
