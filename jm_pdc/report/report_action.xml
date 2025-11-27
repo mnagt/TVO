@@ -1,0 +1,9 @@
+<odoo>
+    <record id="jm_pdc.pdc_wizard" model="ir.actions.report">
+        <field name="name">PDC Payment Report</field>
+        <field name="model">pdc.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">jm_pdc.report_pdc_payment</field>
+        <field name="report_file">jm_pdc.report_pdc_payment</field>
+    </record>
+</odoo>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Post Dated Check (PDC)</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 0;">
+    <div class="oe_styling_v8">
+        <div style="background:#efefef; text-align: center;">
+            <section class="oe_container oe_dark">
+                <div class="oe_row oe_spaced">
+
+                    <h1 style="background: linear-gradient(135deg, #0073e6, #005bb5); padding: 40px 20px; text-align: center;">
+                        <center>Post Dated Check (PDC) Management</center>
+                    </h1>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+
+    <!-- Overview Section -->
+    <section id="overview" style="padding: 20px;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2 style="text-align: left; font-size: 2em; color: #004085; margin: 30px 0 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; position: relative; border-left: 5px solid #0073e6; padding-left: 15px;">
+                <span style="background: #f8f9fa; padding: 0 12px; color: #0073e6; font-weight: 600;">Overview</span>
+            </h2>
+            <p style="font-size: 1.1em; color: #555; line-height: 1.5;">
+                In invoicing and billing, a Post-Dated Cheque (PDC) refers to a cheque
+                issued by a customer or vendor (payer) with a future date.
+                The ability to deposit or encash such cheques before their specified date
+                varies across countries. Since Odoo does not include native support for managing
+                post-dated cheques, we have developed this module to fill that gap.
+                This module enables seamless management of post-dated cheques
+                along with the related accounting journal entries. You can easily record and monitor post-dated cheques from both customers and vendors. It helps you track and manage each cheque through
+                multiple stages — including New, Registered, Returned, Deposited, Bounced, and Completed.
+                Each stage is automatically supported with the appropriate accounting entries, ensuring accurate financial tracking. Additionally, you can filter and view cheques by their status
+                and generate clear, concise PDF reports for record-keeping or analysis.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- Features Section -->
+    <section id="features" style="padding: 20px;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2 style="text-align: left; font-size: 2em; color: #004085; margin: 30px 0 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; position: relative; border-left: 5px solid #0073e6; padding-left: 15px;">
+                <span style="background: #f8f9fa; padding: 0 12px; color: #0073e6; font-weight: 600;">Key Features</span>
+            </h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span> You can cancel PDCs using multiple available options.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Create PDC payments for multiple invoices or bills at once using the multi-action feature.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>A PDC can be deleted only when its status is "Draft"
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span> The PDC form remains editable when it is in the "Returned" state.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span> Perform multi-actions for all PDC cheque states — Register, Return, Deposit, Bounce, Done, and Cancel.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span> View the total sum of all payments directly in the list view.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span> Manage partial payments efficiently for each PDC cheque.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span> Automatically send due date notifications to customers, vendors, and internal users.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Simplifies management of customer and vendor PDC payments.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Easily track PDC payments through related journal entries and journal items.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Conveniently handle attachments, journal entries, and journal items from the PDC form view.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Easily track PDC payments through related journal entries and journal items.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Smoothly manage PDC payments across different stages such as Deposit, Return, Bounce, etc.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Effortlessly print detailed PDF reports of PDC payments.
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid #ddd; display: flex; align-items: center;">
+                    <span style="color: #0073e6; font-weight: bold; margin-right: 10px; font-size: 1.2em;">✓</span>Supports multi-company environments for PDC accounts.
+                </li>
+
+            </ul>
+        </div>
+    </section>
+
+    <!-- Screenshot Section -->
+    <section id="screenshots" style="padding: 20px;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2 style="text-align: left; font-size: 2em; color: #004085; margin: 30px 0 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; position: relative; border-left: 5px solid #0073e6; padding-left: 15px;">
+                <span style="background: #f8f9fa; padding: 0 12px; color: #0073e6; font-weight: 600;">Screenshots</span>
+            </h2>
+            <br/><br/>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Installation and Configuration</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    You need to configure a PDC account for each company. To do this,
+                    navigate to the Invoicing configuration settings and
+                    select the appropriate PDC account for both customers and vendors.
+                </p>
+                <img src="sjm.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">PDC Check Register</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                     Register PDC Cheque button in invoice form view *(Only visible in open state).
+                </p>
+
+                <img src="sjm3.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">PDC Wizard</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    Register PDC Cheque Wizard' will pop up after clicking the 'Register PDC cheque button.
+                </p>
+                <img src="sjm4.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">PDC Payment Menu</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    The PDC Payments menu displays a list of all registered post-dated cheques.
+                </p>
+                <img src="sjm5.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">PDC Payment Form</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    The PDC Payment form view allows you to deposit or return the cheque as needed.
+                </p>
+                <img src="sjm6.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Returned state</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    After clicking 'Return', the cheque status is updated to 'Returned'.
+                </p>
+                <img src="sjm7.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Deposited State</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    After clicking 'Deposit', the cheque status changes to 'Deposited',
+                    and two new buttons — 'Bounced' and 'Done' — become visible.
+                </p>
+                <img src="sjm8.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+             <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Bounced State</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    If the cheque is bounced, click 'Bounce', and its status will be updated to 'Bounced'.
+                </p>
+                <img src="sjm9.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Done State</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    If the cheque is successfully deposited, click 'Done', and its status will be updated to 'Done'.
+                </p>
+                <img src="sjm10.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Payment Enteries</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                    In the Journal Items section, you can view all the PDC payment entries.
+                    The image below shows the entries created during each operation performed.
+                </p>
+                <img src="sjm11.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+             <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">Payment State</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                     Invoice with the In-Payment state.
+                </p>
+                <img src="nn.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">PDF Report Menu</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                     PDC payment report for print PDF report of multiple PDC cheque payments
+                </p>
+                <img src="s13.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;">PDC PDF Payment Report</h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+
+                </p>
+                <img src="jm_r.PNG" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;"></h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                     If Currently no any invoice/bill and we press "Done".
+                </p>
+                <img src="sn1.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;"></h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                     Journal Entry created of that payment
+                </p>
+                <img src="sn2.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+            <hr/>
+            <div style="text-align: center; margin: 40px 0;">
+                <h3 style="color: #0073e6; font-size: 1.5em; margin-bottom: 5px;"></h3>
+                <p style="color: #555; font-size: 1em; line-height: 1.5; margin-bottom: 20px;">
+                     When the due amount becomes zero, a matching number is assigned to the invoice and bill for full reconciliation.
+                </p>
+                <img src="n13.png" alt="Screenshot" style="width: 100%; max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 1.9em; color: #555;">
+        <p>For support, development inquiries, or any assistance, please reach out to us at</p>
+        <p style="color: #333; text-decoration: none; text-align:center; margin-top:10px;">odoojobmatters@gmail.com</p>
+        <p style="margin-top: 10px;">We’re here to help!</p>
+    </footer>
+
+</body>
+</html>

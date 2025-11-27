@@ -1,0 +1,77 @@
+<odoo>
+    <template id="report_pdc_payment">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <center>
+                        <h2>PDC Payment Report</h2>
+                    </center>
+                    <br/>
+                    <div class="oe_structure"/>
+                    <div class="row">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">
+                                        <strong>Name</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Customer</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Bank</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Date</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Amount</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Cheque Reference</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Due Date</strong>
+                                    </th>
+                                    <th style="text-align:left;">
+                                        <strong>Status</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="doc">
+                                    <tr>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.name"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.partner_id.name"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.bank_id.name"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.payment_date"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.payment_amount"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.reference"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.due_date"/>
+                                        </td>
+                                        <td style="text-align:left;">
+                                            <t t-esc="doc.state"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

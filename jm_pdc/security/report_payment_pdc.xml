@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+
+        <record model="ir.rule" id="rule_generate_payment_pdc_report">
+            <field name="name">Access Payment PDC Report</field>
+            <field name="model_id" ref="model_pdc_wizard"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+        </record>
+
+    </data>
+</odoo>
