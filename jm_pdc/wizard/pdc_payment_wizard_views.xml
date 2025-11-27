@@ -98,7 +98,7 @@
         </field>
     </record>
     <!-- PDC Tree view -->
-    <record id="sh_pdc_tree_form" model="ir.ui.view">
+    <!-- <record id="sh_pdc_tree_form" model="ir.ui.view">
         <field name="name">sh.pdc.tree.view</field>
         <field name="model">pdc.wizard</field>
         <field name="arch" type="xml">
@@ -111,7 +111,7 @@
                 <field name="payment_amount" sum="Total"/><field name="state" />
             </list>
         </field>
-    </record>
+    </record> -->
     <!-- PDC Filter -->
     <record id="view_sh_pdc_filter" model="ir.ui.view">
         <field name="name">pdc.payment.select</field>
