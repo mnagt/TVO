@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- PDC Wizard -->
-    <record id="sh_pdc_wizard_form_wizard" model="ir.ui.view">
+    <!-- <record id="sh_pdc_wizard_form_wizard" model="ir.ui.view">
         <field name="name">sh.pdc.wizard</field>
         <field name="model">pdc.wizard</field>
         <field name="arch" type="xml">
@@ -35,10 +35,10 @@
                 </footer>
             </form>
         </field>
-    </record>
+    </record> -->
 
     <!-- PDC Form Wizard -->
-    <!-- <record id="sh_pdc_payment_form_view" model="ir.ui.view">
+    <record id="sh_pdc_payment_form_view" model="ir.ui.view">
         <field name="name">sh.pdc.wizard</field>
         <field name="model">pdc.wizard</field>
         <field name="arch" type="xml">
@@ -97,7 +97,7 @@
                 </div>
             </form>
         </field>
-    </record> -->
+    </record>
 
     <!-- PDC Tree view -->
     <record id="sh_pdc_tree_form" model="ir.ui.view">
