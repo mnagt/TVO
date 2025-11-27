@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- PDC Wizard -->
-    <!-- <record id="sh_pdc_wizard_form_wizard" model="ir.ui.view">
+    <record id="sh_pdc_wizard_form_wizard" model="ir.ui.view">
         <field name="name">sh.pdc.wizard</field>
         <field name="model">pdc.wizard</field>
         <field name="arch" type="xml">
@@ -35,7 +35,7 @@
                 </footer>
             </form>
         </field>
-    </record> -->
+    </record>
 
     <!-- PDC Form Wizard -->
     <record id="sh_pdc_payment_form_view" model="ir.ui.view">
@@ -163,16 +163,16 @@
         <field name="name">PDC</field>
         <field name="res_model">pdc.wizard</field>
         <field name="view_mode">list,form</field>
-        <!-- <field
+        <field
             name="view_ids"
             eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'list', 'view_id': ref('sh_pdc_tree_form')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('sh_pdc_payment_form_view')})]"
-        /> -->
+        />
     </record>
     <!-- PDC Menu -->
 
-    <menuitem id="menu_pdc_payment" name="PDC" groups="account.group_account_invoice" parent="account.menu_finance" sequence="25" />
+    <menuitem id="menu_pdc_payment" name="PDC" groups="account.group_account_invoice" parent="account.menu_finance" sequence="25" action="sh_pdc_wizard_action"/>
     <menuitem id="sub_menu_pdc_payment" name="PDC" parent="menu_pdc_payment" sequence="26" action="sh_pdc_payment_menu_action"/>
 
     <!-- account.move (Journal Entry) -->
