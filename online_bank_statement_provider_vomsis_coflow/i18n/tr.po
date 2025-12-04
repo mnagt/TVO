@@ -1,0 +1,126 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* online_bank_statement_provider_vomsis_coflow
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-11 09:11+0000\n"
+"PO-Revision-Date: 2024-10-11 12:23+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_form_view
+msgid ""
+"<span>\n"
+"                                <br/>\n"
+"                                Hesapları Getir\n"
+"                            </span>"
+msgstr ""
+"<span>\n"
+"                                <br/>\n"
+"                                Hesapları Getir\n"
+"                            </span>"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_form_view
+msgid "API URL"
+msgstr "API Bağlantı Adresi"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model:ir.model.fields,field_description:online_bank_statement_provider_vomsis_coflow.field_online_bank_statement_provider__api_key
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_form_view
+msgid "Api Anahtarı"
+msgstr "API Anahtarı"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model:ir.model.fields,field_description:online_bank_statement_provider_vomsis_coflow.field_online_bank_statement_provider__api_secret
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_form_view
+msgid "Api Gizli Anahtarı"
+msgstr "API Gizli Anahtarı"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model:ir.model,name:online_bank_statement_provider_vomsis_coflow.model_res_partner_bank
+msgid "Bank Accounts"
+msgstr "Banka Hesapları"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#. odoo-python
+#: code:addons/online_bank_statement_provider_vomsis_coflow/models/provider_vomsis.py:0
+#, python-format
+msgid "Başlangıç kaydı bulunamadı %s (%s)"
+msgstr "Başlangıç kaydı bulunamadı %s (%s)"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#. odoo-python
+#: code:addons/online_bank_statement_provider_vomsis_coflow/models/provider_vomsis.py:0
+#, python-format
+msgid "Bilinmeyen hata oluştu"
+msgstr "Bilinmeyen hata oluştu"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#. odoo-python
+#: code:addons/online_bank_statement_provider_vomsis_coflow/models/provider_vomsis.py:0
+#, python-format
+msgid "Desteklenmeyen Metod [%s] not in [GET, POST, PUT, PATCH or DELETE]!"
+msgstr "Desteklenmeyen Metot [%s] [GET, POST, PUT, PATCH veya DELETE] arasında değil!"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#. odoo-python
+#: code:addons/online_bank_statement_provider_vomsis_coflow/models/provider_vomsis.py:0
+#, python-format
+msgid "Evrak %s %s"
+msgstr "Evrak %s %s"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#. odoo-python
+#: code:addons/online_bank_statement_provider_vomsis_coflow/models/provider_vomsis.py:0
+#, python-format
+msgid "Hata oluştu. %s"
+msgstr "Hata oluştu. %s"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_dashboard_view
+msgid "Manuel Ekstre Al"
+msgstr "Manuel Ekstre Al"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model:ir.model,name:online_bank_statement_provider_vomsis_coflow.model_online_bank_statement_provider
+msgid "Online Bank Statement Provider"
+msgstr "Çevrimiçi Banka Hesap Özeti Sağlayıcısı"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#. odoo-python
+#: code:addons/online_bank_statement_provider_vomsis_coflow/models/provider_vomsis.py:0
+#, python-format
+msgid "Son ekstre kaydı bulunamadı %s (%s)"
+msgstr "Son ekstre kaydı bulunamadı %s (%s)"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_form_view
+msgid "Vomsis Bilgileri"
+msgstr "Vomsis Bilgileri"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.provider_vomsis_form_view
+msgid "Vomsis Hesabınızdaki banka hesap bilgilerini getirir"
+msgstr "Vomsis Hesabınızdaki banka hesap bilgilerini getirir"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model:ir.model.fields,field_description:online_bank_statement_provider_vomsis_coflow.field_account_setup_bank_manual_config__vomsis_id
+#: model:ir.model.fields,field_description:online_bank_statement_provider_vomsis_coflow.field_res_partner_bank__vomsis_id
+msgid "Vomsis ID"
+msgstr "Vomsis Kimliği"
+
+#. module: online_bank_statement_provider_vomsis_coflow
+#: model_terms:ir.ui.view,arch_db:online_bank_statement_provider_vomsis_coflow.account_bank_statement_line_tree
+msgid "İş Ortağı Bilgisi"
+msgstr "İş Ortağı Bilgisi"
