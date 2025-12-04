@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pdc_wizard,access_pdc_wizard,model_pdc_wizard,base.group_user,1,1,1,1
-access_partner_wizard,access_partner_wizard,model_partner_wizard,,1,1,1,1
-access_report_payment_pdc,access_report_payment_pdc,model_report_payment_pdc,,1,1,1,1
