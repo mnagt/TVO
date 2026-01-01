@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="stock_valuation_layer_revaluation_form">
+        <field name="name">stock.valuation.layer.revaluation.form</field> 
+        <field name="model">stock.valuation.layer.revaluation</field> 
+        <field name="inherit_id" ref="stock_account.stock_valuation_layer_revaluation_form_view"/> 
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="before">
+                <group>
+                    <group>
+                        <label for="warehouse_id" string="Warehouse"/>
+                            <div class="o_row">
+                                <field name="warehouse_id" />
+                            </div>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

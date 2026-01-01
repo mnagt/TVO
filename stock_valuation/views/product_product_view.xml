@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+    <!-- ========================================== -->
+    <!-- VIEWS -->
+    <!-- ========================================== -->
+
+        <!-- Product Product Views  -->
+        <record model="ir.ui.view" id="product_product_form">
+            <field name="name">product_product_form</field> 
+            <field name="model">product.product</field> 
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[last()]" position="after">
+                    <page name="costs" string="Costs" groups="account.group_account_manager">
+                        <field name="location_cost_ids" widget="one2many_list">
+                            <list string="Costs" editable="bottom">
+                                <field name="warehouse_id" readonly="1"/>
+                                <field name="cost" readonly="1"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+                <!-- <field name="default_code" position="after">
+                    <field name="result"/>
+                </field> -->
+            </field>
+        </record>
+
+        <!-- Stock Valuation Layer Views  -->
+        <record model="ir.ui.view" id="stock_valuation_layer_form">
+            <field name="name">stock_valuation_layer_form</field> 
+            <field name="model">stock.valuation.layer</field> 
+            <field name="inherit_id" ref="stock_account.stock_valuation_layer_form"/>
+            <field name="arch" type="xml">
+                <field name="stock_move_id" position="after">
+                    <field name="warehouse_id"/>
+                </field>
+            </field>
+        </record>
+
+
+        <!-- Stock Quant Views -->
+        <record model="ir.ui.view" id="stock_quant_list">
+            <field name="name">stock_quant_list</field> 
+            <field name="model">stock.quant</field> 
+            <field name="inherit_id" ref="stock_account.view_stock_quant_tree_editable_inherit"/> 
+            <field name="arch" type="xml">
+                <field name="value" position="before">
+                    <field name="unit_value"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Stock Move Views -->
+        <!-- <record model="ir.ui.view" id="stock_move_form">
+            <field name="name">stock_move_form</field> 
+            <field name="model">stock.move</field> 
+            <field name="inherit_id" ref="stock.view_move_form"/> 
+            <field name="arch" type="xml">
+                <field name="reference" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+
+        <!-- Stock Move Views -->
+        <record model="ir.ui.view" id="stock_picking_form">
+            <field name="name">stock_move_form</field> 
+            <field name="model">stock.picking</field> 
+            <field name="inherit_id" ref="stock.view_picking_form"/> 
+            <field name="arch" type="xml">
+                <field name="backorder_id" position="after">
+                    <!-- <field name="result"/> -->
+                    <field name="sequence_code" invisible="1"/>
+                    <field name="destination"
+                        invisible="sequence_code != 'EXO'"
+                        required="sequence_code == 'EXO'"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Stock Landed Cost Views -->
+        <!-- <record model="ir.ui.view" id="stock_landed_cost_form">
+            <field name="name">stock_landed_cost_form</field> 
+            <field name="model">stock.landed.cost</field> 
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/> 
+            <field name="arch" type="xml">
+                <field name="picking_ids" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+
+        <!-- Product Location Cost list View -->
+        <record id="view_product_location_cost_unified_list" model="ir.ui.view">
+            <field name="name">product.location.cost.unified.list</field>
+            <field name="model">product.location.cost</field>
+            <field name="arch" type="xml">
+                <list string="Product Location Costs &amp; History">
+                    <field name="product_id" options="{'no_create': True}"/>
+                    <field name="warehouse_id" options="{'no_create': True}"/>
+                    <field name="location_id" options="{'no_create': True}"/>
+                    <field name="cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="last_updated" widget="datetime"/>
+                    <field name="last_updated_by" widget="many2one_avatar_user"/>
+                    <!-- Expandable history rows -->
+                    <field name="history_ids" invisible="1"/>
+                </list>
+            </field>
+        </record>
+    
+        <!-- Product Location Cost Form View -->
+        <record id="view_product_location_cost_unified_form" model="ir.ui.view">
+            <field name="name">product.location.cost.unified.form</field>
+            <field name="model">product.location.cost</field>
+            <field name="arch" type="xml">
+                <form string="Product Location Cost">
+                    <sheet>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="product_id" options="{'no_create': True, 'no_edit': True}"/>
+                            </h1>
+                            <h1>
+                                <field name="warehouse_id" options="{'no_create': True, 'no_edit': True}"/>
+                            </h1>
+                            <h2>
+                                <field name="location_id" options="{'no_create': True, 'no_edit': True}"/>
+                            </h2>
+                        </div>
+                        
+                        <!-- Cost Information -->
+                        <group>
+                            <group string="Current Cost">
+                                <field name="cost" widget="monetary" options="{'currency_field': 'currency_id'}" 
+                                    class="oe_inline oe_bold"/>
+                                <field name="last_updated" readonly="1"/>
+                                <field name="last_updated_by" readonly="1" widget="many2one_avatar_user"/>
+                            </group>
+                        </group>
+
+                        <!-- Historical Data in Notebook -->
+                        <notebook>
+                            <!-- Recent Changes Tab -->
+                            <page string="Recent Changes" name="recent_history">
+                                <field name="history_ids" readonly="1" 
+                                    domain="[('change_date', '>=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]">
+                                    <list decoration-success="cost_difference &gt; 0" 
+                                        decoration-danger="cost_difference &lt; 0"
+                                        default_order="change_date desc">
+                                        <field name="change_date" widget="datetime"/>
+                                        <field name="changed_by" widget="many2one_avatar_user"/>
+                                        <field name="old_cost" widget="monetary"/>
+                                        <field name="new_cost" widget="monetary"/>
+                                        <field name="cost_difference" widget="monetary" decoration-bf="1"/>
+                                        <field name="cost_change_percent" widget="percentage"/>
+                                        <field name="change_reason"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <!-- All History Tab -->
+                            <page string="Complete History" name="all_history">
+                                <field name="history_ids" readonly="1">
+                                    <list decoration-success="cost_difference &gt; 0" 
+                                        decoration-danger="cost_difference &lt; 0"
+                                        default_order="change_date desc" 
+                                        limit="100">
+                                        <field name="change_date" widget="datetime"/>
+                                        <field name="changed_by" widget="many2one_avatar_user"/>
+                                        <field name="old_cost" widget="monetary" optional="show"/>
+                                        <field name="new_cost" widget="monetary"/>
+                                        <field name="cost_difference" widget="monetary" decoration-bf="1"/>
+                                        <field name="cost_change_percent" widget="percentage" optional="hide"/>
+                                        <field name="change_reason"/>
+                                    </list>
+                                    <form string="Cost Change Detail" create="false" edit="false">
+                                        <group>
+                                            <group string="Change Information">
+                                                <field name="change_date"/>
+                                                <field name="changed_by"/>
+                                                <field name="change_reason"/>
+                                            </group>
+                                            <group string="Cost Details">
+                                                <field name="old_cost" widget="monetary"/>
+                                                <field name="new_cost" widget="monetary"/>
+                                                <field name="cost_difference" widget="monetary" class="oe_bold"/>
+                                                <field name="cost_change_percent" widget="percentage" class="oe_bold"/>
+                                            </group>
+                                        </group>
+                                        <group string="Context">
+                                            <field name="product_id" readonly="1"/>
+                                            <field name="warehouse_id" readonly="1"/>
+                                            <field name="location_id" readonly="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            
+
+                            <!-- Product Details Tab -->
+                            <page string="Product &amp; Location Info" name="details">
+                                <group>
+                                    <group string="Product Information">
+                                        <field name="product_id" readonly="1" force_save="1" nolabel="1">
+                                            <form>
+                                                <group>
+                                                    <field name="default_code"/>
+                                                    <field name="name"/>
+                                                    <field name="categ_id"/>
+                                                    <field name="uom_id"/>
+                                                    <field name="list_price"/>
+                                                    <field name="standard_price"/>
+                                                    <field name="cost_method"/>
+                                                </group>
+                                            </form>
+                                        </field>
+                                    </group>
+                                    <group string="Location Information">
+                                        <field name="location_id" readonly="1" force_save="1" nolabel="1">
+                                            <form>
+                                                <group>
+                                                    <field name="complete_name"/>
+                                                    <field name="usage"/>
+                                                    <field name="company_id"/>
+                                                    <field name="active"/>
+                                                </group>
+                                            </form>
+                                        </field>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                </form>
+            </field>
+        </record>
+
+    <!-- ========================================== -->
+    <!-- ACTIONS -->
+    <!-- ========================================== -->
+        
+        <record id="action_product_location_cost_unified" model="ir.actions.act_window">
+            <field name="name">Product Location Costs</field>
+            <field name="res_model">product.location.cost</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_product_location_cost_unified_list"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first product location cost!
+                </p>
+                <p>
+                    Track costs for products at specific locations and monitor their changes over time.
+                </p>
+            </field>
+        </record>
+
+    <!-- ========================================== -->
+    <!-- MENUS -->
+    <!-- ========================================== -->
+
+        <menuitem id="menu_product_location_cost_main" 
+                name="Location Costs" 
+                parent="stock.menu_warehouse_report"
+                action="action_product_location_cost_unified" 
+                sequence="170"/>
+                
+        
+    </data>
+</odoo>
