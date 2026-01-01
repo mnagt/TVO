@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_form_inherit_einvoice_pdf" model="ir.ui.view">
+        <field name="name">stock.picking.form.einvoice.pdf</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+
+                <button name="action_download_despatch_pdf"
+                        string="E-İrsaliye'yı İndir"
+                        type="object"
+                        class="btn-primary"
+                        invisible="l10n_tr_nilvera_send_status not in ['sent', 'succeed', 'waiting']"/>
+
+            </xpath>
+        </field>
+    </record>
+</odoo>

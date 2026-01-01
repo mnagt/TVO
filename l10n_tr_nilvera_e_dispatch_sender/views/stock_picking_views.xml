@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add button and fields to stock picking form -->
+    <record id="view_picking_form_inherit_nilvera_sender" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.nilvera.sender</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="l10n_tr_nilvera_edispatch.view_picking_form_inherit_l10n_tr_nilvera_edispatch"/>
+        <field name="arch" type="xml">
+            <!-- Add Send to Nilvera button after Generate XML button -->
+            <xpath expr="//button[@name='action_generate_l10n_tr_edispatch_xml']" position="after">
+                <button name="action_send_to_nilvera" 
+                        string="Send to Nilvera" 
+                        type="object" 
+                        class="btn-primary"
+                        invisible="country_code != 'TR' or picking_type_code != 'outgoing' or l10n_tr_nilvera_dispatch_state != 'to_send' or l10n_tr_nilvera_send_status == 'sent'"
+                        groups="stock.group_stock_user"/>
+                <button name="action_retry_nilvera_send"
+                        string="Retry Send"
+                        type="object"
+                        class="btn-warning"
+                        invisible="l10n_tr_nilvera_send_status != 'error'"
+                        groups="stock.group_stock_user"/>
+            </xpath>
+            
+            <!-- Add status fields in a new group -->
+            <xpath expr="//group[@name='l10n_tr_additionals']" position="after">
+                <group name="l10n_tr_nilvera_status" string="Nilvera Status" invisible="country_code != 'TR' or picking_type_code != 'outgoing'">
+                    <field name="l10n_tr_nilvera_send_status" widget="badge" decoration-success="l10n_tr_nilvera_send_status == 'sent'" decoration-danger="l10n_tr_nilvera_send_status == 'error'" decoration-warning="l10n_tr_nilvera_send_status == 'sending'"/>
+                    <field name="l10n_tr_nilvera_response_uuid" invisible="not l10n_tr_nilvera_response_uuid"/>
+                    <field name="l10n_tr_nilvera_ettn" invisible="not l10n_tr_nilvera_ettn"/>
+                </group>
+            </xpath>
+            
+            <!-- Add response details in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Nilvera Response" name="nilvera_response" invisible="not l10n_tr_nilvera_response">
+                    <div class="o_group">
+                        <div class="o_group_col_12">
+                            <field name="l10n_tr_nilvera_response"
+                                   widget="ace"
+                                   options="{'mode': 'json', 'theme': 'monokai', 'height': 400, 'showGutter': true, 'wrap': true}"
+                                   nolabel="1"/>
+                        </div>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Add action to send multiple dispatches -->
+    <record id="action_send_edispatch_to_nilvera" model="ir.actions.server">
+        <field name="name">Send to Nilvera</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    records.action_send_to_nilvera()
+        </field>
+    </record>
+    
+    <!-- Tree view customization -->
+    <record id="view_picking_tree_inherit_nilvera_sender" model="ir.ui.view">
+        <field name="name">stock.picking.tree.inherit.nilvera.sender</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="l10n_tr_nilvera_send_status" 
+                       string="Nilvera" 
+                       widget="badge" 
+                       optional="hide"
+                       decoration-success="l10n_tr_nilvera_send_status == 'sent'" 
+                       decoration-danger="l10n_tr_nilvera_send_status == 'error'" 
+                       decoration-warning="l10n_tr_nilvera_send_status == 'sending'"/>
+            </field>
+        </field>
+    </record>
+</odoo>
