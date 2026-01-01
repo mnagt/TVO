@@ -1,0 +1,1775 @@
+INFO	660170	stagetvo	2025-12-10 14:50:41,035	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000003</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>a907c805-2146-4860-813a-2c77e69208a5</cbc:UUID>
+  <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : IKIYÜZKIRK TRY SIFIR KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : IKIYÜZKIRK USD SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.000000 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00003</cbc:ID>
+    <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567890</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>New</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>hgjhgjh</cbc:StreetName>
+        <cbc:CitySubdivisionName>fatih</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34000</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Fatih Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>New</cbc:RegistrationName>
+        <cbc:CompanyID>1234567890</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>8993</cbc:ID>
+        <cbc:Name>New</cbc:Name>
+        <cbc:ElectronicMail>hjbhjb@kjbg.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="mutually defined">ZZZ</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-10</cbc:PaymentDueDate>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="USD">40.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="USD">200.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="USD">40.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="USD">200.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="USD">200.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="USD">240.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="USD">240.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">10.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="USD">200.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="USD">40.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="USD">200.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="USD">40.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="USD">20.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+
+
+INFO	660172	stagetvo	2025-12-10 15:14:41,686	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000003</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>a907c805-2146-4860-813a-2c77e69208a5</cbc:UUID>
+  <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : IKIYÜZALTI TRY ONALTI KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : IKIYÜZKIRK EUR SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 0.859059 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:PricingCurrencyCode>EUR</cbc:PricingCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00003</cbc:ID>
+    <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567890</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>New</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>hgjhgjh</cbc:StreetName>
+        <cbc:CitySubdivisionName>fatih</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34000</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Fatih Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>New</cbc:RegistrationName>
+        <cbc:CompanyID>1234567890</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>8993</cbc:ID>
+        <cbc:Name>New</cbc:Name>
+        <cbc:ElectronicMail>hjbhjb@kjbg.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="mutually defined">ZZZ</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-10</cbc:PaymentDueDate>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>EUR</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>USD</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>0.859059</cbc:CalculationRate>
+    <cbc:Date>2025-12-10</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">200.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">200.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">200.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">240.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="EUR">240.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">10.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">200.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="EUR">200.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">20.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+INFO	660172	stagetvo	2025-12-10 15:16:53,788	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000001</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>310b76e3-0e08-496f-9584-66227fa4988c</cbc:UUID>
+  <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : YIRMIBINÜÇYÜZDOKSANSEKIZ TRY ELLIALTI KURUS</cbc:Note>
+  <cbc:DocumentCurrencyCode>TRY</cbc:DocumentCurrencyCode>
+  <cbc:PricingCurrencyCode>TRY</cbc:PricingCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00001</cbc:ID>
+    <cbc:SalesOrderID>S00003</cbc:SalesOrderID>
+    <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-10</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="mutually defined">ZZZ</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-25</cbc:PaymentDueDate>
+  </cac:PaymentMeans>
+  <cac:PaymentTerms>
+    <cbc:Note>Payment terms: 15 Days</cbc:Note>
+  </cac:PaymentTerms>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>TRY</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>USD</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>42.5179</cbc:CalculationRate>
+    <cbc:Date>2025-12-10</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="TRY">80.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="TRY">400.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="TRY">80.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="TRY">400.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="TRY">400.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="TRY">480.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="TRY">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="TRY">480.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">200.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="TRY">400.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="TRY">80.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="TRY">400.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="TRY">80.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="TRY">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+
+
+
+INFO	689710	stagetvo	2025-12-11 12:23:09,480	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000006</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>c0fff650-3639-4c66-a3e5-9a30fbaf4f04</cbc:UUID>
+  <cbc:IssueDate>2025-12-11</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : IKIYÜZALTI TRY ONALTI KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : IKIYÜZKIRK EUR SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 0.859059 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:PricingCurrencyCode>EUR</cbc:PricingCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00006</cbc:ID>
+    <cbc:IssueDate>2025-12-11</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-11</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567890</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>New</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>hgjhgjh</cbc:StreetName>
+        <cbc:CitySubdivisionName>fatih</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34000</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Fatih Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>New</cbc:RegistrationName>
+        <cbc:CompanyID>1234567890</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>8993</cbc:ID>
+        <cbc:Name>New</cbc:Name>
+        <cbc:ElectronicMail>hjbhjb@kjbg.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="mutually defined">ZZZ</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-11</cbc:PaymentDueDate>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>EUR</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>USD</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>0.859059</cbc:CalculationRate>
+    <cbc:Date>2025-12-11</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">200.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">200.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">200.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">240.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="EUR">240.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">10.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">200.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="EUR">200.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">40.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">20.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>		
+
+INFO	689710	stagetvo	2025-12-11 12:23:09,819	odoo.addons.tcmb.models.account_move	invoice_data: {
+  "sending_methods": {},
+  "extra_edis": "{'tr_nilvera'}",
+  "pdf_report": "ir.actions.report(231,)",
+  "author_user_id": 2,
+  "author_partner_id": 3,
+  "invoice_edi_format": "ubl_tr",
+  "ubl_cii_xml_attachment_values": {
+    "name": "SFA_2025_00006_einvoice.xml",
+    "raw": "b'<?xml version=\\'1.0\\' encoding=\\'UTF-8\\'?>\\n<Invoice xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\" xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\">\\n  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>\\n  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>\\n  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>\\n  <cbc:ID>SFA2025000000006</cbc:ID>\\n  <cbc:CopyIndicator>false</cbc:CopyIndicator>\\n  <cbc:UUID>c0fff650-3639-4c66-a3e5-9a30fbaf4f04</cbc:UUID>\\n  <cbc:IssueDate>2025-12-11</cbc:IssueDate>\\n  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>\\n  <cbc:Note>YALNIZ : IKIY\\xc3\\x9cZALTI TRY ONALTI KURUS</cbc:Note>\\n  <cbc:Note>YALNIZ : IKIY\\xc3\\x9cZKIRK EUR SIFIR CENTS</cbc:Note>\\n  <cbc:Note>KUR : 0.859059 TL</cbc:Note>\\n  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>\\n  <cbc:PricingCurrencyCode>EUR</cbc:PricingCurrencyCode>\\n  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>\\n  <cac:OrderReference>\\n    <cbc:ID>SFA/2025/00006</cbc:ID>\\n    <cbc:IssueDate>2025-12-11</cbc:IssueDate>\\n  </cac:OrderReference>\\n  <cac:AdditionalDocumentReference>\\n    <cbc:ID>ELEKTRONIK</cbc:ID>\\n    <cbc:IssueDate>2025-12-11</cbc:IssueDate>\\n    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>\\n  </cac:AdditionalDocumentReference>\\n  <cac:AccountingSupplierParty>\\n    <cac:Party>\\n      <cac:PartyIdentification>\\n        <cbc:ID schemeID=\"VKN\">1234567801</cbc:ID>\\n      </cac:PartyIdentification>\\n      <cac:PartyIdentification>\\n        <cbc:ID schemeID=\"MERSISNO\">123456897</cbc:ID>\\n      </cac:PartyIdentification>\\n      <cac:PartyName>\\n        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>\\n      </cac:PartyName>\\n      <cac:PostalAddress>\\n        <cbc:StreetName>\\xc4\\xb0K\\xc4\\xb0TELL\\xc4\\xb0 OSB MAH.</cbc:StreetName>\\n        <cbc:CitySubdivisionName>BA\\xc5\\x9eAK\\xc5\\x9eEH\\xc4\\xb0R</cbc:CitySubdivisionName>\\n        <cbc:CityName>\\xc4\\xb0stanbul</cbc:CityName>\\n        <cbc:PostalZone>34490</cbc:PostalZone>\\n        <cac:Country>\\n          <cbc:IdentificationCode>TR</cbc:IdentificationCode>\\n          <cbc:Name>T\\xc3\\xbcrkiye</cbc:Name>\\n        </cac:Country>\\n      </cac:PostalAddress>\\n      <cac:PartyTaxScheme>\\n        <cac:TaxScheme>\\n          <cbc:Name>\\xc4\\xb0kitelli Vergi Dairesi M\\xc3\\xbcd\\xc3\\xbcrl\\xc3\\xbc\\xc4\\x9f\\xc3\\xbc</cbc:Name>\\n        </cac:TaxScheme>\\n      </cac:PartyTaxScheme>\\n      <cac:PartyLegalEntity>\\n        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>\\n        <cbc:CompanyID>1234567801</cbc:CompanyID>\\n      </cac:PartyLegalEntity>\\n      <cac:Contact>\\n        <cbc:ID>1</cbc:ID>\\n        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>\\n      </cac:Contact>\\n    </cac:Party>\\n  </cac:AccountingSupplierParty>\\n  <cac:AccountingCustomerParty>\\n    <cac:Party>\\n      <cac:PartyIdentification>\\n        <cbc:ID schemeID=\"VKN\">1234567890</cbc:ID>\\n      </cac:PartyIdentification>\\n      <cac:PartyName>\\n        <cbc:Name>New</cbc:Name>\\n      </cac:PartyName>\\n      <cac:PostalAddress>\\n        <cbc:StreetName>hgjhgjh</cbc:StreetName>\\n        <cbc:CitySubdivisionName>fatih</cbc:CitySubdivisionName>\\n        <cbc:CityName>\\xc4\\xb0stanbul</cbc:CityName>\\n        <cbc:PostalZone>34000</cbc:PostalZone>\\n        <cac:Country>\\n          <cbc:IdentificationCode>TR</cbc:IdentificationCode>\\n          <cbc:Name>T\\xc3\\xbcrkiye</cbc:Name>\\n        </cac:Country>\\n      </cac:PostalAddress>\\n      <cac:PartyTaxScheme>\\n        <cac:TaxScheme>\\n          <cbc:Name>Fatih Vergi Dairesi M\\xc3\\xbcd\\xc3\\xbcrl\\xc3\\xbc\\xc4\\x9f\\xc3\\xbc</cbc:Name>\\n        </cac:TaxScheme>\\n      </cac:PartyTaxScheme>\\n      <cac:PartyLegalEntity>\\n        <cbc:RegistrationName>New</cbc:RegistrationName>\\n        <cbc:CompanyID>1234567890</cbc:CompanyID>\\n      </cac:PartyLegalEntity>\\n      <cac:Contact>\\n        <cbc:ID>8993</cbc:ID>\\n        <cbc:Name>New</cbc:Name>\\n        <cbc:ElectronicMail>hjbhjb@kjbg.com</cbc:ElectronicMail>\\n      </cac:Contact>\\n    </cac:Party>\\n  </cac:AccountingCustomerParty>\\n  <cac:PaymentMeans>\\n    <cbc:PaymentMeansCode name=\"mutually defined\">ZZZ</cbc:PaymentMeansCode>\\n    <cbc:PaymentDueDate>2025-12-11</cbc:PaymentDueDate>\\n  </cac:PaymentMeans>\\n  <cac:PricingExchangeRate>\\n    <cbc:SourceCurrencyCode>EUR</cbc:SourceCurrencyCode>\\n    <cbc:TargetCurrencyCode>USD</cbc:TargetCurrencyCode>\\n    <cbc:CalculationRate>0.859059</cbc:CalculationRate>\\n    <cbc:Date>2025-12-11</cbc:Date>\\n  </cac:PricingExchangeRate>\\n  <cac:TaxTotal>\\n    <cbc:TaxAmount currencyID=\"EUR\">40.00</cbc:TaxAmount>\\n    <cac:TaxSubtotal>\\n      <cbc:TaxableAmount currencyID=\"EUR\">200.00</cbc:TaxableAmount>\\n      <cbc:TaxAmount currencyID=\"EUR\">40.00</cbc:TaxAmount>\\n      <cbc:Percent>20.0</cbc:Percent>\\n      <cac:TaxCategory>\\n        <cac:TaxScheme>\\n          <cbc:Name>Ger\\xc3\\xa7ek Usulde KDV</cbc:Name>\\n          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>\\n        </cac:TaxScheme>\\n      </cac:TaxCategory>\\n    </cac:TaxSubtotal>\\n  </cac:TaxTotal>\\n  <cac:LegalMonetaryTotal>\\n    <cbc:LineExtensionAmount currencyID=\"EUR\">200.00</cbc:LineExtensionAmount>\\n    <cbc:TaxExclusiveAmount currencyID=\"EUR\">200.00</cbc:TaxExclusiveAmount>\\n    <cbc:TaxInclusiveAmount currencyID=\"EUR\">240.00</cbc:TaxInclusiveAmount>\\n    <cbc:AllowanceTotalAmount currencyID=\"EUR\">0.00</cbc:AllowanceTotalAmount>\\n    <cbc:PayableAmount currencyID=\"EUR\">240.00</cbc:PayableAmount>\\n  </cac:LegalMonetaryTotal>\\n  <cac:InvoiceLine>\\n    <cbc:ID>1</cbc:ID>\\n    <cbc:InvoicedQuantity unitCode=\"C62\">10.0</cbc:InvoicedQuantity>\\n    <cbc:LineExtensionAmount currencyID=\"EUR\">200.00</cbc:LineExtensionAmount>\\n    <cac:TaxTotal>\\n      <cbc:TaxAmount currencyID=\"EUR\">40.00</cbc:TaxAmount>\\n      <cac:TaxSubtotal>\\n        <cbc:TaxableAmount currencyID=\"EUR\">200.00</cbc:TaxableAmount>\\n        <cbc:TaxAmount currencyID=\"EUR\">40.00</cbc:TaxAmount>\\n        <cbc:Percent>20.0</cbc:Percent>\\n        <cac:TaxCategory>\\n          <cac:TaxScheme>\\n            <cbc:Name>Ger\\xc3\\xa7ek Usulde KDV</cbc:Name>\\n            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>\\n          </cac:TaxScheme>\\n        </cac:TaxCategory>\\n      </cac:TaxSubtotal>\\n    </cac:TaxTotal>\\n    <cac:Item>\\n      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>\\n      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>\\n    </cac:Item>\\n    <cac:Price>\\n      <cbc:PriceAmount currencyID=\"EUR\">20.0</cbc:PriceAmount>\\n    </cac:Price>\\n  </cac:InvoiceLine>\\n</Invoice>'",
+    "mimetype": "application/xml",
+    "res_model": "account.move",
+    "res_id": 117,
+    "res_field": "ubl_cii_xml_file"
+  },
+  "ubl_cii_xml_options": {
+    "ubl_cii_format": "ubl_tr",
+    "builder": "account.edi.xml.ubl.tr()"
+  },
+  "blocking_error": null,
+  "error_but_continue": false
+}			
+
+
+
+
+
+INFO	692000	stagetvo	2025-12-11 13:45:47,904	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000007</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>a7dc4398-70e9-496e-9616-b5e32fdebd81</cbc:UUID>
+  <cbc:IssueDate>2025-12-11</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN TRY SIFIR KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN USD SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.000000 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00007</cbc:ID>
+    <cbc:IssueDate>2025-12-11</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-11</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234569872</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI (copy)</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH. DEPOSITE İŞ MERKEZİ A1 BLOK NO 311</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI (copy)</cbc:RegistrationName>
+        <cbc:CompanyID>1234569872</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>8992</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI (copy)</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="mutually defined">ZZZ</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-11</cbc:PaymentDueDate>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="USD">400.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="USD">400.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="USD">400.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="USD">480.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="USD">480.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">200.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="USD">400.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="USD">400.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="USD">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+
+
+INFO	733470	stagetvo	2025-12-12 15:46:10,745	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000014</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>d1971da8-a0a8-4611-8c90-f0d11e73bf30</cbc:UUID>
+  <cbc:IssueDate>2025-12-12</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : DOKUZ TRY ELLIDOKUZ KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : DOKUZ USD ELLIDOKUZ CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.000000 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00014</cbc:ID>
+    <cbc:SalesOrderID>S00012</cbc:SalesOrderID>
+    <cbc:IssueDate>2025-12-12</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-12</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-12</cbc:PaymentDueDate>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>TR330006100519786457841326</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>USD</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>TRY</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>0.02351</cbc:CalculationRate>
+    <cbc:Date>2025-12-12</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="USD">1.60</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="USD">8.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="USD">1.60</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="USD">8.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="USD">8.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="USD">9.60</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="USD">9.60</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">4.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="USD">8.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="USD">1.60</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="USD">8.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="USD">1.60</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="USD">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+INFO	733932	stagetvo	2025-12-12 15:54:11,719	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000016</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>a5c3d32a-7604-40f5-a573-3ac5cc90a59d</cbc:UUID>
+  <cbc:IssueDate>2025-12-12</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN TRY SIFIR KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN USD SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.000000 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00016</cbc:ID>
+    <cbc:SalesOrderID>S00014</cbc:SalesOrderID>
+    <cbc:IssueDate>2025-12-12</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-12</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-12</cbc:PaymentDueDate>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>TR330006100519786457841326</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>USD</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>TRY</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>42.5344</cbc:CalculationRate>
+    <cbc:Date>2025-12-12</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="USD">400.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="USD">400.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="USD">400.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="USD">480.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="USD">480.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">200.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="USD">400.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="USD">400.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="USD">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+INFO	898433	stagetvo	2025-12-17 12:22:14,325	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000024</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>4204fc26-ff3e-4258-88cc-a3c8a66332ed</cbc:UUID>
+  <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN TRY SIFIR KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN USD SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.000000 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00024</cbc:ID>
+    <cbc:SalesOrderID>S00021</cbc:SalesOrderID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-17</cbc:PaymentDueDate>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>TR330006100519786457841326</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>USD</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>TRY</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>0.023457</cbc:CalculationRate>
+    <cbc:Date>2025-12-17</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="USD">400.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="USD">400.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="USD">400.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="USD">480.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="USD">480.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">200.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="USD">400.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="USD">400.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="USD">80.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="USD">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+
+INFO	900747	stagetvo	2025-12-17 13:23:27,087	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000028</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>24abe398-1dbc-4820-98df-06b39fcfda82</cbc:UUID>
+  <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : BEŞYÜZALTMIŞIKI TRY OTUZDÖRT KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN EUR SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.171543 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:PricingCurrencyCode>EUR</cbc:PricingCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00028</cbc:ID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-17</cbc:PaymentDueDate>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>TR330006100519786457841326</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>EUR</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>USD</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>49.9682</cbc:CalculationRate>
+    <cbc:Date>2025-12-17</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>EUR</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>TRY</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>49.9682</cbc:CalculationRate>
+    <cbc:Date>2025-12-17</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">400.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">400.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">400.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">480.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="EUR">480.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">200.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">400.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="EUR">400.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+
+INFO	901396	stagetvo	2025-12-17 13:28:20,335	odoo.addons.tcmb.models.account_move	XML being sent:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000029</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>13d4035b-df15-4e25-9dce-f248ec31a2d3</cbc:UUID>
+  <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : BEŞYÜZALTMIŞIKI TRY OTUZDÖRT KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : DÖRTYÜZSEKSEN EUR SIFIR CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.171543 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:PricingCurrencyCode>EUR</cbc:PricingCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00029</cbc:ID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-17</cbc:PaymentDueDate>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>TR330006100519786457841326</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PricingExchangeRate>
+    <cbc:SourceCurrencyCode>EUR</cbc:SourceCurrencyCode>
+    <cbc:TargetCurrencyCode>USD</cbc:TargetCurrencyCode>
+    <cbc:CalculationRate>49.9682</cbc:CalculationRate>
+    <cbc:Date>2025-12-17</cbc:Date>
+  </cac:PricingExchangeRate>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">400.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">400.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">400.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">480.00</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="EUR">480.00</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">200.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">400.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="EUR">400.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">80.00</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">2.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			
+
+
+
+
+INFO	905376	stagetvo	2025-12-17 15:43:13,552	odoo.addons.tcmb.models.account_move	XML:
+<?xml version='1.0' encoding='UTF-8'?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID>TR1.2</cbc:CustomizationID>
+  <cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>
+  <cbc:ID>SFA2025000000032</cbc:ID>
+  <cbc:CopyIndicator>false</cbc:CopyIndicator>
+  <cbc:UUID>048b4d6c-081c-405b-ac2d-ddbc48889751</cbc:UUID>
+  <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>SATIS</cbc:InvoiceTypeCode>
+  <cbc:Note>YALNIZ : BEŞYÜZALTMIŞBIR TRY ALTMIŞ KURUS</cbc:Note>
+  <cbc:Note>YALNIZ : BEŞYÜZALTMIŞBIR USD ALTMIŞ CENTS</cbc:Note>
+  <cbc:Note>KUR : 1.000000 TL</cbc:Note>
+  <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
+  <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+  <cac:OrderReference>
+    <cbc:ID>SFA/2025/00032</cbc:ID>
+    <cbc:SalesOrderID>S00025</cbc:SalesOrderID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ELEKTRONIK</cbc:ID>
+    <cbc:IssueDate>2025-12-17</cbc:IssueDate>
+    <cbc:DocumentTypeCode>SEND_TYPE</cbc:DocumentTypeCode>
+  </cac:AdditionalDocumentReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">1234567801</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="MERSISNO">123456897</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>İKİTELLİ OSB MAH.</cbc:StreetName>
+        <cbc:CitySubdivisionName>BAŞAKŞEHİR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34490</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>İkitelli Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:RegistrationName>
+        <cbc:CompanyID>1234567801</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>1</cbc:ID>
+        <cbc:Name>TVO BITKISEL YAG SANAYI TICARET ANONIM SIRKETI</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="VKN">7541007433</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>CAMLIK MAH</cbc:StreetName>
+        <cbc:CitySubdivisionName>BASAKSEHIR</cbc:CitySubdivisionName>
+        <cbc:CityName>İstanbul</cbc:CityName>
+        <cbc:PostalZone>34480</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>TR</cbc:IdentificationCode>
+          <cbc:Name>Türkiye</cbc:Name>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cac:TaxScheme>
+          <cbc:Name>Acıpayam Vergi Dairesi Müdürlüğü</cbc:Name>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:RegistrationName>
+        <cbc:CompanyID>7541007433</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ID>2375</cbc:ID>
+        <cbc:Name>SAYE EDT GIDA TARIM HAYVANCILIK TEKSTİL İNŞAAT İTHALAT İHRACAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</cbc:Name>
+        <cbc:ElectronicMail>gfhjgjh@knkl.com</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>2025-12-17</cbc:PaymentDueDate>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>TR330006100519786457841326</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="USD">93.60</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="USD">468.00</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="USD">93.60</cbc:TaxAmount>
+      <cbc:Percent>20.0</cbc:Percent>
+      <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+          <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="USD">468.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="USD">468.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="USD">561.60</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+    <cbc:PayableAmount currencyID="USD">561.60</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">156.0</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="USD">468.00</cbc:LineExtensionAmount>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="USD">93.60</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="USD">468.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="USD">93.60</cbc:TaxAmount>
+        <cbc:Percent>20.0</cbc:Percent>
+        <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:Name>Gerçek Usulde KDV</cbc:Name>
+            <cbc:TaxTypeCode>0015</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>(PO-2) RBD Palm Olein Bulk</cbc:Description>
+      <cbc:Name>(PO-2) RBD Palm Olein Bulk</cbc:Name>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="USD">3.0</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>			

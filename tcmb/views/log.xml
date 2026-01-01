@@ -1,0 +1,35 @@
+First
+INFO	903715	stagetvo	2025-12-17 15:02:56,080	odoo.addons.l10n_tr_nilvera.lib.nilvera_client	"GET https://apitest.nilvera.com/general/GlobalCompany/Check/TaxNumber/7541007433" 200 0.246			
+INFO	903715	stagetvo	2025-12-17 15:02:56,106	odoo.addons.tcmb.models.account_move	=== NILVERA REQUEST ===			
+INFO	903715	stagetvo	2025-12-17 15:02:56,106	odoo.addons.tcmb.models.account_move	Endpoint: /earchive/Send/Xml			
+INFO	903715	stagetvo	2025-12-17 15:02:56,106	odoo.addons.tcmb.models.account_move	File: SFA_2025_00029_einvoice.xml			
+INFO	903715	stagetvo	2025-12-17 15:02:56,402	odoo.addons.l10n_tr_nilvera.lib.nilvera_client	"POST https://apitest.nilvera.com/earchive/Send/Xml" 409 0.296			
+INFO	903715	stagetvo	2025-12-17 15:02:56,403	odoo.addons.tcmb.models.account_move	=== NILVERA RESPONSE ===			
+INFO	903715	stagetvo	2025-12-17 15:02:56,403	odoo.addons.tcmb.models.account_move	Status: 409			
+INFO	903715	stagetvo	2025-12-17 15:02:56,403	odoo.addons.tcmb.models.account_move	Headers: {'Date': 'Wed, 17 Dec 2025 15:02:56 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'}			
+INFO	903715	stagetvo	2025-12-17 15:02:56,403	odoo.addons.tcmb.models.account_move	Body: {"Message":"HATALI ISTEK","Errors":[{"Code":1001,"Description":"ETTN Numarası Sistemde Kayıtlıdır.","Detail":"13d4035b-df15-4e25-9dce-f248ec31a2d3 ETTN Numarası Sistemde Kayıtlıdır."}]}			
+INFO	903715	stagetvo	2025-12-17 15:02:56,403	odoo.addons.tcmb.models.account_move	======================			
+ERROR	903715	stagetvo	2025-12-17 15:02:56,403	odoo.addons.tcmb.models.account_move	Error codes: [1001]			
+
+
+
+
+
+
+
+
+
+
+
+
+Second
+INFO	904874	stagetvo	2025-12-17 15:34:21,308	odoo.addons.tcmb.models.account_move	=== NILVERA REQUEST ===			
+INFO	904874	stagetvo	2025-12-17 15:34:21,309	odoo.addons.tcmb.models.account_move	Endpoint: /earchive/Send/Xml			
+INFO	904874	stagetvo	2025-12-17 15:34:21,311	odoo.addons.tcmb.models.account_move	File: SFA_2025_00032_einvoice.xml			
+INFO	904874	stagetvo	2025-12-17 15:34:21,651	odoo.addons.l10n_tr_nilvera.lib.nilvera_client	"POST https://apitest.nilvera.com/earchive/Send/Xml" 500 0.340			
+INFO	904874	stagetvo	2025-12-17 15:34:21,652	odoo.addons.tcmb.models.account_move	=== NILVERA RESPONSE ===			
+INFO	904874	stagetvo	2025-12-17 15:34:21,652	odoo.addons.tcmb.models.account_move	Status: 500			
+INFO	904874	stagetvo	2025-12-17 15:34:21,652	odoo.addons.tcmb.models.account_move	Headers: {'Date': 'Wed, 17 Dec 2025 15:34:21 GMT', 'Content-Type': 'application/json', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'}			
+INFO	904874	stagetvo	2025-12-17 15:34:21,652	odoo.addons.tcmb.models.account_move	Body: {"Message":"HATALI ISTEK","Errors":[{"Code":500,"Description":"NullReferenceException","Detail":"Object reference not set to an instance of an object."}]}			
+INFO	904874	stagetvo	2025-12-17 15:34:21,652	odoo.addons.tcmb.models.account_move	======================			
+WARNING	904874	stagetvo	2025-12-17 15:34:21,682	odoo.http	Server error: {"Message":"HATALI ISTEK","Errors":[{"Code":500,"Description":"NullReferenceException","Detail":"Object reference not set to an instance of an object."}]}			
