@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2023 Kıta Yazılım
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="provider_vomsis_form_view" model="ir.ui.view">
+        <field name="name">provider.vomsis.form (in online_bank_statement_provider_vomsis_kita)</field>
+        <field name="model">online.bank.statement.provider</field>
+        <field name="inherit_id" ref="account_statement_import_online.online_bank_statement_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='configuration']" position="after">
+                <group invisible="service != 'vomsis'" string="Vomsis Bilgileri">
+                    <field groups="base.group_no_one" name="api_base" string="API URL"/>
+                    <field name="api_key" password="True" required="service == 'vomsis'" string="Api Anahtarı"/>
+                    <field name="api_secret" password="True" required="service == 'vomsis'" string="Api Gizli Anahtarı"/>
+                    <div class="o_row">
+                        <button class="oe_edit_only oe_inline btn btn-secondary pt-1" help="Vomsis Hesabınızdaki banka hesap bilgilerini getirir" icon="/online_bank_statement_provider_vomsis_kita/static/src/img/icons/config.webp" invisible="api_key == False or api_secret == False" name="get_vomsis_account_data" type="object">
+                            <span>
+                                <br/>
+                                Hesapları Getir
+                            </span>
+                        </button>
+                    </div>
+                </group>
+            </xpath></field>
+    </record>
+</odoo>
