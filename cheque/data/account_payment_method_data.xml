@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data noupdate="1">
+
+    <record id="payment_method_cheque_outgoing" model="account.payment.method">
+        <field name="name">Outgoing Checks</field>
+        <field name="code">cheque_outgoing</field>
+        <field name="payment_type">outbound</field>
+    </record>
+
+    <!-- third party checks -->
+    <record id="payment_method_cheque_incoming" model="account.payment.method">
+        <field name="name">Incoming Checks</field>
+        <field name="code">cheque_incoming</field>
+        <field name="payment_type">inbound</field>
+    </record>
+
+    <record id="payment_method_cheque_existing_in" model="account.payment.method">
+        <field name="name">Existing Checks (Inbound)</field>
+        <field name="code">cheque_existing_in</field>
+        <field name="payment_type">inbound</field>
+    </record>
+
+    <record id="payment_method_cheque_existing_out" model="account.payment.method">
+        <field name="name">Existing Checks (Outbound)</field>
+        <field name="code">cheque_existing_out</field>
+        <field name="payment_type">outbound</field>
+    </record>
+
+    <record id="payment_method_cheque_return" model="account.payment.method">
+        <field name="name">Return Checks</field>
+        <field name="code">cheque_return</field>
+        <field name="payment_type">outbound</field>
+    </record>
+
+</data>

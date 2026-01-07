@@ -1,0 +1,53 @@
+<odoo>
+
+    <record id="view_account_payment_form_inherited" model="ir.ui.view">
+        <field name="name">account.payment.form.inherited</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <group>
+                <notebook>
+                    <page name="cheques_page" string="Checks" invisible="payment_method_code not in ['cheque_existing_in', 'cheque_existing_out', 'cheque_return', 'cheque_incoming', 'cheque_outgoing']">
+                        <group name="cheques" colspan="2">
+                            <field name="new_cheque_ids" invisible="payment_method_code not in ['cheque_incoming', 'cheque_outgoing']" nolabel="1" colspan="2" readonly="state != 'draft'">
+                                <list name="new_checks" editable="bottom">
+                                    <field name="company_id" column_invisible="True"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="name" />
+                                    <field name="bank_id" column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
+                                    <field name="issuer_vat" column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
+                                    <field name="payment_date"/>
+                                    <field name="amount" />
+                                    <button type="object" name="get_formview_action" icon="fa-pencil-square-o" title="open" help="Open" column_invisible="parent.state == 'draft'"/>
+                                </list>
+                            </field>
+                            <field name="move_cheque_ids" invisible="payment_method_code not in ['cheque_existing_in', 'cheque_existing_out', 'cheque_return']"
+                                domain="
+                                    [('payment_method_code', '=', 'cheque_incoming'), ('current_journal_id', '=', journal_id), ('company_id', '=', company_id)]
+                                        if payment_type == 'outbound' else
+                                    [('payment_method_code', '=', 'cheque_incoming'), ('current_journal_id', '=', False), ('company_id', '=', company_id)]" options="{'no_create': True}"
+                                    nolabel="1" colspan="2" readonly="state != 'draft'">
+                                <list name="existing_checks">
+                                    <field name="company_id" column_invisible="True"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="name" />
+                                    <field name="bank_id" optional="hide"/>
+                                    <field name="issuer_vat" optional="hide"/>
+                                    <field name="payment_date" optional="hide"/>
+                                    <field name="amount"/>
+                                    <button type="object" name="get_formview_action" icon="fa-pencil-square-o" title="open" help="Open"/>
+                                </list>
+                            </field>
+                        </group>
+                    </page>
+                </notebook>
+            </group>
+            <sheet position="before">
+                <div class="alert alert-danger mb-0" role="alert" invisible="not cheque_warning_msg">
+                    <field name="cheque_warning_msg" nolabel="1"/>
+                </div>
+            </sheet>
+        </field>
+    </record>
+
+</odoo>

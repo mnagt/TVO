@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payment_mass_transfer,access_payment_mass_transfer,model_payment_mass_transfer,account.group_account_invoice,1,1,1,0
+access_account_payment_register_cheque,access.account.payment.register.cheque,model_payment_register_cheque,account.group_account_invoice,1,1,1,1
+access_cheque_readonly,cheque.eadonly,model_account_cheque,account.group_account_readonly,1,0,0,0
+access_cheque,access_cheque,model_account_cheque,account.group_account_invoice,1,1,1,1
+
+cheque_mgmt.access_cheque_wizard,access_cheque_wizard,model_cheque_wizard,base.group_user,1,1,1,1
+cheque_mgmt.access_cheque_transfer_wizard,access_cheque_transfer_wizard,model_cheque_transfer_wizard,base.group_user,1,1,1,1
+access_cheque_outgoing_wizard,cheque.outgoing.wizard,model_cheque_outgoing_wizard,base.group_user,1,1,1,1
+access_cheque_deposit_wizard,access_cheque_deposit_wizard,model_cheque_deposit_wizard,account.group_account_invoice,1,1,1,1
+access_cheque_bulk_state_update,access_cheque_bulk_state_update,model_cheque_bulk_state_update,account.group_account_invoice,1,1,1,1
+access_cheque_bulk_state_update_line,access_cheque_bulk_state_update_line,model_cheque_bulk_state_update_line,account.group_account_invoice,1,1,1,1
+access_cheque_state_option,access_cheque_state_option,model_cheque_state_option,account.group_account_invoice,1,0,0,0

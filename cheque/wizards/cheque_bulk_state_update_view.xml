@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Line List View (defined separately) -->
+    <record id="view_cheque_bulk_state_update_line_list" model="ir.ui.view">
+        <field name="name">cheque.bulk.state.update.line.list</field>
+        <field name="model">cheque.bulk.state.update.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="available_state_ids" column_invisible="1"/>
+                <field name="available_cheque_ids" column_invisible="1"/>
+                <field name="current_state" column_invisible="1"/>
+                <field name="state" column_invisible="1"/>
+                <field name="current_state_display" readonly="1"/>
+                <field name="state_id" required="1"
+                       options="{'no_create': True, 'no_open': True}"
+                       domain="[('id', 'in', available_state_ids)]"/>
+                <field name="cheque_ids" widget="many2many_tags"
+                       options="{'no_create': True}"
+                       required="1"
+                       domain="[('id', 'in', available_cheque_ids)]"/>
+                <field name="deposit_journal_id"
+                       optional="show"
+                       invisible="state != 'deposit'"
+                       required="state == 'deposit'"
+                       options="{'no_create': True, 'no_open': True}"/>
+                <field name="deposit_date"
+                       optional="show"
+                       invisible="state != 'deposit'"
+                       required="state == 'deposit'"/>
+                <field name="bank_account_id"
+                       optional="show"
+                       invisible="state != 'done'"
+                       required="state == 'done'"/>
+                <field name="cashed_date"
+                       optional="show"
+                       invisible="state != 'done'"
+                       required="state == 'done'"/>
+                <field name="allowed_cheque_count" string="Available"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Bulk State Update Wizard Form View -->
+    <record id="view_cheque_bulk_state_update_form" model="ir.ui.view">
+        <field name="name">cheque.bulk.state.update.form</field>
+        <field name="model">cheque.bulk.state.update</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Update Cheque States">
+                <group>
+                    <field name="line_ids" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_cheque_bulk_state_update" model="ir.actions.act_window">
+        <field name="name">Bulk Update States</field>
+        <field name="res_model">cheque.bulk.state.update</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_account_cheque"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+</odoo>

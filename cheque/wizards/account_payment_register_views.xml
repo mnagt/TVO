@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List view for payment.register.cheque -->
+    <record id="view_payment_register_cheque_list" model="ir.ui.view">
+        <field name="name">payment.register.cheque.list</field>
+        <field name="model">payment.register.cheque</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="company_id" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name"/>
+                <field name="issuer_partner_id" options="{'no_create': True}"/>
+                <field name="bank_id"/>
+                <field name="issuer_vat"/>
+                <field name="payment_date"/>
+                <field name="amount"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_payment_register_form" model="ir.ui.view">
+        <field name="name">account.payment.register.form</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+            <group>
+                <notebook invisible="not can_edit_wizard or (can_group_payments and not group_payment)">
+                    <page name="cheques_page" string="Checks" invisible="payment_method_code not in ['cheque_existing_in', 'cheque_existing_out', 'cheque_return', 'cheque_incoming', 'cheque_outgoing']">
+                        <group name="cheques" colspan="2">
+                            <field name="new_cheque_ids" invisible="payment_method_code not in ['cheque_incoming', 'cheque_outgoing']" nolabel="1" colspan="2" >
+                                <list editable="bottom">
+                                    <field name="company_id" column_invisible="True"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="name" />
+                                    <field name="issuer_partner_id"
+                                           column_invisible="parent.payment_method_code == 'cheque_outgoing'"
+                                           placeholder="Leave empty for normal cheques"
+                                           options="{'no_create': True}"/>
+                                    <field name="bank_id" column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
+                                    <field name="issuer_vat" column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
+                                    <field name="payment_date"/>
+                                    <field name="amount" />
+                                </list>
+                            </field>
+                            <field name="move_cheque_ids" invisible="payment_method_code not in ['cheque_existing_in', 'cheque_existing_out', 'cheque_return']"
+                                domain="
+                                    [('payment_method_code', '=', 'cheque_incoming'), ('current_journal_id', '=', journal_id), ('company_id', '=', company_id)]
+                                        if payment_type == 'outbound' else
+                                    [('payment_method_code', '=', 'cheque_incoming'), ('current_journal_id', '=', False), ('company_id', '=', company_id)]" options="{'no_create': True}"
+                                    nolabel="1" colspan="2">
+                                <list name="existing_checks">
+                                    <field name="company_id" column_invisible="True"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="name" />
+                                    <field name="issuer_partner_id" optional="hide"/>
+                                    <field name="bank_id" optional="hide"/>
+                                    <field name="issuer_vat" optional="hide"/>
+                                    <field name="payment_date" optional="show"/>
+                                    <field name="amount"/>
+                                </list>
+                            </field>
+                        </group>
+                    </page>
+                </notebook>
+            </group>
+            <div role="alert" position="after">
+                <div role="alert" class="alert alert-info"
+                        invisible="payment_method_code not in ['cheque_incoming', 'cheque_existing_in', 'cheque_existing_out', 'cheque_return', 'cheque_outgoing'] or can_edit_wizard and (not can_group_payments or can_group_payments and group_payment)">
+                    <p>You can't use checks when paying invoices of different partners or same partner without grouping</p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+</odoo>
