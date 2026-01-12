@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add Convert to Quotation button to Sale Order form -->
+        <record id="view_order_form_convert_to_quotation" model="ir.ui.view">
+            <field name="name">sale.order.form.convert.to.quotation</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_unlock']" position="replace">
+                    <button name="action_convert_to_quotation" 
+                            string="Quotation" 
+                            type="object" 
+                            class="btn-primary"
+                            invisible="state not in ['sale', 'done']"
+                            confirm="Are you sure you want to convert this Sale Order to a Quotation?"
+                            data-hotkey="shift+c"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
