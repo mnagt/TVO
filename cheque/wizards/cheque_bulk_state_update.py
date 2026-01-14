@@ -27,9 +27,9 @@ class ChequeBulkStateUpdate(models.TransientModel):
 
             # State transition mapping
             STATE_TRANSITIONS = {
-                'register': ['deposit', 'return'],
-                'deposit': ['bounce', 'done'],
-                'bounce': ['return'],
+                'register': ['deposit', 'voided'],
+                'deposit': ['bounce', 'cashed'],
+                'bounce': ['deposit', 'voided'],
             }
 
             # Group cheques by current state
@@ -42,7 +42,7 @@ class ChequeBulkStateUpdate(models.TransientModel):
 
             # Create one line per state group (skip if no valid transitions)
             for state, state_cheques in cheques_by_state.items():
-                # Skip states with no valid transitions (e.g., 'done')
+                # Skip states with no valid transitions (e.g., 'cashed')
                 if state not in STATE_TRANSITIONS:
                     continue
 
@@ -123,7 +123,7 @@ class ChequeBulkStateUpdate(models.TransientModel):
                     errors.append(_('Deposit date cannot be in the future.'))
 
             # Special validations for cashed action
-            if line.state == 'done':
+            if line.state == 'cashed':
                 # Required fields
                 if not line.bank_account_id:
                     errors.append(_('Line "%s": Bank Account is required for Cashed action.') % line.state_id.name)
@@ -133,7 +133,7 @@ class ChequeBulkStateUpdate(models.TransientModel):
                 # Validate each cheque for cashed operation
                 for cheque in line.cheque_ids:
                     # Check if already cashed
-                    if cheque.state == 'done':
+                    if cheque.state == 'cashed':
                         errors.append(_('Cheque %s is already in Done state and cannot be cashed again.') % cheque.name)
 
                     # Check if cashed_date already set
@@ -184,13 +184,13 @@ class ChequeBulkStateUpdate(models.TransientModel):
                 continue
 
             # Use appropriate action method based on state
-            if line.state == 'done':
+            if line.state == 'cashed':
                 # Cash each cheque using the model's action_cash method
                 for cheque in line.cheque_ids:
                     cheque.action_cash(line.bank_account_id.id, line.cashed_date)
-            elif line.state == 'return':
-                # Return creates journal entries to reverse outstanding line
-                line.cheque_ids.action_return()
+            elif line.state == 'voided':
+                # Void/return creates journal entries to reverse outstanding line
+                line.cheque_ids.action_void()
             elif line.state == 'deposit':
                 # Deposit action - creates accounting move
                 for cheque in line.cheque_ids:
@@ -328,9 +328,9 @@ class ChequeBulkStateUpdateLine(models.TransientModel):
         """Compute available states based on current state transitions"""
         # State transition mapping based on button visibility
         STATE_TRANSITIONS = {
-            'register': ['deposit', 'return'],
-            'deposit': ['bounce', 'done'],
-            'bounce': ['return'],
+            'register': ['deposit', 'voided'],
+            'deposit': ['bounce', 'cashed'],
+            'bounce': ['deposit', 'voided'],
         }
 
         for line in self:
@@ -339,7 +339,7 @@ class ChequeBulkStateUpdateLine(models.TransientModel):
                 allowed_codes = STATE_TRANSITIONS[line.current_state]
                 all_states = self.env['cheque.state.option'].search([('code', 'in', allowed_codes)])
             else:
-                # No valid transitions for this state (e.g., 'done')
+                # No valid transitions for this state (e.g., 'cashed')
                 all_states = self.env['cheque.state.option']
 
             if line.wizard_id:
@@ -393,9 +393,9 @@ class ChequeBulkStateUpdateLine(models.TransientModel):
 
         # State-specific domains based on button visibility conditions
         state_domains = {
-            'deposit': [('state', '=', 'register')],
+            'deposit': [('state', 'in', ['register', 'bounce'])],
             'bounce': [('state', '=', 'deposit')],
-            'return': [('state', 'in', ['register', 'bounce'])],
+            'voided': [('state', 'in', ['register', 'bounce'])],
         }
 
         if self.state in state_domains:

@@ -1,6 +1,5 @@
 # Copyright 2024 Moduon Team S.L.
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl-3.0)
-from contextlib import suppress
 
 from odoo import api, fields, models
 from odoo.exceptions import AccessError
@@ -9,12 +8,10 @@ from odoo.exceptions import AccessError
 class ProductCostSecurityMixin(models.AbstractModel):
     """Automatic security for models related with product costs.
 
-    When you inherit from this mixin, make sure to add
-    `groups="product_cost_security.group_product_cost"` to the fields that
-    should be protected. Odoo will take care of hiding those fields to users
-    without that access, and this mixin will add an extra protection to prevent
-    editing if the user is not in the
-    `product_cost_security.group_product_edit_cost` group.
+    Access control:
+    - No group: Field hidden from UI, blocked from export/API, system writes allowed
+    - Read group: Field visible but readonly, export/API allowed
+    - Edit group: Field visible and editable
     """
 
     _name = "product.cost.security.mixin"
@@ -24,53 +21,58 @@ class ProductCostSecurityMixin(models.AbstractModel):
 
     @api.depends_context("uid")
     def _compute_user_can_update_cost(self):
-        """Let views know if users can edit product costs.
-
-        A user could have full cost permissions but no product edition permissions.
-        We want to prevent those from updating costs.
-        """
+        """Let views know if users can edit product costs."""
         self.user_can_update_cost = self._user_can_update_cost()
 
     @api.model
-    def _user_can_update_cost(self):
-        """Know if current user can update product costs.
+    def _user_can_read_cost(self):
+        """Know if current user can read product costs."""
+        return self.env.user.has_group("product_cost_security.group_product_cost")
 
-        Just like `self.user_can_update_cost`, but once per model.
-        """
+    @api.model
+    def _user_can_update_cost(self):
+        """Know if current user can update product costs."""
         return self.env.user.has_group("product_cost_security.group_product_edit_cost")
 
     @api.model
     def _product_cost_security_fields(self):
-        """Fields that should be hidden if the user has no cost permissions.
+        """Fields protected by cost security."""
+        return {"standard_price"}
 
-        Returns a list of field names where the security group is applied.
-        """
-        return {
-            fname
-            for (fname, field) in self._fields.items()
-            if "product_cost_security.group_product_cost"
-            in str(field.groups).split(",")
-        }
+    def read(self, fields=None, load="_classic_read"):
+        """Strip cost fields from results for unauthorized users."""
+        result = super().read(fields, load)
+        if self.env.su or self._user_can_read_cost():
+            return result
+        cost_fields = self._product_cost_security_fields()
+        for record in result:
+            for cost_field in cost_fields:
+                record.pop(cost_field, None)
+        return result
 
     @api.model
     def check_field_access_rights(self, operation, fields):
-        """Forbid users from updating product costs if they have no permissions.
+        """Control cost field access based on user permissions.
 
-        The field's `groups` attribute restricts always R/W access. We apply an
-        extra protection to prevent only editing if the user is not in the
-        `product_cost_security.group_product_edit_cost` group.
+        - No group: can't see field, writes must be system ops → allow
+        - Read group: can see field, might try direct edit → block writes
+        - Edit group: full access → allow
         """
         valid_fields = super().check_field_access_rights(operation, fields)
-        if self.env.su:
+        if self.env.su or operation == "read":
             return valid_fields
         product_cost_fields = self._product_cost_security_fields().intersection(
-            valid_fields
+            set(valid_fields) if valid_fields else set()
         )
-        if (
-            operation != "read"
-            and product_cost_fields
-            and not self._user_can_update_cost()
-        ):
+        if not product_cost_fields:
+            return valid_fields
+        can_read = self._user_can_read_cost()
+        can_edit = self._user_can_update_cost()
+        # No group - can't see field, write must be system operation
+        if not can_read:
+            return valid_fields
+        # Read group but no Edit - block direct writes
+        if not can_edit:
             description = self.env["ir.model"]._get(self._name).name
             raise AccessError(
                 self.env._(
@@ -88,10 +90,17 @@ class ProductCostSecurityMixin(models.AbstractModel):
 
     @api.model
     def fields_get(self, allfields=None, attributes=None):
-        """Make product cost fields readonly for non-editors."""
+        """Control cost field visibility in UI."""
         result = super().fields_get(allfields, attributes)
-        if not self._user_can_update_cost():
-            for field_name in self._product_cost_security_fields():
-                with suppress(KeyError):
-                    result[field_name]["readonly"] = True
+        cost_fields = self._product_cost_security_fields()
+        can_read = self._user_can_read_cost()
+        can_edit = self._user_can_update_cost()
+        for field_name in cost_fields:
+            if field_name not in result:
+                continue
+            if not can_read:
+                # Hide field but keep definition for frontend
+                result[field_name]["invisible"] = True
+            elif not can_edit:
+                result[field_name]["readonly"] = True
         return result

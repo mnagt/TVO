@@ -40,7 +40,7 @@ class AccountPaymentRegister(models.TransientModel):
         if self.new_cheque_ids:
             vals.update({'new_cheque_ids': [Command.create({
                 'name': x.name,
-                'issuer_partner_id': x.issuer_partner_id.id if x.issuer_partner_id else False,
+                'issuer_name': x.issuer_name,
                 'bank_id': x.bank_id.id,
                 'issuer_vat': x.issuer_vat,
                 'payment_date': x.payment_date,

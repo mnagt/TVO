@@ -76,9 +76,10 @@ class AccountPayment(models.Model):
                 # Single cheque case
                 cheques.outstanding_line_id = liquidity_lines[0].id
 
-        # Set register status for all new checks
-        for check in self.new_cheque_ids:
-            check.write({'state': 'register'})
+        # Set register status for incoming checks only
+        incoming_checks = self.new_cheque_ids.filtered(lambda x: x.payment_method_code == 'cheque_incoming')
+        if incoming_checks:
+            incoming_checks.write({'state': 'register'})
 
     def _get_cheques(self):
         self.ensure_one()
@@ -133,11 +134,11 @@ class AccountPayment(models.Model):
         return msgs
 
     def _get_reconciled_checks_error(self):
-        checks_reconciled = self.new_cheque_ids.filtered(lambda x: x.issue_state in ['debited', 'voided'])
+        checks_reconciled = self.new_cheque_ids.filtered(lambda x: x.state in ['cashed', 'voided'])
         if checks_reconciled:
             raise UserError(
-                _("You can't cancel or re-open a payment with checks if some check has been debited or been voided. "
-                  "Checks:\n%s", ('\n'.join(['* %s (%s)' % (x.name, x.issue_state) for x in checks_reconciled])))
+                _("You can't cancel or re-open a payment with checks if some check has been cashed or voided. "
+                  "Checks:\n%s", ('\n'.join(['* %s (%s)' % (x.name, x.state) for x in checks_reconciled])))
             )
 
     def action_cancel(self):

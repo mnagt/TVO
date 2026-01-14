@@ -14,6 +14,8 @@
                                     <field name="company_id" column_invisible="True"/>
                                     <field name="currency_id" column_invisible="True"/>
                                     <field name="name" />
+                                    <field name="issuer_name"
+                                           column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
                                     <field name="bank_id" column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
                                     <field name="issuer_vat" column_invisible="parent.payment_method_code == 'cheque_outgoing'"/>
                                     <field name="payment_date"/>
@@ -31,6 +33,7 @@
                                     <field name="company_id" column_invisible="True"/>
                                     <field name="currency_id" column_invisible="True"/>
                                     <field name="name" />
+                                    <field name="issuer_name" optional="hide"/>
                                     <field name="bank_id" optional="hide"/>
                                     <field name="issuer_vat" optional="hide"/>
                                     <field name="payment_date" optional="hide"/>

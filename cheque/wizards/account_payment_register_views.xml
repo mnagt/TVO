@@ -10,7 +10,7 @@
                 <field name="company_id" column_invisible="1"/>
                 <field name="currency_id" column_invisible="1"/>
                 <field name="name"/>
-                <field name="issuer_partner_id" options="{'no_create': True}"/>
+                <field name="issuer_name" options="{'no_create': True}"/>
                 <field name="bank_id"/>
                 <field name="issuer_vat"/>
                 <field name="payment_date"/>
@@ -33,7 +33,7 @@
                                     <field name="company_id" column_invisible="True"/>
                                     <field name="currency_id" column_invisible="True"/>
                                     <field name="name" />
-                                    <field name="issuer_partner_id"
+                                    <field name="issuer_name"
                                            column_invisible="parent.payment_method_code == 'cheque_outgoing'"
                                            placeholder="Leave empty for normal cheques"
                                            options="{'no_create': True}"/>
@@ -53,7 +53,7 @@
                                     <field name="company_id" column_invisible="True"/>
                                     <field name="currency_id" column_invisible="True"/>
                                     <field name="name" />
-                                    <field name="issuer_partner_id" optional="hide"/>
+                                    <field name="issuer_name" optional="hide"/>
                                     <field name="bank_id" optional="hide"/>
                                     <field name="issuer_vat" optional="hide"/>
                                     <field name="payment_date" optional="show"/>

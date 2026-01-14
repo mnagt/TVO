@@ -14,15 +14,15 @@
             <field name="sequence">20</field>
         </record>
 
-        <record id="state_return" model="cheque.state.option">
-            <field name="name">Returned</field>
-            <field name="code">return</field>
+        <record id="state_voided" model="cheque.state.option">
+            <field name="name">Voided</field>
+            <field name="code">voided</field>
             <field name="sequence">30</field>
         </record>
 
-        <record id="state_done" model="cheque.state.option">
+        <record id="state_cashed" model="cheque.state.option">
             <field name="name">Cashed</field>
-            <field name="code">done</field>
+            <field name="code">cashed</field>
             <field name="sequence">40</field>
         </record>
 

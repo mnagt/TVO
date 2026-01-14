@@ -1,34 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from odoo import fields, models
 
-from odoo import api, fields, models, _
 
-
-                    
-class ChequeWizard(models.TransientModel):
-    _name = "cheque.wizard"
-    
-    cheque_date = fields.Date(string='Cheque Date')
-    
-
-    def cash_submit(self):  
-        cheque_inc = self.env['cheque.manage'].search([])
-        cheque_inc.cheque_date = self.cheque_date 
-        return cheque_inc.write({'state': 'done'})
-    
-    
-class ChequeTransferWizard(models.TransientModel):
-    _name = "cheque.transfer.wizard"
-    
-    transfer_date = fields.Date(string='Transfered Date')
-    contact = fields.Many2one('res.partner', 'Contact')
-    
-
-    def transfer_submit(self):  
-        cheque_inc = self.env['cheque.manage'].search([])
-        return cheque_inc.write({'state': 'transfer'})
-    
-                    
 class ChequeOutgoingWizard(models.TransientModel):
     _name = "cheque.outgoing.wizard"
     

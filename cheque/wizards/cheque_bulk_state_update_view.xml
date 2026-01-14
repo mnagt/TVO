@@ -30,12 +30,12 @@
                        required="state == 'deposit'"/>
                 <field name="bank_account_id"
                        optional="show"
-                       invisible="state != 'done'"
-                       required="state == 'done'"/>
+                       invisible="state != 'cashed'"
+                       required="state == 'cashed'"/>
                 <field name="cashed_date"
                        optional="show"
-                       invisible="state != 'done'"
-                       required="state == 'done'"/>
+                       invisible="state != 'cashed'"
+                       required="state == 'cashed'"/>
                 <field name="allowed_cheque_count" string="Available"/>
             </list>
         </field>

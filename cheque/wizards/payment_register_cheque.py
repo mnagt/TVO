@@ -17,16 +17,16 @@ class ChequePaymentRegisterCheck(models.TransientModel):
     company_id = fields.Many2one(related='payment_register_id.company_id')
     currency_id = fields.Many2one(related='payment_register_id.currency_id')
     name = fields.Char(string='Number')
-    issuer_partner_id = fields.Many2one(
-        'res.partner',
-        string='Cheque Issuer',
-        help='Partner who owns this cheque (for third-party cheques). Leave empty for normal cheques.'
+    issuer_name = fields.Char(
+        string='Issuer Name',
+        compute='_compute_issuer_name', store=True, readonly=False,
     )
     bank_id = fields.Many2one(
         comodel_name='res.bank',
         compute='_compute_bank_id', store=True, readonly=False,
     )
     issuer_vat = fields.Char(
+        string='Issuer VAT',
         compute='_compute_issuer_vat', store=True, readonly=False,
     )
     payment_date = fields.Date(readonly=False, required=True)
@@ -37,22 +37,25 @@ class ChequePaymentRegisterCheck(models.TransientModel):
         if self.name:
             self.name = self.name.zfill(8)
 
-    @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id', 'issuer_partner_id')
+    @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id')
+    def _compute_issuer_name(self):
+        new_third_party_checks = self.filtered(lambda x: x.payment_register_id.payment_method_line_id.code == 'cheque_incoming')
+        for rec in new_third_party_checks:
+            rec.issuer_name = rec.payment_register_id.partner_id.name
+        (self - new_third_party_checks).issuer_name = False
+
+    @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id')
     def _compute_bank_id(self):
         new_third_party_checks = self.filtered(lambda x: x.payment_register_id.payment_method_line_id.code == 'cheque_incoming')
         for rec in new_third_party_checks:
-            # Use issuer partner if set, otherwise use payment partner
-            partner = rec.issuer_partner_id if rec.issuer_partner_id else rec.payment_register_id.partner_id
-            rec.bank_id = partner.bank_ids[:1].bank_id
+            rec.bank_id = rec.payment_register_id.partner_id.bank_ids[:1].bank_id
         (self - new_third_party_checks).bank_id = False
 
-    @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id', 'issuer_partner_id')
+    @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id')
     def _compute_issuer_vat(self):
         new_third_party_checks = self.filtered(lambda x: x.payment_register_id.payment_method_line_id.code == 'cheque_incoming')
         for rec in new_third_party_checks:
-            # Use issuer partner if set, otherwise use payment partner
-            partner = rec.issuer_partner_id if rec.issuer_partner_id else rec.payment_register_id.partner_id
-            rec.issuer_vat = partner.vat
+            rec.issuer_vat = rec.payment_register_id.partner_id.vat
         (self - new_third_party_checks).issuer_vat = False
 
     @api.onchange('issuer_vat')

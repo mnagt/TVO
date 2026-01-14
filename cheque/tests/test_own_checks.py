@@ -34,11 +34,11 @@ class TestOwnChecks(L10nLatamCheckTest):
         self.assertEqual(payment.amount, 50)
         outstanding_line_ids = payment.l10n_latam_new_check_ids.mapped('outstanding_line_id')
         self.assertEqual(len(outstanding_line_ids), 2, "There should be a split line per check. (2)")
-        all_handed = any(s == 'handed' for s in payment.l10n_latam_new_check_ids.mapped('issue_state'))
-        self.assertTrue(all_handed, "All checks should be in handed status.")
+        all_draft = all(s == 'draft' for s in payment.l10n_latam_new_check_ids.mapped('state'))
+        self.assertTrue(all_draft, "All checks should be in draft state.")
         first_check = payment.l10n_latam_new_check_ids[0]
         first_check.action_void()
-        self.assertTrue(first_check.issue_state == 'voided', "First checks should be in voided status.")
+        self.assertEqual(first_check.state, 'voided', "First check should be in voided status.")
 
     def test_02_pay_with_own_check_and_cancel_payment(self):
         """ Create and post a manual check with deferred date ands cancel it """
@@ -60,8 +60,8 @@ class TestOwnChecks(L10nLatamCheckTest):
         payment.action_post()
         self.assertEqual(payment.amount, 50)
         payment.action_cancel()
-        self.assertFalse(payment.l10n_latam_new_check_ids.issue_state,
-                         "Canceled payment checks must not have issue state")
+        self.assertEqual(payment.l10n_latam_new_check_ids.state, 'draft',
+                         "Canceled payment checks should be in draft state")
         self.assertEqual(len(payment.l10n_latam_new_check_ids.outstanding_line_id), 0,
                          "Canceled payment checks must not have split move")
 
