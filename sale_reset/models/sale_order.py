@@ -79,13 +79,13 @@ class SaleOrder(models.Model):
 
     def _get_related_purchase_orders(self):
         """Get all purchase orders related to this sale order"""
-        purchase_orders = self.env['purchase.order']
-        
-        # Get POs from sale order lines
+        purchase_orders = self.env['purchase.order'].sudo()
+
+        # Get POs from sale order lines (use sudo to bypass access rights)
         for line in self.order_line:
             if line.product_id:
                 # Find POs that might be related to this sale order line
-                related_pos = self.env['purchase.order.line'].search([
+                related_pos = self.env['purchase.order.line'].sudo().search([
                     ('product_id', '=', line.product_id.id),
                     ('order_id.origin', '=', self.name),
                     ('order_id.state', 'in', ['draft', 'sent', 'to approve', 'purchase'])
@@ -93,7 +93,7 @@ class SaleOrder(models.Model):
                 purchase_orders |= related_pos
         
         # Filter out any records that might have been deleted
-        existing_pos = self.env['purchase.order']
+        existing_pos = self.env['purchase.order'].sudo()
         for po in purchase_orders:
             try:
                 # Test if record still exists by accessing a basic field
