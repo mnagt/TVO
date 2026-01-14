@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record model="ir.ui.view" id="view_purchase_requisition_form_purchase_custom">
+        <field name="name">view_purchase_requisition_form_purchase_custom</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+        <field name="arch" type="xml">
+
+            <field name="price_unit" position="after">
+                <field name="taxes_id" widget="many2many_tags"
+                    domain="[('type_tax_use', '=', 'purchase'), ('company_id', 'parent_of', parent.company_id), ('active', '=', True)]"
+                    context="{'default_type_tax_use': 'purchase', 'search_view_ref': 'account.account_tax_view_search'}"
+                    options="{'no_create': True}"/>
+                <field name="price_subtotal" widget="monetary"/>
+                <field name="price_total" column_invisible="1"/>
+                <field name="price_tax" column_invisible="1"/>
+            </field>
+
+            <xpath expr="//page[@name='products']//separator" position="before">
+                <group class="oe_subtotal_footer oe_right">
+                    <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2" readonly="1"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
