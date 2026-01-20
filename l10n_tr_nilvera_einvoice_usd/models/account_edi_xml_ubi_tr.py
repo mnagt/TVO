@@ -8,8 +8,7 @@ from odoo import _, models
 
 
 class AccountEdiXmlUblTr(models.AbstractModel):
-    _name = 'account.edi.xml.ubl.tr'
-    _inherit = ['account.edi.xml.ubl.tr']
+    _inherit = 'account.edi.xml.ubl.tr'
 
     
 
