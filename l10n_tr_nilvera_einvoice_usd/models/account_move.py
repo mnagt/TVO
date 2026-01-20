@@ -72,3 +72,6 @@ class AccountMove(models.Model):
     
             self.message_post(body=_("The invoice has been successfully sent to Nilvera."))
 
+    def button_draft(self):
+        super().button_draft()
+
