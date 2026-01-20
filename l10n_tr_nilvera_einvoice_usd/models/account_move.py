@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 class AccountMove(models.Model):
     _name = 'account.move'
-    _inherit = 'account.move'
+    _inherit = ['account.move']
 
 
     def _l10n_tr_nilvera_submit_document(self, xml_file, endpoint, post_series=True):
@@ -72,5 +72,5 @@ class AccountMove(models.Model):
             self.message_post(body=_("The invoice has been successfully sent to Nilvera."))
 
     def button_draft(self):
-        super().button_draft
+        super(AccountMove, self).button_draft
 
