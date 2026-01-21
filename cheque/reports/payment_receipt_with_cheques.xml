@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Modify invoices table to only show when invoices exist -->
+    <template id="report_payment_receipt_document_with_cheques_invoices" inherit_id="account.report_payment_receipt_document">
+        <xpath expr="//table[@name='invoices']" position="attributes">
+            <attribute name="t-if">values['display_invoices'] and (o.reconciled_invoice_ids or o.reconciled_bill_ids)</attribute>
+        </xpath>
+    </template>
+
+    <!-- Reduce payment reference size -->
+    <template id="report_payment_receipt_document_with_cheques_reference" inherit_id="account.report_payment_receipt_document">
+        <xpath expr="//h3" position="attributes">
+            <attribute name="style">font-size: 1.2em;</attribute>
+        </xpath>
+    </template>
+
+    <!-- Add cheques section -->
+    <template id="report_payment_receipt_document_with_cheques" inherit_id="account.report_payment_receipt_document">
+        <xpath expr="//table[@name='invoices']" position="after">
+            <!-- Cheques Section -->
+            <div class="mt-4" t-if="o.new_cheque_ids or o.move_cheque_ids">
+                <h4><strong>Related Cheques</strong></h4>
+                <table name="cheques" class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th><span>Cheque Number</span></th>
+                            <th><span>Cheque Date</span></th>
+                            <th class="text-end"><span>Amount</span></th>
+                            <th><span>Issuer/Partner</span></th>
+                            <th><span>Bank</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="o.new_cheque_ids + o.move_cheque_ids" t-as="cheque">
+                            <tr>
+                                <td><span t-field="cheque.name"/></td>
+                                <td><span t-field="cheque.payment_date"/></td>
+                                <td class="text-end">
+                                    <span t-field="cheque.amount" 
+                                          t-options="{'widget': 'monetary', 'display_currency': cheque.currency_id}"/>
+                                </td>
+                                <td>
+                                    <t t-if="cheque.payment_method_code == 'cheque_incoming'">
+                                        <span t-field="cheque.issuer_name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="cheque.partner_id.name"/>
+                                    </t>
+                                </td>
+                                <td><span t-field="cheque.bank_id.name"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>

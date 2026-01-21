@@ -28,6 +28,7 @@
         'views/account_journal_view.xml',
         'views/cheque_view.xml',
         'wizards/account_payment_register_views.xml',
+        'reports/payment_receipt_with_cheques.xml',
     ],
     'installable': True,
 }
