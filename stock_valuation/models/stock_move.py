@@ -85,7 +85,7 @@ class StockMove(models.Model):
                 new_std_price = next(iter(move_cost.values()))
             else:
                 # Get the standard price
-                amount_unit = std_price_update.get((move.company_id.id, move.product_id.id)) or cost_dest_value
+                amount_unit = std_price_update.get((move.company_id.id, move.product_id.id, warehouse_dest_id)) or cost_dest_value
                 new_std_price = ((amount_unit * product_tot_qty_available) + (next(iter(move_cost.values())) * qty)) / (product_tot_qty_available + qty)
 
             tmpl_dict[move.product_id.id] += qty
