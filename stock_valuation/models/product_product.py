@@ -144,14 +144,15 @@ class ProductProduct(models.Model):
 
             
             if float_is_zero(candidate.remaining_qty, precision_rounding=self.uom_id.rounding):
-                ProductWarehouseCost = self.env['product.location.cost']
-                oldest_cost = ProductWarehouseCost.sudo().search([
-                    ('product_id', '=', self.id),
-                    ('warehouse_id', '=', candidate.warehouse_id.id)
-                ], order='create_date asc', limit=1)
-                
-                if oldest_cost:
-                    oldest_cost.sudo().unlink()
+                if self.cost_method == 'fifo':
+                    ProductWarehouseCost = self.env['product.location.cost']
+                    oldest_cost = ProductWarehouseCost.sudo().search([
+                        ('product_id', '=', self.id),
+                        ('warehouse_id', '=', candidate.warehouse_id.id)
+                    ], order='create_date asc', limit=1)
+                    
+                    if oldest_cost:
+                        oldest_cost.sudo().unlink()
                 if float_is_zero(qty_to_take_on_candidates, precision_rounding=self.uom_id.rounding):
                     next_candidates = candidates.filtered(lambda svl: svl.remaining_qty > 0)
                     new_standard_price = next_candidates and next_candidates[0].unit_cost or new_standard_price
