@@ -16,9 +16,4 @@ class StockValuationLayer(models.Model):
         index=True,
         store=True,)
 
-    account_move_id = fields.Many2one('account.move', 'Journal Entry', 
-                                      readonly=False, 
-                                      check_company=True, 
-                                      index="btree_not_null")
-
     
