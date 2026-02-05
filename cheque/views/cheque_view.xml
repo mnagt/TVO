@@ -173,16 +173,16 @@
         <field name="priority">100</field>
         <field name="arch" type="xml">
             <list edit="false" create="false" delete="false" duplicate="false" sample="1" decoration-muted="state in ('voided', 'cashed')">
-                    <field name="payment_date" optional="show"/>
+                    <field name="current_journal_id"/>
                     <field name="name"/>
-                    <field name="original_journal_id"/>
-                    <field name="company_id" optional="hide" groups="base.group_multi_company"/>
-                    <field name="payment_method_line_id" column_invisible="True"/>
+                    <field name="payment_date" optional="show"/>
                     <field name="partner_id" string="Customer"/>
                     <field name="issuer_name" optional="show"/>
+                    <field name="bank_id"/>
                     <field name="amount" optional="show"/>
-                    <field name="currency_id" string="Payment Currency" optional="hide"/>
                     <field name="state" widget="badge" decoration-muted="state in ('voided', 'cashed')"/>
+                    <field name="currency_id" string="Payment Currency" optional="hide"/>
+                    <field name="original_journal_id" optional="hide" />
             </list>
         </field>
     </record>
