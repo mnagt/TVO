@@ -16,6 +16,4 @@ class StockValuationLayer(models.Model):
         index=True,
         store=True,)
 
-    unit_cost = fields.Float('Unit Value', digits='Product Price', readonly=False, aggregator=None)
-    value = fields.Monetary('Total Value', readonly=False)
     
