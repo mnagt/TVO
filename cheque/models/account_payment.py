@@ -66,7 +66,7 @@ class AccountPayment(models.Model):
                 continue
 
             # Find the outstanding/liquidity lines that correspond to each cheque
-            liquidity_lines = payment._seek_for_lines()
+            liquidity_lines, _counterpart_lines, _writeoff_lines = payment._seek_for_lines()
 
             if len(cheques) == len(liquidity_lines):
                 # Link each cheque to its corresponding line
