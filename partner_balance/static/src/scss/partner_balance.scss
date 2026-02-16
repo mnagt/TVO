@@ -1,0 +1,151 @@
+/* ===============================
+   🌐 Variables
+================================ */
+:root {
+  // Spacing
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+
+  // Border & Radius
+  --border-radius: 6px;
+  --border-color: #d1d5db;
+
+  // Colors
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-accent: #f0f9ff;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --success-color: #059669;
+  --info-color: #0ea5e9;
+  --danger-color: #dc2626;
+
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  // Transitions
+  --transition: all 0.2s ease;
+  --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* ===============================
+   🧱 Base Styles
+================================ */
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  margin: 0;
+  padding: 0;
+}
+
+/* ===============================
+   📦 Card Component
+================================ */
+.card {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-lg);
+  transition: var(--transition);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+
+/* ===============================
+   🧩 Horizontal Summary Design
+================================ */
+.horizontal-currency-summary {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  padding: 2px;
+  background-color: var(--bg-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  font-family: 'Segoe UI', sans-serif;
+  transition: var(--transition);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.currency-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+  padding: var(--space-sm);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+
+  &:hover {
+    background: var(--bg-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .currency-icon {
+    font-size: 1rem;
+    color: var(--accent-color);
+    margin-bottom: var(--space-xs);
+  }
+}
+
+.currency-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-accent);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius);
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+
+.final-balance {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(6px);
+  animation: fadeUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Partner Balance Toolbar - minimal styling */
+.partner-balance-toolbar {
+    background-color: #f8f9fa;
+}
+
+.partner-balance-toolbar .form-control-sm {
+    width: auto;
+    max-width: 140px;
+}
+

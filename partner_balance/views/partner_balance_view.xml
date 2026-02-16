@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+    <data>
+
+
+        <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit.custom.button</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button name="action_view_move_line_report"
+                    type="object"
+                    string="SOA"
+                    class="btn-primary" />
+                </div>
+            </field>
+        </record>
+
+
+
+        <!-- Tree View for Account Move Line Normal Report -->
+        <record id="view_account_move_line_report_tree" model="ir.ui.view">
+            <field name="name">account.move.line.report.tree</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <list string="Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance" decoration-info="line_type == 'product'">
+                    <field name="date"/>
+                    <field name="type"/>
+                    <field name="reference"/>
+                    <field name="note"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="cumulated_balance" string="Balance"/>
+                    <field name="company_currency_id" column_invisible="True"/>
+                    <field name="amount_currency" string="Origin Amount"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="line_type" column_invisible="True"/>
+                    <field name="type_key" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+
+        <!-- Tree View for Account Move Line TRY Report -->
+        <record id="view_account_move_line_report_tr_tree" model="ir.ui.view">
+            <field name="name">account.move.line.report.tr.tree</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <list string="TL Value Report" create="false" delete="false" edit="false" js_class="partner_balance" decoration-info="line_type == 'product'">
+                    <field name="date"/>
+                    <field name="type"/>
+                    <field name="reference"/>
+                    <field name="note"/>
+                    <field name="amount_tr_debit" string="Debit"/>
+                    <field name="amount_tr_credit" string="Credit"/>
+                    <field name="cumulated_amount_tr_currency" string="Balance"/>
+                    <field name="tr_currency_id" column_invisible="True"/>
+                    <field name="company_currency_id" column_invisible="True"/>
+                    <field name="amount_currency" string="Origin Amount"/>
+                    <field name="tr_rate_display" string="Rate"/>
+                    <field name="currency_id" string="Currency" column_invisible="True"/>
+                    <field name="line_type" column_invisible="True"/>
+                    <field name="type_key" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+         
+        
+
+        <record id="action_partner_move_line_tr_value" model="ir.actions.act_window">
+            <field name="name">Statement in TRY</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move.line.report</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="partner_balance.view_account_move_line_report_tr_tree"/>
+            <field name="views" eval="[(ref('partner_balance.view_account_move_line_report_tr_tree'), 'list')]"/>
+            <field name="target">current</field>
+            <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
+            <field name="context">{'search_default_group_by_account': 1}</field>
+        </record>
+ 
+
+    </data>
+</odoo>
