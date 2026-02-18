@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_expense_sheet_inherit" inherit_id="hr_expense.report_expense_sheet">
+        <xpath expr="//div[hasclass('o_total')]" position="after">
+            <div t-if="foreign_currencies" class="row justify-content-end">
+                <div class="col-4">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td>Untaxed Amount (TL)</td>
+                                <td class="text-end">
+                                    <span t-field="o.untaxed_amount_currency"
+                                        t-options='{"widget": "monetary", "display_currency": o.currency_tl_id}'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Taxes (TL)</td>
+                                <td class="text-end">
+                                    <span t-field="o.total_tax_amount_currency"
+                                        t-options='{"widget": "monetary", "display_currency": o.currency_tl_id}'/>
+                                </td>
+                            </tr>
+                            <tr class="fw-bold">
+                                <td>Total (TL)</td>
+                                <td class="text-end">
+                                    <span t-field="o.total_amount_currency"
+                                        t-options='{"widget": "monetary", "display_currency": o.currency_tl_id}'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
