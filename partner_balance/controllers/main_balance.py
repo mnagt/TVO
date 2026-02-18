@@ -3,12 +3,10 @@
 
 import json
 import operator
-import functools
 import logging
-import werkzeug
 
 from odoo import http
-from odoo.http import content_disposition, request, serialize_exception as _serialize_exception
+from odoo.http import content_disposition, request
 from odoo.tools import osutil
 from odoo.addons.web.controllers.export import (
     ExportFormat as BaseExportFormat,
@@ -25,29 +23,10 @@ from ..services.balance_export import (
 _logger = logging.getLogger(__name__)
 
 
-def serialize_exception(f):
-    """Decorator to serialize exceptions as JSON responses."""
-    @functools.wraps(f)
-    def wrap(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except Exception as e:
-            _logger.exception("An exception occurred during an http request")
-            se = _serialize_exception(e)
-            error = {
-                'code': 200,
-                'message': "Odoo Server Error",
-                'data': se
-            }
-            return werkzeug.exceptions.InternalServerError(json.dumps(error))
-    return wrap
-
-
 class BalanceExcelExport(BaseExportFormat, http.Controller):
     """Controller for exporting partner balance data to Excel."""
 
     @http.route('/web/balance_export/xlsx', type='http', auth="user")
-    @serialize_exception
     def index(self, data):
         return self.base(data)
 
@@ -97,6 +76,36 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             ],
         )
 
+    def _fetch_product_lines(self, records, show_products):
+        """Fetch product detail lines grouped by move_id.
+
+        Args:
+            records: recordset of account.move.line.report to inspect
+            show_products: boolean flag from context
+
+        Returns:
+            dict mapping move_id -> list of account.move.line records
+        """
+        if not show_products:
+            return {}
+
+        invoice_types = ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
+        move_ids = records.filtered(
+            lambda r: r.type_key in invoice_types
+        ).mapped('move_id').ids
+
+        if not move_ids:
+            return {}
+
+        product_lines_by_move = {}
+        aml = request.env['account.move.line'].sudo().search([
+            ('move_id', 'in', move_ids),
+            ('display_type', '=', 'product'),
+        ])
+        for line in aml:
+            product_lines_by_move.setdefault(line.move_id.id, []).append(line)
+        return product_lines_by_move
+
     def _export_flat(self, Model, field_names, columns_headers, ids, domain, params):
         """Export non-grouped data."""
         records = Model.browse(ids) if ids else Model.search(domain, offset=0, limit=False, order=False)
@@ -105,36 +114,23 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         ctx = params.get('context', {})
         data_service = BalanceDataService.from_params(request.env, params)
 
-        show_products = ctx.get('show_products', False)
-        product_lines_by_move = {}
-
-        if show_products:
-            # Get all move_ids from records that are invoices
-            invoice_types = ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
-            move_ids = records.filtered(
-                lambda r: r.type_key in invoice_types
-            ).mapped('move_id').ids
-
-            if move_ids:
-                aml = request.env['account.move.line'].sudo().search([
-                    ('move_id', 'in', move_ids),
-                    ('display_type', '=', 'product'),
-                ])
-                for line in aml:
-                    product_lines_by_move.setdefault(line.move_id.id, []).append(line)
+        product_lines_by_move = self._fetch_product_lines(
+            records, ctx.get('show_products', False)
+        )
 
         opening_data = data_service.get_opening_balance()
 
         with BalanceXlsxWriter(columns_headers, len(export_data)) as writer:
-            writer.write_metadata(ctx, data_service)
+            header_end_row = writer.write_metadata(ctx, data_service)
+            data_start_row = writer.write_header(row=header_end_row)
 
             # Write opening balance
             if opening_data['balance'] != 0.0:
                 period_start_row, opening_debit, opening_credit = writer.write_opening_balance_row(
-                    FieldMapping.DATA_START_ROW, opening_data
+                    data_start_row, opening_data
                 )
             else:
-                period_start_row = FieldMapping.DATA_START_ROW
+                period_start_row = data_start_row
                 opening_debit = opening_credit = 0
                 opening_data['balance'] = 0.0
 
@@ -168,24 +164,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         ctx = params.get('context', {})
         data_service = BalanceDataService.from_params(request.env, params)
 
-        show_products = ctx.get('show_products', False)
-        product_lines_by_move = {}
-
-        if show_products:
-            # For grouped export, search records from domain to get move_ids
-            invoice_types = ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
-            all_records = Model.search(domain, offset=0, limit=False, order=False)
-            move_ids = all_records.filtered(
-                lambda r: r.type_key in invoice_types
-            ).mapped('move_id').ids
-
-            if move_ids:
-                aml = request.env['account.move.line'].sudo().search([
-                    ('move_id', 'in', move_ids),
-                    ('display_type', '=', 'product'),
-                ])
-                for line in aml:
-                    product_lines_by_move.setdefault(line.move_id.id, []).append(line)
+        all_records = Model.search(domain, offset=0, limit=False, order=False)
+        product_lines_by_move = self._fetch_product_lines(
+            all_records, ctx.get('show_products', False)
+        )
 
         # Determine groupby field
         groupby_field = groupby[0].split(':')[0] if groupby else ''
@@ -200,11 +182,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             summary = data_service.get_period_summary(tree)
             opening_data = data_service.get_opening_balance()
 
-            writer.write_metadata(ctx, data_service, summary)
+            header_end_row = writer.write_metadata(ctx, data_service, summary)
 
-
-            # Write groups starting at row 9
-            x, y = 9, 0
+            # Write groups starting after metadata
+            x, y = header_end_row, 0
             for group_name, group in tree.children.items():
                 x, y = writer.write_group(x, y, group_name, group, opening_balances)
 

@@ -36,6 +36,14 @@ class BalanceXlsxWriter:
         self.styles = ExportStyles(self.workbook, monetary_format)
         self.monetary_format = monetary_format
         self.float_format = '#,##0.00'
+        self._float_cell_format = self.workbook.add_format({
+            'text_wrap': True,
+            'font_size': 8,
+            'align': 'left',
+            'valign': 'vcenter',
+            'border': 1,
+            'num_format': self.float_format,
+        })
 
     def _get_max_decimal_places(self):
         """Get maximum decimal places from currencies."""
@@ -55,7 +63,6 @@ class BalanceXlsxWriter:
             ) % (row_count, self.worksheet.xls_rowmax))
 
     def __enter__(self):
-        self.write_header()
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -102,14 +109,7 @@ class BalanceXlsxWriter:
         elif isinstance(value, datetime.date):
             style = self.styles.date
         elif isinstance(value, float):
-            style = self.workbook.add_format({
-                'text_wrap': True,
-                'font_size': 8,
-                'align': 'left',
-                'valign': 'vcenter',
-                'border': 1,
-                'num_format': self.float_format,
-            })
+            style = self._float_cell_format
 
         return value, style
 
@@ -134,11 +134,18 @@ class BalanceXlsxWriter:
                 return str(val)
         return str(val)
 
-    def write_header(self):
-        """Write column headers."""
+    def write_header(self, row=None):
+        """Write column headers.
+
+        Args:
+            row: Row number to write headers at. If None, defaults to 0.
+        """
+        if row is None:
+            row = 0
         for i, fieldname in enumerate(self.field_names):
-            self.write(FieldMapping.HEADER_ROW, i, fieldname, self.styles.transaction_header)
+            self.write(row, i, fieldname, self.styles.transaction_header)
         self.worksheet.set_column(0, len(self.field_names) - 1, 10)
+        return row + 1
 
     def write_metadata(self, ctx, data_service, summary_data=None):
         """Write header metadata section."""
@@ -252,7 +259,7 @@ class BalanceXlsxWriter:
             self.write(row, 3, line.product_uom_id.name or '', self.styles.product_cell)
             self.write(row, 4, line.price_unit, self.styles.product_cell_number)
             self.write(row, 5, line.discount or 0, self.styles.product_cell_number)
-            self.write(row, 6, line.price_subtotal - line.price_total, self.styles.product_cell_number)
+            self.write(row, 6, line.price_total - line.price_subtotal, self.styles.product_cell_number)
             self.write(row, 7, line.price_total, self.styles.product_cell_number)
             row += 1
 

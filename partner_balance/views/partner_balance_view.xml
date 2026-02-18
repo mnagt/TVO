@@ -83,7 +83,18 @@
             <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
             <field name="context">{'search_default_group_by_account': 1}</field>
         </record>
- 
+        
+        <record id="action_partner_move_line_usd" model="ir.actions.act_window">
+            <field name="name">Statement of Account</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.move.line.report</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="partner_balance.view_account_move_line_report_tree"/>
+            <field name="views" eval="[(ref('partner_balance.view_account_move_line_report_tree'), 'list')]"/>
+            <field name="target">current</field>
+            <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
+            <field name="context">{'search_default_group_by_account': 1}</field>
+        </record>
 
     </data>
 </odoo>

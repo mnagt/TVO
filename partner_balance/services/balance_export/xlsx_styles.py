@@ -122,6 +122,15 @@ class ExportStyles:
             'border': 1,
         })
 
+        self._float_style = self.workbook.add_format({
+            'text_wrap': True,
+            'font_size': 8,
+            'align': 'left',
+            'valign': 'vcenter',
+            'border': 1,
+            'num_format': self.float_format,
+        })
+
         self.opening_balance = self.workbook.add_format({
             'num_format': self.monetary_format,
             'align': 'left',
@@ -233,8 +242,6 @@ class ExportStyles:
         elif isinstance(value, datetime.date):
             return self.date
         elif isinstance(value, float):
-            style = self.workbook.add_format(self.base.__dict__.copy() if hasattr(self.base, '__dict__') else {})
-            style.set_num_format(self.float_format)
-            return style
+            return self._float_style
 
         return self.base

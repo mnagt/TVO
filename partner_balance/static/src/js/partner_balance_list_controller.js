@@ -5,7 +5,7 @@ import { _t } from "@web/core/l10n/translation";
 import { download } from "@web/core/network/download";
 import { useService } from "@web/core/utils/hooks";
 import { ListController } from "@web/views/list/list_controller";
-import { useState, onMounted, onPatched } from "@odoo/owl";
+import { useState, onPatched } from "@odoo/owl";
 import { PartnerBalanceToolbar } from "./components/partner_balance_toolbar";
 
 export class PartnerBalanceListController extends ListController {
@@ -38,10 +38,6 @@ export class PartnerBalanceListController extends ListController {
                 setTimeout(() => this._renderProductSubTables(), 0);
             }
         });
-
-        onMounted(() => {
-            this.setupSummaryDisplay();
-        });
     }
 
     // -------------------------------------------------------------------------
@@ -71,6 +67,7 @@ export class PartnerBalanceListController extends ListController {
             showProducts: this.state.showProducts,
             onToggleProducts: this.onToggleProducts.bind(this),
             onTrReport: this.onTrReport.bind(this),
+            onUsdReport: this.onUsdReport.bind(this),
             onDateChange: this.onDateChange.bind(this),
             onExcelExport: this.onExcelExport.bind(this),
         };
@@ -88,6 +85,21 @@ export class PartnerBalanceListController extends ListController {
                 default_partner_id: this.partnerId,
                 partner_name: this.context.partner_name || '',
                 action_name: 'Statement in TRY',
+            },
+        });
+    }
+
+    onUsdReport() {
+        if (!this.partnerId) return;
+
+        this.action.doAction('partner_balance.action_partner_move_line_usd', {
+            additionalContext: {
+                active_id: this.partnerId,
+                active_ids: [this.partnerId],
+                active_model: 'res.partner',
+                default_partner_id: this.partnerId,
+                partner_name: this.context.partner_name || '',
+                action_name: 'Statement of Account',
             },
         });
     }
@@ -151,6 +163,7 @@ export class PartnerBalanceListController extends ListController {
 
         if (this.state.showProducts) {
             await this._fetchProductData();
+            this._renderProductSubTables();
         }
     }
 
@@ -217,40 +230,80 @@ export class PartnerBalanceListController extends ListController {
             const lines = this._productData[moveId];
             const colSpan = row.cells.length;
 
-            const subRow = document.createElement('tr');
-            subRow.classList.add('o_product_subtable_row');
-            subRow.innerHTML = `
-                <td colspan="${colSpan}" style="padding: 4px 8px 4px 40px; background-color: #f0f9ff; border-top: none;">
-                    <table class="table table-sm table-bordered mb-0" style="font-size: 0.85em;">
-                        <thead>
-                            <tr style="background-color: #e0f2fe;">
-                                <th>Product</th>
-                                <th class="text-end">Qty</th>
-                                <th>UoM</th>
-                                <th class="text-end">Unit Price</th>
-                                <th class="text-end">Disc. %</th>
-                                <th class="text-end">Tax</th>
-                                <th class="text-end">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${lines.map(l => `
-                                <tr>
-                                    <td>${l.product_id ? l.product_id[1] : ''}</td>
-                                    <td class="text-end">${l.quantity}</td>
-                                    <td>${l.product_uom_id ? l.product_uom_id[1] : ''}</td>
-                                    <td class="text-end">${Number(l.price_unit).toFixed(2)}</td>
-                                    <td class="text-end">${l.discount || 0}</td>
-                                    <td class="text-end">${Number(l.price_total - l.price_subtotal).toFixed(2)}</td>
-                                    <td class="text-end">${Number(l.price_total).toFixed(2)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </td>
-            `;
+            const subRow = this._createProductSubRow(lines, colSpan);
             row.after(subRow);
         }
+    }
+
+    /**
+     * Build a product sub-row using safe DOM APIs (no innerHTML).
+     * @param {Array} lines - product line data objects
+     * @param {number} colSpan - number of columns to span
+     * @returns {HTMLTableRowElement}
+     */
+    _createProductSubRow(lines, colSpan) {
+        const tr = document.createElement('tr');
+        tr.classList.add('o_product_subtable_row');
+
+        const td = document.createElement('td');
+        td.setAttribute('colspan', colSpan);
+        Object.assign(td.style, {
+            padding: '4px 8px 4px 40px',
+            backgroundColor: '#f0f9ff',
+            borderTop: 'none',
+        });
+
+        const table = document.createElement('table');
+        table.className = 'table table-sm table-bordered mb-0';
+        table.style.fontSize = '0.85em';
+
+        // Header
+        const thead = document.createElement('thead');
+        const headRow = document.createElement('tr');
+        headRow.style.backgroundColor = '#e0f2fe';
+        const headers = [
+            { text: 'Product', cls: '' },
+            { text: 'Qty', cls: 'text-end' },
+            { text: 'UoM', cls: '' },
+            { text: 'Unit Price', cls: 'text-end' },
+            { text: 'Disc. %', cls: 'text-end' },
+            { text: 'Tax', cls: 'text-end' },
+            { text: 'Total', cls: 'text-end' },
+        ];
+        for (const h of headers) {
+            const th = document.createElement('th');
+            th.textContent = h.text;
+            if (h.cls) th.className = h.cls;
+            headRow.appendChild(th);
+        }
+        thead.appendChild(headRow);
+        table.appendChild(thead);
+
+        // Body
+        const tbody = document.createElement('tbody');
+        for (const l of lines) {
+            const dataRow = document.createElement('tr');
+            const cells = [
+                { text: l.product_id ? l.product_id[1] : '', cls: '' },
+                { text: String(l.quantity), cls: 'text-end' },
+                { text: l.product_uom_id ? l.product_uom_id[1] : '', cls: '' },
+                { text: Number(l.price_unit).toFixed(2), cls: 'text-end' },
+                { text: String(l.discount || 0), cls: 'text-end' },
+                { text: Number(l.price_total - l.price_subtotal).toFixed(2), cls: 'text-end' },
+                { text: Number(l.price_total).toFixed(2), cls: 'text-end' },
+            ];
+            for (const c of cells) {
+                const cell = document.createElement('td');
+                cell.textContent = c.text;
+                if (c.cls) cell.className = c.cls;
+                dataRow.appendChild(cell);
+            }
+            tbody.appendChild(dataRow);
+        }
+        table.appendChild(tbody);
+        td.appendChild(table);
+        tr.appendChild(td);
+        return tr;
     }
 
     _removeProductSubTables() {
@@ -261,29 +314,17 @@ export class PartnerBalanceListController extends ListController {
     // Summary Display
     // -------------------------------------------------------------------------
 
-    setupSummaryDisplay() {
-        // Logic handled by template conditionals
-    }
-
-
     async getCurrencyBalance() {
         if (!this.partnerId || !this.state.dateFrom) return {};
 
         const result = await this.orm.call(
             'account.move.line.report',
             'get_opening_balance_value',
-            [this.partnerId, this.state.dateFrom]
+            [this.partnerId, this.state.dateFrom, this.isTrReport]
         );
         return result;
     }
 
-
-    formatCurrency(value) {
-        return Number(value || 0).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    }
 
     // -------------------------------------------------------------------------
     // Export

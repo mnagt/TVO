@@ -14,7 +14,8 @@ export class PartnerBalanceToolbar extends Component {
         onTrReport: { type: Function },
         onDateChange: { type: Function },
         onExcelExport: { type: Function },
-        showProducts: { type: Boolean, optional: true }, onToggleProducts: { type: Function }
+        showProducts: { type: Boolean, optional: true }, onToggleProducts: { type: Function },
+        onUsdReport: { type: Function },
     };
 
     setup() {
@@ -40,6 +41,10 @@ export class PartnerBalanceToolbar extends Component {
 
     handleTrReport() {
         this.props.onTrReport();
+    }
+
+    handleUsdReport() {
+        this.props.onUsdReport();
     }
 
     handleToggleProducts() { 

@@ -38,6 +38,13 @@
                 <i class="fa fa-try"/> TL
             </button>
 
+            <!-- USD Report Button (shown only in TRY report) -->
+            <button t-if="props.isTrReport"
+                    class="btn btn-outline-secondary btn-sm"
+                    t-on-click="handleUsdReport">
+                <i class="fa fa-usd"/> USD
+            </button>
+
             <button class="btn btn-sm"
                     t-att-class="props.showProducts ? 'btn-secondary' : 'btn-outline-secondary'"
                     t-on-click="handleToggleProducts">
@@ -49,7 +56,7 @@
                  class="d-flex align-items-center gap-2 ms-auto">
                 <t t-foreach="currencyEntries" t-as="entry" t-key="entry[0]">
                     <span class="badge bg-info text-dark">
-                        <t t-esc="entry[0]"/>: <t t-esc="formatCurrency(entry[1].opening)"/>
+                        <t t-esc="entry[1].symbol or entry[0]"/>  <t t-esc="formatCurrency(entry[1].opening)"/>
                     </span>
                 </t>
             </div>

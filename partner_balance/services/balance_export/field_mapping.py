@@ -28,10 +28,25 @@ class FieldMapping:
         'type': 'journal_entry',
     }
 
-    # Layout constants
-    HEADER_ROW = 8
-    DATA_START_ROW = 9
-    DATA_START_ROW_WITH_OPENING = 10
+    # TRY report column layout
+    COLUMNS_TR = {
+        'date': 0,
+        'journal_entry': 1,
+        'label': 2,
+        'reference': 3,
+        'debit': 4,
+        'credit': 5,
+        'balance': 6,
+        'cumulated_balance': 6,
+        'amount_currency': 7,
+        'rate': 8,
+        'currency': 9,
+    }
+
+    @classmethod
+    def get_columns(cls, is_tr_report=False):
+        """Return the appropriate column mapping."""
+        return cls.COLUMNS_TR if is_tr_report else cls.COLUMNS
 
     @classmethod
     def get_index(cls, field_name):

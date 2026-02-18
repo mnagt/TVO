@@ -5,19 +5,18 @@ import datetime
 from datetime import timedelta
 
 from .field_mapping import FieldMapping
+from ...constants import ReportConstants
 
 
 class BalanceDataService:
     """Handles all data fetching and calculations for balance exports."""
 
-    DEFAULT_CURRENCY = 'TRY'
-    EXCLUDED_JOURNAL = 'KRFRK'
-
-    def __init__(self, env, partner_id, date_from=None, date_to=None):
+    def __init__(self, env, partner_id, date_from=None, date_to=None, is_tr_report=False):
         self.env = env
         self.partner_id = partner_id
         self.date_from = date_from
         self.date_to = date_to
+        self.is_tr_report = is_tr_report
         self._model = env['account.move.line.report']
 
     @classmethod
@@ -29,6 +28,7 @@ class BalanceDataService:
             partner_id=ctx.get('default_partner_id'),
             date_from=ctx.get('date_from'),
             date_to=ctx.get('date_to'),
+            is_tr_report=ctx.get('action_name') == 'Statement in TRY',
         )
 
     def _zero_balance(self, currency=None):
@@ -37,7 +37,7 @@ class BalanceDataService:
             'debit': 0.0,
             'credit': 0.0,
             'balance': 0.0,
-            'currency': currency or self.DEFAULT_CURRENCY,
+            'currency': currency or ReportConstants.CURRENCY_TRY,
             'date': '',
         }
 
@@ -52,41 +52,46 @@ class BalanceDataService:
         """Base domain for partner queries."""
         return [
             ('partner_id', '=', self.partner_id),
-            ('move_id.journal_id.code', '!=', self.EXCLUDED_JOURNAL),
+            ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
         ]
 
     def get_opening_balance(self, filter_field=None, filter_value=None):
-        """
-        Calculate opening balance before date_from.
+        """Delegate to the model's unified get_opening_balance_value method.
 
-        Args:
-            filter_field: Optional field to filter by (e.g., 'currency_id.name')
-            filter_value: Value for the filter field
+        When called without filter args, the model returns a per-currency dict
+        for toolbar display. This method aggregates it into the flat
+        {debit, credit, balance, currency, date} format that export consumers expect.
         """
         if not self.date_from or not self.partner_id:
-            currency = filter_value if filter_field == 'currency_id.name' else self.DEFAULT_CURRENCY
+            currency = filter_value if filter_field == 'currency_id.name' else ReportConstants.CURRENCY_TRY
             return self._zero_balance(currency)
 
-        domain = self._base_domain() + [('date', '<', self.date_from)]
+        result = self._model.get_opening_balance_value(
+            self.partner_id,
+            self.date_from,
+            is_tr_report=self.is_tr_report,
+            filter_field=filter_field,
+            filter_value=filter_value,
+        )
 
-        if filter_field and filter_value:
-            domain.append((filter_field, '=', filter_value))
+        # Filtered calls already return the flat format — pass through
+        if filter_field is not None:
+            return result
 
-        records = self._model.search(domain)
-
-        currency = self.DEFAULT_CURRENCY
-        if filter_field == 'currency_id.name':
-            currency = filter_value
-        elif records:
-            currency = records[0].currency_id.name or self.DEFAULT_CURRENCY
-
-        debit = sum(records.mapped('debit'))
-        credit = sum(records.mapped('credit'))
+        # Unfiltered calls return per-currency dict: {'TRY': {'opening': ..., ...}}
+        # Aggregate into the flat format consumers expect
+        total_debit = 0.0
+        total_credit = 0.0
+        currency = ReportConstants.CURRENCY_TRY
+        for curr_name, vals in result.items():
+            total_debit += vals.get('debit', 0.0)
+            total_credit += vals.get('credit', 0.0)
+            currency = curr_name  # last currency wins; typically single-company
 
         return {
-            'debit': debit,
-            'credit': credit,
-            'balance': debit - credit,
+            'debit': total_debit,
+            'credit': total_credit,
+            'balance': total_debit - total_credit,
             'currency': currency,
             'date': self._opening_date(),
         }

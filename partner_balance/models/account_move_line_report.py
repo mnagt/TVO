@@ -2,18 +2,8 @@
 from odoo import models, fields, api, _
 from odoo.tools import float_round
 from odoo import tools
-from collections import defaultdict
 
-
-class ReportConstants:
-    """Constants for account move line report."""
-
-    # Currencies
-    COMPANY_CURRENCY = 'TRY'
-    TRY_CURRENCY = 'TRY'
-
-    # Excluded journals
-    EXCLUDED_JOURNAL_CODES = ('KRFRK',)
+from ..constants import ReportConstants
 
 
 class AccountMoveLineReport(models.Model):
@@ -50,7 +40,7 @@ class AccountMoveLineReport(models.Model):
     cumulated_amount_tr_currency = fields.Monetary('Cumulated TL', compute='_compute_cumulated_amount_tr_currency', currency_field='tr_currency_id')
     amount_tr_debit = fields.Monetary(string='Debit', compute='_compute_amount_tr_debit_credit', currency_field='tr_currency_id', store=False)
     amount_tr_credit = fields.Monetary(string='Credit', compute='_compute_amount_tr_debit_credit', currency_field='tr_currency_id', store=False)
-    
+
     # Line classification
     line_type = fields.Selection(
         [('summary', 'Summary'), ('product', 'Product')],
@@ -81,25 +71,97 @@ class AccountMoveLineReport(models.Model):
             record.id
         )
 
-    def _cumulate_by_group(self, value_field, result_field, group_key_fn, initial_value_fn=None):
+    def _cumulate_by_group(self, value_field, result_field, initial_values):
+        """Shared accumulation pattern for cumulated balance fields.
+
+        Args:
+            value_field: Name of the field to read incremental values from.
+            result_field: Name of the field to write cumulated values to.
+            initial_values: Dict mapping partner_id -> initial balance float.
+        """
         grouped = {}
         for rec in sorted(self, key=self._get_cumulation_sort_key):
             if rec.line_type == 'product':
-                setattr(rec, result_field, 0.0)
+                rec[result_field] = 0.0
                 continue
-            key = group_key_fn(rec)
-            if key not in grouped:
-                grouped[key] = initial_value_fn(rec) if initial_value_fn else 0.0
-            grouped[key] += getattr(rec, value_field) or 0.0
-            setattr(rec, result_field, grouped[key])
+            pid = rec.partner_id.id
+            if pid not in grouped:
+                grouped[pid] = initial_values.get(pid, 0.0)
+            grouped[pid] += rec[value_field] or 0.0
+            rec[result_field] = grouped[pid]
 
+    def _fetch_initial_balances_sql(self):
+        """Fetch initial balances using raw SQL (for stored debit/credit fields).
 
-    
+        Returns:
+            Dict mapping partner_id -> initial balance float.
+        """
+        date_from = self.env.context.get('date_from')
+        if not date_from or not self:
+            return {}
+        partners = self.mapped('partner_id')
+        if not partners:
+            return {}
+        self.env.cr.execute("""
+            SELECT amlr.partner_id, SUM(amlr.debit) - SUM(amlr.credit)
+            FROM account_move_line_report amlr
+            JOIN account_move am ON am.id = amlr.move_id
+            JOIN account_journal aj ON aj.id = am.journal_id
+            WHERE amlr.date < %s
+            AND amlr.partner_id IN %s
+            AND amlr.line_type = 'summary'
+            AND aj.code NOT IN %s
+            GROUP BY amlr.partner_id
+        """, (date_from, tuple(partners.ids), ReportConstants.EXCLUDED_JOURNAL_CODES))
+        return dict(self.env.cr.fetchall())
+
+    def _fetch_initial_tr_balances(self):
+        """Fetch initial TRY balances using ORM (for computed amount_tr_currency).
+
+        Returns:
+            Dict mapping partner_id -> initial TRY balance float.
+        """
+        date_from = self.env.context.get('date_from')
+        if not date_from or not self:
+            return {}
+        partners = self.mapped('partner_id')
+        if not partners:
+            return {}
+        prior_records = self.search([
+            ('date', '<', date_from),
+            ('partner_id', 'in', partners.ids),
+            ('line_type', '=', 'summary'),
+            ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
+        ])
+        initial_balances = {}
+        for rec in prior_records:
+            pid = rec.partner_id.id
+            initial_balances[pid] = initial_balances.get(pid, 0.0) + (rec.amount_tr_currency or 0.0)
+        return initial_balances
+
+    def _zero_product_fields(self, *field_names):
+        """Zero out specified fields for all product-type records in self.
+
+        Returns:
+            Recordset of non-product records that still need processing.
+        """
+        product_recs = self.filtered(lambda r: r.line_type == 'product')
+        for rec in product_recs:
+            for fname in field_names:
+                rec[fname] = 0.0 if self._fields[fname].type != 'char' else ""
+        return self - product_recs
+
+    def _get_try_currency(self):
+        """Return the TRY res.currency record (cached per-environment)."""
+        if not hasattr(self.env, '_try_currency_cache'):
+            self.env._try_currency_cache = self.env['res.currency'].search(
+                [('name', '=', ReportConstants.CURRENCY_TRY)], limit=1
+            )
+        return self.env._try_currency_cache
+
     def _compute_tr_currency_id(self):
         """Always return TRY currency for monetary field formatting."""
-        try_currency = self.env['res.currency'].search(
-            [('name', '=', ReportConstants.TRY_CURRENCY)], limit=1
-        )
+        try_currency = self._get_try_currency()
         for rec in self:
             rec.tr_currency_id = try_currency
 
@@ -208,7 +270,6 @@ class AccountMoveLineReport(models.Model):
             )
         """)
 
-    
     @api.depends('type_key')
     def _compute_type_display(self):
         type_translations = {
@@ -226,41 +287,16 @@ class AccountMoveLineReport(models.Model):
         for rec in self:
             rec.type = type_translations.get(rec.type_key, rec.type_key)
 
-
-
     @api.depends('partner_id', 'date', 'move_id', 'balance')
     @api.depends_context('date_from', 'action_name')
     def _compute_cumulated_balance(self):
-        """Compute cumulated balance with inline initial balance."""
-        date_from = self.env.context.get('date_from')
-        initial_balances = {}
+        """Compute cumulated balance with inline initial balance.
 
-        if date_from and self:
-            partners = self.mapped('partner_id')
-            if partners:
-                self.env.cr.execute("""
-                    SELECT amlr.partner_id, SUM(amlr.debit) - SUM(amlr.credit)
-                    FROM account_move_line_report amlr
-                    JOIN account_move am ON am.id = amlr.move_id
-                    JOIN account_journal aj ON aj.id = am.journal_id
-                    WHERE amlr.date < %s
-                    AND amlr.partner_id IN %s
-                    AND amlr.line_type = 'summary'
-                    AND aj.code NOT IN %s
-                    GROUP BY amlr.partner_id
-                """, (date_from, tuple(partners.ids), ReportConstants.EXCLUDED_JOURNAL_CODES))
-                initial_balances = dict(self.env.cr.fetchall())
-
-        grouped = {}
-        for rec in sorted(self, key=self._get_cumulation_sort_key):
-            if rec.line_type == 'product':
-                rec.cumulated_balance = 0.0
-                continue
-            pid = rec.partner_id.id
-            if pid not in grouped:
-                grouped[pid] = initial_balances.get(pid, 0.0)
-            grouped[pid] += rec.balance or 0.0
-            rec.cumulated_balance = grouped[pid]
+        Uses raw SQL for initial balances because debit/credit are stored
+        columns in the database view, making aggregation efficient.
+        """
+        initial_balances = self._fetch_initial_balances_sql()
+        self._cumulate_by_group('balance', 'cumulated_balance', initial_balances)
 
 
     @api.depends('currency_id', 'amount_currency', 'balance', 'date', 'company_id', 'move_id')
@@ -269,17 +305,50 @@ class AccountMoveLineReport(models.Model):
 
         - TRY document: amount_tr_currency = amount_currency (already TRY)
         - Non-TRY invoice with l10n_tr_tcmb_rate: balance × l10n_tr_tcmb_rate
-        - Non-TRY other: balance × res.currency.rate for TRY
+        - Non-TRY other: balance × res.currency.rate for TRY (batch-fetched)
         """
-        try_currency = self.env['res.currency'].search(
-            [('name', '=', ReportConstants.TRY_CURRENCY)], limit=1
-        )
+        try_currency = self._get_try_currency()
         has_tcmb_rate = 'l10n_tr_tcmb_rate' in self.env['account.move']._fields
-        for rec in self:
-            if rec.line_type == 'product':
-                rec.amount_tr_currency = 0.0
-                rec.tr_rate_display = ""
-                continue
+
+        # --- Zero out product lines upfront ---
+        summary_recs = self._zero_product_fields('amount_tr_currency', 'tr_rate_display')
+
+        # --- Batch-fetch fallback rates to avoid N+1 queries ---
+        # Collect all unique (company_id, date) pairs that may need a rate lookup
+        rate_lookup_keys = set()
+        for rec in summary_recs:
+            if rec.currency_id and rec.currency_id != try_currency:
+                tcmb_rate = 0.0
+                if has_tcmb_rate and rec.move_id:
+                    tcmb_rate = rec.move_id.l10n_tr_tcmb_rate or 0.0
+                if not tcmb_rate and rec.date and rec.company_id:
+                    rate_lookup_keys.add((rec.company_id.id, str(rec.date)))
+
+        rate_cache = {}
+        if rate_lookup_keys and try_currency:
+            # Build a VALUES list for the lateral join
+            values_list = ", ".join(
+                self.env.cr.mogrify("(%s, %s::date)", (cid, dt)).decode()
+                for cid, dt in rate_lookup_keys
+            )
+            self.env.cr.execute(f"""
+                SELECT v.company_id, v.dt, r.rate
+                FROM (VALUES {values_list}) AS v(company_id, dt)
+                LEFT JOIN LATERAL (
+                    SELECT rate
+                    FROM res_currency_rate
+                    WHERE currency_id = %s
+                      AND company_id = v.company_id
+                      AND name <= v.dt
+                    ORDER BY name DESC
+                    LIMIT 1
+                ) r ON TRUE
+            """, (try_currency.id,))
+            for company_id, dt, rate in self.env.cr.fetchall():
+                rate_cache[(company_id, str(dt))] = rate or 0.0
+
+        # --- Assign values ---
+        for rec in summary_recs:
             if rec.currency_id == try_currency:
                 # Already in TRY — no conversion needed
                 rec.amount_tr_currency = rec.amount_currency
@@ -298,16 +367,14 @@ class AccountMoveLineReport(models.Model):
                         precision_digits=2
                     )
                 else:
-                    # Fallback: daily rate from res.currency.rate
-                    rate_record = self.env['res.currency.rate'].search([
-                        ('currency_id', '=', try_currency.id),
-                        ('company_id', '=', rec.company_id.id),
-                        ('name', '<=', rec.date)
-                    ], order='name desc', limit=1)
-                    if rate_record and rate_record.rate:
-                        rec.tr_rate_display = f"{rate_record.rate:.4f}"
+                    # Fallback: batch-fetched daily rate from res.currency.rate
+                    cached_rate = rate_cache.get(
+                        (rec.company_id.id, str(rec.date)), 0.0
+                    )
+                    if cached_rate:
+                        rec.tr_rate_display = f"{cached_rate:.4f}"
                         rec.amount_tr_currency = float_round(
-                            rec.balance * rate_record.rate,
+                            rec.balance * cached_rate,
                             precision_digits=2
                         )
                     else:
@@ -318,59 +385,125 @@ class AccountMoveLineReport(models.Model):
                 rec.tr_rate_display = "N/A"
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_tr_currency')
+    @api.depends_context('date_from')
     def _compute_cumulated_amount_tr_currency(self):
-        """Compute cumulative TRY value, grouped by partner."""
-        self._cumulate_by_group(
-            value_field='amount_tr_currency',
-            result_field='cumulated_amount_tr_currency',
-            group_key_fn=lambda r: r.partner_id.id
-        )
+        """Compute cumulative TRY value with initial balance support.
+
+        Uses ORM search (not raw SQL) because amount_tr_currency is a
+        computed field that is not stored in the database view.
+        """
+        initial_balances = self._fetch_initial_tr_balances()
+        self._cumulate_by_group('amount_tr_currency', 'cumulated_amount_tr_currency', initial_balances)
 
     @api.depends('amount_tr_currency')
     def _compute_amount_tr_debit_credit(self):
         """Split TRY amount into debit (positive) and credit (negative)."""
-        for rec in self:
-            if rec.line_type == 'product':
-                rec.amount_tr_debit = 0.0
-                rec.amount_tr_credit = 0.0
-                continue
+        summary_recs = self._zero_product_fields('amount_tr_debit', 'amount_tr_credit')
+        for rec in summary_recs:
             rec.amount_tr_debit = rec.amount_tr_currency if rec.amount_tr_currency > 0 else 0.0
             rec.amount_tr_credit = abs(rec.amount_tr_currency) if rec.amount_tr_currency < 0 else 0.0
 
-
-
-    def partner_details(self, partner):
-        user = self.env['res.users'].browse(partner)
-        login = user.login
-        name = user.partner_id.name if user.partner_id else 'N/A' 
-        return {
-            'id': partner,
-            'name': name,
-            'login': login,
-        }
-    
-
     @api.model
-    def get_opening_balance_value(self, partner_id, date_from):
-        """Return opening balances per currency for toolbar display."""
+    def get_opening_balance_value(self, partner_id, date_from, is_tr_report=False,
+                                  filter_field=None, filter_value=None):
+        """Return opening balances for toolbar display and export.
+
+        When called without filter_field, returns per-currency dict for toolbar.
+        When called with filter_field/filter_value, returns a single dict with
+        debit/credit/balance/currency/date for the filtered group.
+
+        Args:
+            partner_id: Partner ID to compute balances for.
+            date_from: Date string (YYYY-MM-DD). Records before this date.
+            is_tr_report: If True, compute TRY-equivalent balances.
+            filter_field: Optional ORM domain field to filter by (e.g. 'currency_id.name').
+            filter_value: Value to match for filter_field.
+
+        Returns:
+            dict: Per-currency mapping when no filter, or single balance dict when filtered.
+        """
         if not partner_id or not date_from:
+            if filter_field is not None:
+                currency = filter_value if filter_field == 'currency_id.name' else ReportConstants.CURRENCY_TRY
+                return {'debit': 0.0, 'credit': 0.0, 'balance': 0.0, 'currency': currency, 'date': ''}
             return {}
 
+        # --- Filtered mode: return single balance dict for a specific group ---
+        if filter_field is not None:
+            import datetime as _dt
+            from datetime import timedelta
+            date_obj = _dt.datetime.strptime(date_from, '%Y-%m-%d')
+            opening_date = (date_obj - timedelta(days=1)).strftime('%Y-%m-%d')
+
+            domain = [
+                ('partner_id', '=', partner_id),
+                ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
+                ('date', '<', date_from),
+            ]
+            if filter_field and filter_value:
+                domain.append((filter_field, '=', filter_value))
+
+            records = self.search(domain)
+
+            if is_tr_report:
+                total = sum(r.amount_tr_currency for r in records)
+                debit = sum(r.amount_tr_currency for r in records if r.amount_tr_currency > 0)
+                credit = sum(abs(r.amount_tr_currency) for r in records if r.amount_tr_currency < 0)
+                return {
+                    'debit': debit, 'credit': credit, 'balance': total,
+                    'currency': ReportConstants.CURRENCY_TRY, 'date': opening_date,
+                }
+
+            currency = ReportConstants.CURRENCY_TRY
+            if filter_field == 'currency_id.name':
+                currency = filter_value
+            elif records:
+                currency = records[0].currency_id.name or ReportConstants.CURRENCY_TRY
+
+            debit = sum(records.mapped('debit'))
+            credit = sum(records.mapped('credit'))
+            return {
+                'debit': debit, 'credit': credit, 'balance': debit - credit,
+                'currency': currency, 'date': opening_date,
+            }
+
+        # --- Unfiltered mode: return per-currency dict for toolbar ---
+        if is_tr_report:
+            prior_records = self.search([
+                ('date', '<', date_from),
+                ('partner_id', '=', partner_id),
+                ('line_type', '=', 'summary'),
+                ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
+            ])
+            total = sum(r.amount_tr_currency for r in prior_records)
+            debit = sum(r.amount_tr_currency for r in prior_records if r.amount_tr_currency > 0)
+            credit = sum(abs(r.amount_tr_currency) for r in prior_records if r.amount_tr_currency < 0)
+            try_currency = self._get_try_currency()
+            symbol = try_currency.symbol if try_currency else '₺'
+            return {ReportConstants.CURRENCY_TRY: {
+                'opening': total, 'symbol': symbol, 'debit': debit, 'credit': credit}}
+
         self.env.cr.execute("""
-            SELECT rc.name, SUM(amlr.debit) - SUM(amlr.credit)
+            SELECT rc.name, rc.symbol,
+                   SUM(amlr.debit), SUM(amlr.credit),
+                   SUM(amlr.debit) - SUM(amlr.credit)
             FROM account_move_line_report amlr
             JOIN account_move am ON am.id = amlr.move_id
             JOIN account_journal aj ON aj.id = am.journal_id
-            JOIN res_currency rc ON rc.id = amlr.currency_id
+            JOIN res_company comp ON comp.id = amlr.company_id
+            JOIN res_currency rc ON rc.id = comp.currency_id
             WHERE amlr.date < %s
             AND amlr.partner_id = %s
             AND amlr.line_type = 'summary'
             AND aj.code NOT IN %s
-            GROUP BY rc.name
+            GROUP BY rc.name, rc.symbol
         """, (date_from, partner_id, ReportConstants.EXCLUDED_JOURNAL_CODES))
 
         result = {}
-        for currency_name, balance in self.env.cr.fetchall():
-            result[currency_name] = {'opening': balance}
+        for currency_name, symbol, debit, credit, balance in self.env.cr.fetchall():
+            result[currency_name] = {
+                'opening': balance, 'symbol': symbol,
+                'debit': debit, 'credit': credit,
+            }
         return result
 
