@@ -18,4 +18,5 @@ class StockValuationLayer(models.Model):
 
     unit_cost = fields.Float(readonly=False)
     value = fields.Monetary(readonly=False)
+    description = fields.Char(readonly=False)
     
