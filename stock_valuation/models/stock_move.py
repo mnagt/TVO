@@ -59,7 +59,7 @@ class StockMove(models.Model):
             if move.with_company(move.company_id).product_id.cost_method == 'standard':
                 continue
             warehouse_dest_id = move.location_dest_id.warehouse_id.id
-            product_tot_qty_available = move.product_id.with_context(warehouse_dest_id = warehouse_dest_id).sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
+            product_tot_qty_available = move.product_id.with_context(warehouse_id = warehouse_dest_id).sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
             rounding = move.product_id.uom_id.rounding
 
             valued_move_lines = move._get_in_move_lines()
