@@ -13,7 +13,7 @@ class ProductProduct(models.Model):
 
 
     @api.depends('stock_valuation_layer_ids')
-    @api.depends_context('to_date', 'company', 'warehouse_dest_id')
+    @api.depends_context('to_date', 'company', 'warehouse_id')
     def _compute_value_svl(self):
         """Compute `value_svl` and `quantity_svl`."""
         company_id = self.env.company
@@ -25,7 +25,7 @@ class ProductProduct(models.Model):
         if self.env.context.get('to_date'):
             to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
             domain.append(('create_date', '<=', to_date))
-        warehouse_id = self.env.context.get('warehouse_dest_id')
+        warehouse_id = self.env.context.get('warehouse_id')
         # self.result  = warehouse_id
         if warehouse_id:
             domain.extend([('warehouse_id.id', '=', warehouse_id)])
