@@ -42,6 +42,7 @@ class AccountPaymentCheque(models.Model):
     bank_id = fields.Many2one(
         comodel_name='res.bank',
         compute='_compute_bank_id', store=True, readonly=False,
+        required=True,
     )
     issuer_vat = fields.Char(
         string='Issuer VAT',
