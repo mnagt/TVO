@@ -122,6 +122,13 @@ class AccountPaymentCheque(models.Model):
         counterpart_line = self.payment_id.move_id.line_ids.filtered(
             lambda l: l.account_id == self.payment_id.destination_account_id
         )
+        _logger.warning("VOID DEBUG: counterpart_lines=%s count=%d debit=%s credit=%s amount_currency=%s",
+            counterpart_line.ids, len(counterpart_line),
+            counterpart_line.debit, counterpart_line.credit, counterpart_line.amount_currency)
+        _logger.warning("VOID DEBUG: outstanding_line=%s debit=%s credit=%s amount_currency=%s",
+            self.outstanding_line_id.id,
+            self.outstanding_line_id.debit, self.outstanding_line_id.credit,
+            self.outstanding_line_id.amount_currency)
         return {
             'ref': _('Void cheque %s') % self.name,
             'journal_id': self.payment_id.journal_id.id,
@@ -204,13 +211,29 @@ class AccountPaymentCheque(models.Model):
 
             outstanding_account = self.payment_id.outstanding_account_id
 
+            # Multi-currency: mirror collection_line_id amounts for exact reversal of deposit
+            if self.collection_line_id:
+                company_amount = self.collection_line_id.debit
+                payment_amount = abs(self.collection_line_id.amount_currency) if self.collection_line_id.amount_currency else company_amount
+                line_currency_id = self.collection_line_id.currency_id.id or self.currency_id.id
+            elif self.outstanding_line_id:
+                company_amount = self.outstanding_line_id.debit or self.outstanding_line_id.credit
+                payment_amount = abs(self.outstanding_line_id.amount_currency) if self.outstanding_line_id.amount_currency else company_amount
+                line_currency_id = self.outstanding_line_id.currency_id.id or self.currency_id.id
+            else:
+                company_amount = self.amount
+                payment_amount = self.amount
+                line_currency_id = self.currency_id.id
+
             # Reverse deposit: Debit Outstanding, Credit Collection
             debit_line = {
                 'account_id': outstanding_account.id,
                 'partner_id': self.partner_id.id,
                 'name': _('Bounce: %s') % self.name,
-                'debit': self.amount,
+                'debit': company_amount,
                 'credit': 0.0,
+                'amount_currency': payment_amount,
+                'currency_id': line_currency_id,
                 'date_maturity': self.payment_date,
             }
             credit_line = {
@@ -218,7 +241,9 @@ class AccountPaymentCheque(models.Model):
                 'partner_id': self.partner_id.id,
                 'name': _('Bounce: %s') % self.name,
                 'debit': 0.0,
-                'credit': self.amount,
+                'credit': company_amount,
+                'amount_currency': -payment_amount,
+                'currency_id': line_currency_id,
                 'date_maturity': self.payment_date,
             }
 
@@ -283,13 +308,25 @@ class AccountPaymentCheque(models.Model):
         # Use outstanding line's account for reconciliation
         outstanding_account = self.outstanding_line_id.account_id if self.outstanding_line_id else self.payment_id.outstanding_account_id
 
+        # Multi-currency: derive company-currency amount from the original payment line
+        if self.outstanding_line_id:
+            company_amount = self.outstanding_line_id.debit or self.outstanding_line_id.credit
+            payment_amount = abs(self.outstanding_line_id.amount_currency) if self.outstanding_line_id.amount_currency else company_amount
+            line_currency_id = self.outstanding_line_id.currency_id.id or self.currency_id.id
+        else:
+            company_amount = self.amount
+            payment_amount = self.amount
+            line_currency_id = self.currency_id.id
+
         # Debit: Collection Account, Credit: Outstanding
         debit_line = {
             'account_id': collection_account.id,
             'partner_id': self.partner_id.id,
             'name': _('Deposit: %s') % self.name,
-            'debit': self.amount,
+            'debit': company_amount,
             'credit': 0.0,
+            'amount_currency': payment_amount,
+            'currency_id': line_currency_id,
             'date_maturity': self.payment_date,
         }
         credit_line = {
@@ -297,7 +334,9 @@ class AccountPaymentCheque(models.Model):
             'partner_id': self.partner_id.id,
             'name': _('Deposit: %s') % self.name,
             'debit': 0.0,
-            'credit': self.amount,
+            'credit': company_amount,
+            'amount_currency': -payment_amount,
+            'currency_id': line_currency_id,
             'date_maturity': self.payment_date,
         }
 
@@ -451,14 +490,26 @@ class AccountPaymentCheque(models.Model):
             # Fallback for cheques deposited before this change
             collection_account = self.payment_id.outstanding_account_id
 
+        # Multi-currency: derive company-currency amount from collection line
+        if self.collection_line_id:
+            company_amount = self.collection_line_id.debit
+            payment_amount = abs(self.collection_line_id.amount_currency) if self.collection_line_id.amount_currency else company_amount
+            line_currency_id = self.collection_line_id.currency_id.id or self.currency_id.id
+        else:
+            company_amount = self.amount
+            payment_amount = self.amount
+            line_currency_id = self.currency_id.id
+
         if self.payment_type == 'inbound':  # incoming cheque
             # Debit: Bank, Credit: Collection
             debit_line = {
                 'account_id': bank_account.id,
                 'partner_id': self.partner_id.id,
                 'name': _('Cashed: %s') % self.name,
-                'debit': self.amount,
+                'debit': company_amount,
                 'credit': 0,
+                'amount_currency': payment_amount,
+                'currency_id': line_currency_id,
                 'date_maturity': self.payment_date,
             }
             credit_line = {
@@ -466,7 +517,9 @@ class AccountPaymentCheque(models.Model):
                 'partner_id': self.partner_id.id,
                 'name': _('Cashed: %s') % self.name,
                 'debit': 0,
-                'credit': self.amount,
+                'credit': company_amount,
+                'amount_currency': -payment_amount,
+                'currency_id': line_currency_id,
                 'date_maturity': self.payment_date,
             }
         else:  # outbound cheque
@@ -475,8 +528,10 @@ class AccountPaymentCheque(models.Model):
                 'account_id': collection_account.id,
                 'partner_id': self.partner_id.id,
                 'name': _('Cashed: %s') % self.name,
-                'debit': self.amount,
+                'debit': company_amount,
                 'credit': 0,
+                'amount_currency': payment_amount,
+                'currency_id': line_currency_id,
                 'date_maturity': self.payment_date,
             }
             credit_line = {
@@ -484,7 +539,9 @@ class AccountPaymentCheque(models.Model):
                 'partner_id': self.partner_id.id,
                 'name': _('Cashed: %s') % self.name,
                 'debit': 0,
-                'credit': self.amount,
+                'credit': company_amount,
+                'amount_currency': -payment_amount,
+                'currency_id': line_currency_id,
                 'date_maturity': self.payment_date,
             }
 
