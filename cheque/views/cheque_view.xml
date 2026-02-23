@@ -179,6 +179,8 @@
                     <field name="partner_id" string="Customer"/>
                     <field name="issuer_name" optional="show"/>
                     <field name="bank_id"/>
+                    <field name="deposit_journal_id"/>
+                    <field name="deposit_date"/>
                     <field name="amount" optional="show"/>
                     <field name="state" widget="badge" decoration-muted="state in ('voided', 'cashed')"/>
                     <field name="currency_id" string="Payment Currency" optional="hide"/>
