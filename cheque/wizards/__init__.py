@@ -2,6 +2,6 @@
 
 from . import account_payment_register
 from . import payment_register_cheque
-from . import cheque_wizard
+from . import cheque_cash_wizard
 from . import cheque_bulk_state_update
 from . import cheque_deposit_wizard

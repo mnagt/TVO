@@ -111,7 +111,7 @@
                             confirm="Marking a check as void will cancel the check and generate a new entry that will re-open the debt." data-hotkey="v"/>
                     <button name="action_deposit" string="Deposit" type="object" class="oe_highlight"
                             invisible="payment_method_code != 'cheque_incoming' or state not in ('register', 'bounce')"/>
-                    <button name="%(action_cheque_outgoing_wizard_view)d" type="action"
+                    <button name="%(action_cheque_cash_wizard_view)d" type="action"
                             string="Cashed" class="oe_highlight"
                             invisible="payment_method_code != 'cheque_incoming' or state != 'deposit'"/>
                     <button name="action_bounce" type="object" string="Bounced" class="oe_highlight"
@@ -197,7 +197,7 @@
         <field name="view_mode">list,form,calendar,graph,pivot</field>
         <field name="view_id" ref="view_account_own_check_tree"/>
         <field name="search_view_id" ref="view_account_payment_search"/>
-        <field name="domain">[('outstanding_line_id', '!=', False)]</field>
+        <field name="domain">[('payment_method_code', '=', 'cheque_outgoing'), ('payment_id.state', '!=', 'draft')]</field>
         <field name="context">{'group_by': 'state'}</field>
     </record>
 

@@ -1,6 +1,7 @@
 from odoo import fields, models, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.misc import format_date
+from ..constants import CHEQUE_NEW_CODES, CHEQUE_MOVE_CODES, CHEQUE_ALL_CODES
 
 
 class AccountPayment(models.Model):
@@ -25,7 +26,7 @@ class AccountPayment(models.Model):
         for payment in self:
             if (
                 not payment.move_id and
-                payment.payment_method_code in ('cheque_outgoing', 'cheque_incoming', 'cheque_existing_in', 'cheque_existing_out', 'cheque_return') and
+                payment.payment_method_code in CHEQUE_ALL_CODES and
                 not payment.outstanding_account_id
             ):
                 raise ValidationError(_("A payment with any Third Party Check or Own Check payment methods needs an outstanding account"))
@@ -39,12 +40,10 @@ class AccountPayment(models.Model):
 
     def _is_cheque_payment(self, check_subtype=False):
         if check_subtype == 'move_check':
-            codes = ['cheque_existing_in', 'cheque_existing_out', 'cheque_return']
+            return self.payment_method_code in CHEQUE_MOVE_CODES
         elif check_subtype == 'new_check':
-            codes = ['cheque_incoming', 'cheque_outgoing']
-        else:
-            codes = ['cheque_existing_in', 'cheque_existing_out', 'cheque_return', 'cheque_incoming', 'cheque_outgoing']
-        return self.payment_method_code in codes
+            return self.payment_method_code in CHEQUE_NEW_CODES
+        return self.payment_method_code in CHEQUE_ALL_CODES
 
     def action_post(self):
         # unlink checks if payment method code is not for checks. We do it on post and not when changing payment
@@ -52,9 +51,8 @@ class AccountPayment(models.Model):
         # also, changing partner recompute payment method so all checks would be cleaned
         for payment in self.filtered(lambda x: x.new_cheque_ids and not x._is_cheque_payment(check_subtype='new_check')):
             payment.new_cheque_ids.unlink()
-        if not self.env.context.get('l10n_ar_skip_remove_check'):
-            for payment in self.filtered(lambda x: x.move_cheque_ids and not x._is_cheque_payment(check_subtype='move_check')):
-                payment.move_cheque_ids = False
+        for payment in self.filtered(lambda x: x.move_cheque_ids and not x._is_cheque_payment(check_subtype='move_check')):
+            payment.move_cheque_ids = False
         msgs = self._get_blocking_warning_msg()
         if msgs:
             raise ValidationError('* %s' % '\n* '.join(msgs))
@@ -168,7 +166,7 @@ class AccountPayment(models.Model):
         """
         Compute warning message for checks
         We use cheque_number as de dependency because on the interface this is the field the user is using.
-        Another approach could be to add an onchange on _inversecheque_number method
+        Another approach could be to add an onchange on _inverse_cheque_number method
         """
         self.cheque_warning_msg = False
         for rec in self.filtered(lambda x: x._is_cheque_payment()):

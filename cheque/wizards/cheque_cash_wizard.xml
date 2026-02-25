@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="cheque_outgoing_wizard_view" model="ir.ui.view">
-        <field name="name">cheque.outgoing.wizard</field>
-        <field name="model">cheque.outgoing.wizard</field>
+    <record id="cheque_cash_wizard_view" model="ir.ui.view">
+        <field name="name">cheque.cash.wizard</field>
+        <field name="model">cheque.cash.wizard</field>
         <field name="arch" type="xml">
             <form string="Cashed">
                 <group>
@@ -18,12 +18,11 @@
         </field>
     </record>
 
-
-    <record id="action_cheque_outgoing_wizard_view" model="ir.actions.act_window">
+    <record id="action_cheque_cash_wizard_view" model="ir.actions.act_window">
         <field name="name">Cashed</field>
-        <field name="res_model">cheque.outgoing.wizard</field>
+        <field name="res_model">cheque.cash.wizard</field>
         <field name="view_mode">form</field>
-        <field name="view_id" ref="cheque_outgoing_wizard_view"/>
+        <field name="view_id" ref="cheque_cash_wizard_view"/>
         <field name="target">new</field>
     </record>
 

@@ -1,14 +1,11 @@
 # pylint: disable=protected-access
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-import logging
 
 from odoo import models, fields, api
-import stdnum
-
-_logger = logging.getLogger(__name__)
+from ..models.mixins import ChequeIssuerMixin
 
 
-class ChequePaymentRegisterCheck(models.TransientModel):
+class ChequePaymentRegisterCheck(ChequeIssuerMixin, models.TransientModel):
     _name = 'payment.register.cheque'
     _description = 'Payment register check'
     _check_company_auto = True
@@ -32,35 +29,20 @@ class ChequePaymentRegisterCheck(models.TransientModel):
     payment_date = fields.Date(readonly=False, required=True)
     amount = fields.Monetary()
 
-    @api.onchange('name')
-    def _onchange_name(self):
-        if self.name:
-            self.name = self.name.zfill(8)
+    def _get_issuer_method_code(self):
+        return self.payment_register_id.payment_method_line_id.code
+
+    def _get_issuer_partner(self):
+        return self.payment_register_id.partner_id
 
     @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id')
     def _compute_issuer_name(self):
-        new_third_party_checks = self.filtered(lambda x: x.payment_register_id.payment_method_line_id.code == 'cheque_incoming')
-        for rec in new_third_party_checks:
-            rec.issuer_name = rec.payment_register_id.partner_id.name
-        (self - new_third_party_checks).issuer_name = False
+        self._compute_issuer_fields()
 
     @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id')
     def _compute_bank_id(self):
-        new_third_party_checks = self.filtered(lambda x: x.payment_register_id.payment_method_line_id.code == 'cheque_incoming')
-        for rec in new_third_party_checks:
-            rec.bank_id = rec.payment_register_id.partner_id.bank_ids[:1].bank_id
-        (self - new_third_party_checks).bank_id = False
+        self._compute_issuer_fields()
 
     @api.depends('payment_register_id.payment_method_line_id.code', 'payment_register_id.partner_id')
     def _compute_issuer_vat(self):
-        new_third_party_checks = self.filtered(lambda x: x.payment_register_id.payment_method_line_id.code == 'cheque_incoming')
-        for rec in new_third_party_checks:
-            rec.issuer_vat = rec.payment_register_id.partner_id.vat
-        (self - new_third_party_checks).issuer_vat = False
-
-    @api.onchange('issuer_vat')
-    def _clean_issuer_vat(self):
-        for rec in self.filtered(lambda x: x.issuer_vat and x.company_id.country_id.code):
-            stdnum_vat = stdnum.util.get_cc_module(rec.company_id.country_id.code, 'vat')
-            if hasattr(stdnum_vat, 'compact'):
-                rec.issuer_vat = stdnum_vat.compact(rec.issuer_vat)
+        self._compute_issuer_fields()

@@ -1,7 +1,14 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
+
+
+CHEQUE_STATE_TRANSITIONS = {
+    'register': ['deposit', 'voided'],
+    'deposit':  ['bounce', 'cashed'],
+    'bounce':   ['deposit', 'voided'],
+}
 
 
 class ChequeBulkStateUpdate(models.TransientModel):
@@ -25,13 +32,6 @@ class ChequeBulkStateUpdate(models.TransientModel):
             # Get selected cheques
             cheques = self.env['account.cheque'].browse(active_ids)
 
-            # State transition mapping
-            STATE_TRANSITIONS = {
-                'register': ['deposit', 'voided'],
-                'deposit': ['bounce', 'cashed'],
-                'bounce': ['deposit', 'voided'],
-            }
-
             # Group cheques by current state
             lines = []
             cheques_by_state = {}
@@ -43,23 +43,23 @@ class ChequeBulkStateUpdate(models.TransientModel):
             # Create one line per state group (skip if no valid transitions)
             for state, state_cheques in cheques_by_state.items():
                 # Skip states with no valid transitions (e.g., 'cashed')
-                if state not in STATE_TRANSITIONS:
+                if state not in CHEQUE_STATE_TRANSITIONS:
                     continue
 
                 line_vals = {
-                    'cheque_ids': [(6, 0, state_cheques.ids)],
+                    'cheque_ids': [Command.set(state_cheques.ids)],
                     'current_state': state,
                 }
 
                 # Auto-select state if only one option available
-                allowed_codes = STATE_TRANSITIONS[state]
+                allowed_codes = CHEQUE_STATE_TRANSITIONS[state]
                 if len(allowed_codes) == 1:
                     # Find the state option record
                     state_option = self.env['cheque.state.option'].search([('code', '=', allowed_codes[0])], limit=1)
                     if state_option:
                         line_vals['state_id'] = state_option.id
 
-                lines.append((0, 0, line_vals))
+                lines.append(Command.create(line_vals))
 
             # If no lines created, raise error (all cheques in terminal states)
             if not lines:
@@ -326,17 +326,10 @@ class ChequeBulkStateUpdateLine(models.TransientModel):
     @api.depends('wizard_id.line_ids.state_id', 'current_state')
     def _compute_available_state_ids(self):
         """Compute available states based on current state transitions"""
-        # State transition mapping based on button visibility
-        STATE_TRANSITIONS = {
-            'register': ['deposit', 'voided'],
-            'deposit': ['bounce', 'cashed'],
-            'bounce': ['deposit', 'voided'],
-        }
-
         for line in self:
             # Get allowed state codes based on current state
-            if line.current_state and line.current_state in STATE_TRANSITIONS:
-                allowed_codes = STATE_TRANSITIONS[line.current_state]
+            if line.current_state and line.current_state in CHEQUE_STATE_TRANSITIONS:
+                allowed_codes = CHEQUE_STATE_TRANSITIONS[line.current_state]
                 all_states = self.env['cheque.state.option'].search([('code', 'in', allowed_codes)])
             else:
                 # No valid transitions for this state (e.g., 'cashed')

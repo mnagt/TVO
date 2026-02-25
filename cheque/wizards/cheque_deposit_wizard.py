@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
 
 
@@ -66,7 +66,7 @@ class ChequeDepositWizard(models.TransientModel):
     @api.depends('cheque_ids')
     def _compute_currency_id(self):
         for wizard in self:
-            wizard.currency_id = wizard.cheque_ids[:1].currency_id if wizard.cheque_ids else self.env.company.currency_id
+            wizard.currency_id = wizard.cheque_ids[:1].currency_id if wizard.cheque_ids else wizard.company_id.currency_id
 
     @api.model
     def default_get(self, fields_list):
@@ -101,7 +101,7 @@ class ChequeDepositWizard(models.TransientModel):
             if len(companies) > 1:
                 raise UserError(_('All selected cheques must belong to the same company.'))
 
-            res['cheque_ids'] = [(6, 0, cheques.ids)]
+            res['cheque_ids'] = [Command.set(cheques.ids)]
             if companies:
                 res['company_id'] = companies[0].id
 

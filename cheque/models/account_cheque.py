@@ -1,17 +1,14 @@
 # pylint: disable=protected-access
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-import logging
 import stdnum
 
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import index_exists
+from .mixins import ChequeIssuerMixin
 
 
-_logger = logging.getLogger(__name__)
-
-
-class AccountPaymentCheque(models.Model):
+class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
     _name = 'account.cheque'
     _description = 'Account payment cheque'
     _check_company_auto = True
@@ -113,22 +110,78 @@ class AccountPaymentCheque(models.Model):
                 WHERE outstanding_line_id IS NOT NULL
             """)
 
-    @api.onchange('name')
-    def _onchange_name(self):
-        if self.name:
-            self.name = self.name.zfill(8)
+
+    def _get_move_amounts(self):
+        """Return (company_amount, payment_amount, currency_id) for the current cheque.
+
+        Source priority: collection_line_id (post-deposit) → outstanding_line_id (pre-deposit)
+        → cheque.amount (no line yet, e.g. legacy records).
+        """
+        line = self.collection_line_id or self.outstanding_line_id
+        if line:
+            company_amount = line.debit or line.credit
+            payment_amount = abs(line.amount_currency) if line.amount_currency else company_amount
+            currency_id = line.currency_id.id or self.currency_id.id
+        else:
+            company_amount = self.amount
+            payment_amount = self.amount
+            currency_id = self.currency_id.id
+        return company_amount, payment_amount, currency_id
+
+    def _build_move_line_vals(self, account_id, name, company_amount, payment_amount, currency_id, is_debit):
+        """Build a single journal entry line dict (debit or credit)."""
+        sign = 1 if is_debit else -1
+        return {
+            'account_id': account_id,
+            'partner_id': self.partner_id.id,
+            'name': name,
+            'debit': company_amount if is_debit else 0.0,
+            'credit': 0.0 if is_debit else company_amount,
+            'amount_currency': sign * payment_amount,
+            'currency_id': currency_id,
+            'date_maturity': self.payment_date,
+        }
+
+    def _create_transition_move(self, debit_account, credit_account, journal_id, date, label, reconcile_line=None):
+        """Create, post, and optionally reconcile a two-line cheque lifecycle journal entry.
+
+        Amounts are derived from the current cheque state via _get_move_amounts().
+        If reconcile_line is provided, the move line on the same account is reconciled with it.
+
+        :param debit_account: account.account record to debit
+        :param credit_account: account.account record to credit
+        :param journal_id: int, journal to post in
+        :param date: Date or None (defaults to today)
+        :param label: str, used as move ref and both line names
+        :param reconcile_line: account.move.line to reconcile with (optional)
+        :return: posted account.move
+        """
+        company_amount, payment_amount, line_currency_id = self._get_move_amounts()
+        debit  = self._build_move_line_vals(debit_account.id,  label, company_amount, payment_amount, line_currency_id, True)
+        credit = self._build_move_line_vals(credit_account.id, label, company_amount, payment_amount, line_currency_id, False)
+        move = self.env['account.move'].create({
+            'date': date or fields.Date.today(),
+            'journal_id': journal_id,
+            'ref': label,
+            'line_ids': [Command.create(debit), Command.create(credit)],
+        })
+        move.action_post()
+        if reconcile_line:
+            target = move.line_ids.filtered(lambda l: l.account_id == reconcile_line.account_id)
+            (target + reconcile_line).reconcile()
+        return move
+
+    def _get_issuer_method_code(self):
+        return self.payment_method_line_id.code
+
+    def _get_issuer_partner(self):
+        return self.payment_id.partner_id
 
     def _prepare_void_move_vals(self):
         """Prepare journal entry to void/return cheque and reopen the original debt."""
         counterpart_line = self.payment_id.move_id.line_ids.filtered(
             lambda l: l.account_id == self.payment_id.destination_account_id
         )
-        _logger.warning("VOID DEBUG: counterpart_lines=%s count=%d balance=%s amount_currency=%s",
-            counterpart_line.ids, len(counterpart_line),
-            counterpart_line.balance, counterpart_line.amount_currency)
-        _logger.warning("VOID DEBUG: outstanding_line=%s balance=%s amount_currency=%s",
-            self.outstanding_line_id.id,
-            self.outstanding_line_id.balance, self.outstanding_line_id.amount_currency)
         return {
             'ref': _('Void cheque %s') % self.name,
             'journal_id': self.payment_id.journal_id.id,
@@ -156,6 +209,7 @@ class AccountPaymentCheque(models.Model):
 
     def action_void(self):
         """Void cheque - cancels the check and reopens the original debt."""
+        voided = self.env['account.cheque']
         for rec in self:
             if not rec.payment_id or not rec.payment_id.move_id:
                 continue
@@ -186,8 +240,10 @@ class AccountPaymentCheque(models.Model):
             void_move = rec.env['account.move'].create(rec._prepare_void_move_vals())
             void_move.action_post()
             (void_move.line_ids[1] + reconcile_line).reconcile()
-        # Update state for all voided checks
-        self.write({'state': 'voided'})
+            voided |= rec
+        # Update state for successfully voided checks only
+        if voided:
+            voided.write({'state': 'voided'})
 
     def action_bounce(self):
         """
@@ -198,9 +254,6 @@ class AccountPaymentCheque(models.Model):
 
         # If cheque was deposited, reverse the deposit move
         if self.state == 'deposit' and self.deposit_journal_id:
-            Move = self.env['account.move']
-
-            # Get accounts - use collection account instead of bank
             if self.collection_line_id:
                 collection_account = self.collection_line_id.account_id
             else:
@@ -209,54 +262,15 @@ class AccountPaymentCheque(models.Model):
 
             outstanding_account = self.payment_id.outstanding_account_id
 
-            # Multi-currency: mirror collection_line_id amounts for exact reversal of deposit
-            if self.collection_line_id:
-                company_amount = self.collection_line_id.debit
-                payment_amount = abs(self.collection_line_id.amount_currency) if self.collection_line_id.amount_currency else company_amount
-                line_currency_id = self.collection_line_id.currency_id.id or self.currency_id.id
-            elif self.outstanding_line_id:
-                company_amount = self.outstanding_line_id.debit or self.outstanding_line_id.credit
-                payment_amount = abs(self.outstanding_line_id.amount_currency) if self.outstanding_line_id.amount_currency else company_amount
-                line_currency_id = self.outstanding_line_id.currency_id.id or self.currency_id.id
-            else:
-                company_amount = self.amount
-                payment_amount = self.amount
-                line_currency_id = self.currency_id.id
-
-            # Reverse deposit: Debit Outstanding, Credit Collection
-            debit_line = {
-                'account_id': outstanding_account.id,
-                'partner_id': self.partner_id.id,
-                'name': _('Bounce: %s') % self.name,
-                'debit': company_amount,
-                'credit': 0.0,
-                'amount_currency': payment_amount,
-                'currency_id': line_currency_id,
-                'date_maturity': self.payment_date,
-            }
-            credit_line = {
-                'account_id': collection_account.id,
-                'partner_id': self.partner_id.id,
-                'name': _('Bounce: %s') % self.name,
-                'debit': 0.0,
-                'credit': company_amount,
-                'amount_currency': -payment_amount,
-                'currency_id': line_currency_id,
-                'date_maturity': self.payment_date,
-            }
-
-            move_vals = {
-                'date': fields.Date.today(),
-                'journal_id': self.deposit_journal_id.id,
-                'ref': _('Bounce: %s') % self.name,
-                'line_ids': [(0, 0, debit_line), (0, 0, credit_line)]
-            }
-            move = Move.create(move_vals)
-            move.action_post()
-
-            # Reconcile collection line with bounce credit
-            if self.collection_line_id:
-                (move.line_ids.filtered(lambda l: l.account_id == collection_account) + self.collection_line_id).reconcile()
+            label = _('Bounce: %s') % self.name
+            move = self._create_transition_move(
+                debit_account=outstanding_account,
+                credit_account=collection_account,
+                journal_id=self.deposit_journal_id.id,
+                date=fields.Date.today(),
+                label=label,
+                reconcile_line=self.collection_line_id,
+            )
 
             # Update outstanding_line_id to the new debit line for later void/re-deposit
             new_outstanding_line = move.line_ids.filtered(lambda l: l.account_id == outstanding_account)
@@ -289,70 +303,29 @@ class AccountPaymentCheque(models.Model):
                 'view_mode': 'form',
                 'target': 'new',
                 'context': {
-                    'default_cheque_ids': [(6, 0, self.ids)],
+                    'default_cheque_ids': [Command.set(self.ids)],
                     'default_company_id': self.company_id.id,
                 }
             }
 
-        # Create deposit accounting move
-        Move = self.env['account.move']
         bank_journal = self.env['account.journal'].browse(bank_journal_id)
 
-        # Use collection account from original journal (cheque journal)
         collection_account = self.original_journal_id.cheque_collection_account_id
         if not collection_account:
             raise UserError(_('Please configure "Cheques Under Collection Account" on journal "%s".') % self.original_journal_id.name)
 
-        # Use outstanding line's account for reconciliation
         outstanding_account = self.outstanding_line_id.account_id if self.outstanding_line_id else self.payment_id.outstanding_account_id
 
-        # Multi-currency: derive company-currency amount from the original payment line
-        if self.outstanding_line_id:
-            company_amount = self.outstanding_line_id.debit or self.outstanding_line_id.credit
-            payment_amount = abs(self.outstanding_line_id.amount_currency) if self.outstanding_line_id.amount_currency else company_amount
-            line_currency_id = self.outstanding_line_id.currency_id.id or self.currency_id.id
-        else:
-            company_amount = self.amount
-            payment_amount = self.amount
-            line_currency_id = self.currency_id.id
-
-        # Debit: Collection Account, Credit: Outstanding
-        debit_line = {
-            'account_id': collection_account.id,
-            'partner_id': self.partner_id.id,
-            'name': _('Deposit: %s') % self.name,
-            'debit': company_amount,
-            'credit': 0.0,
-            'amount_currency': payment_amount,
-            'currency_id': line_currency_id,
-            'date_maturity': self.payment_date,
-        }
-        credit_line = {
-            'account_id': outstanding_account.id,
-            'partner_id': self.partner_id.id,
-            'name': _('Deposit: %s') % self.name,
-            'debit': 0.0,
-            'credit': company_amount,
-            'amount_currency': -payment_amount,
-            'currency_id': line_currency_id,
-            'date_maturity': self.payment_date,
-        }
-
-        move_vals = {
-            'date': deposit_date or fields.Date.today(),
-            'journal_id': bank_journal.id,
-            'ref': _('Deposit: %s') % self.name,
-            'line_ids': [(0, 0, debit_line), (0, 0, credit_line)]
-        }
-        move = Move.create(move_vals)
-        move.action_post()
-
-        # Get the collection line for later reconciliation at cashed
+        label = _('Deposit: %s') % self.name
+        move = self._create_transition_move(
+            debit_account=collection_account,
+            credit_account=outstanding_account,
+            journal_id=bank_journal.id,
+            date=deposit_date,
+            label=label,
+            reconcile_line=self.outstanding_line_id,
+        )
         collection_line = move.line_ids.filtered(lambda l: l.account_id == collection_account)
-
-        # Reconcile with outstanding line
-        if self.outstanding_line_id:
-            (move.line_ids.filtered(lambda l: l.account_id == outstanding_account) + self.outstanding_line_id).reconcile()
 
         # Update cheque
         self.write({
@@ -363,10 +336,6 @@ class AccountPaymentCheque(models.Model):
         })
 
         return True
-    
-    def action_cashed(self):
-        self.ensure_one()
-        return self.write({'state': 'cashed'})
 
     def _get_last_operation(self):
         self.ensure_one()
@@ -396,7 +365,7 @@ class AccountPaymentCheque(models.Model):
         self.ensure_one()
         operations = ((self.operation_ids + self.payment_id).filtered(lambda x: x.state not in ['draft', 'canceled']))
         action = {
-            'name': _("cheque Operations"),
+            'name': _("Cheque Operations"),
             'type': 'ir.actions.act_window',
             'res_model': 'account.payment',
             'views': [
@@ -429,31 +398,15 @@ class AccountPaymentCheque(models.Model):
 
     @api.depends('payment_method_line_id.code', 'payment_id.partner_id')
     def _compute_issuer_name(self):
-        new_cheques = self.filtered(lambda x: x.payment_method_line_id.code == 'cheque_incoming')
-        for rec in new_cheques:
-            rec.issuer_name = rec.payment_id.partner_id.name
-        (self - new_cheques).issuer_name = False
+        self._compute_issuer_fields()
 
     @api.depends('payment_method_line_id.code', 'payment_id.partner_id')
     def _compute_bank_id(self):
-        new_cheques = self.filtered(lambda x: x.payment_method_line_id.code == 'cheque_incoming')
-        for rec in new_cheques:
-            rec.bank_id = rec.partner_id.bank_ids[:1].bank_id
-        (self - new_cheques).bank_id = False
+        self._compute_issuer_fields()
 
     @api.depends('payment_method_line_id.code', 'payment_id.partner_id')
     def _compute_issuer_vat(self):
-        new_cheques = self.filtered(lambda x: x.payment_method_line_id.code == 'cheque_incoming')
-        for rec in new_cheques:
-            rec.issuer_vat = rec.payment_id.partner_id.vat
-        (self - new_cheques).issuer_vat = False
-
-    @api.onchange('issuer_vat')
-    def _clean_issuer_vat(self):
-        for rec in self.filtered(lambda x: x.issuer_vat and x.company_id.country_id.code):
-            stdnum_vat = stdnum.util.get_cc_module(rec.company_id.country_id.code, 'vat')
-            if hasattr(stdnum_vat, 'compact'):
-                rec.issuer_vat = stdnum_vat.compact(rec.issuer_vat)
+        self._compute_issuer_fields()
 
     @api.constrains('issuer_vat')
     def _check_issuer_vat(self):
@@ -467,7 +420,7 @@ class AccountPaymentCheque(models.Model):
     @api.ondelete(at_uninstall=False)
     def _unlink_if_payment_is_draft(self):
         if any(check.payment_id.state != 'draft' for check in self):
-            raise UserError("Can't delete a cheque if payment is In Process!")
+            raise UserError(_("Can't delete a cheque if payment is In Process!"))
 
     def action_cash(self, bank_account_id, cashed_date):
         """
@@ -478,83 +431,29 @@ class AccountPaymentCheque(models.Model):
         """
         self.ensure_one()
 
-        Move = self.env['account.move']
         bank_account = self.env['account.account'].browse(bank_account_id)
 
-        # Use collection account (from deposit) instead of outstanding
         if self.collection_line_id:
             collection_account = self.collection_line_id.account_id
         else:
             # Fallback for cheques deposited before this change
             collection_account = self.payment_id.outstanding_account_id
 
-        # Multi-currency: derive company-currency amount from collection line
-        if self.collection_line_id:
-            company_amount = self.collection_line_id.debit
-            payment_amount = abs(self.collection_line_id.amount_currency) if self.collection_line_id.amount_currency else company_amount
-            line_currency_id = self.collection_line_id.currency_id.id or self.currency_id.id
+        label = _('Cashed: %s') % self.name
+
+        if self.payment_type == 'inbound':
+            debit_account, credit_account = bank_account, collection_account
         else:
-            company_amount = self.amount
-            payment_amount = self.amount
-            line_currency_id = self.currency_id.id
+            debit_account, credit_account = collection_account, bank_account
 
-        if self.payment_type == 'inbound':  # incoming cheque
-            # Debit: Bank, Credit: Collection
-            debit_line = {
-                'account_id': bank_account.id,
-                'partner_id': self.partner_id.id,
-                'name': _('Cashed: %s') % self.name,
-                'debit': company_amount,
-                'credit': 0,
-                'amount_currency': payment_amount,
-                'currency_id': line_currency_id,
-                'date_maturity': self.payment_date,
-            }
-            credit_line = {
-                'account_id': collection_account.id,
-                'partner_id': self.partner_id.id,
-                'name': _('Cashed: %s') % self.name,
-                'debit': 0,
-                'credit': company_amount,
-                'amount_currency': -payment_amount,
-                'currency_id': line_currency_id,
-                'date_maturity': self.payment_date,
-            }
-        else:  # outbound cheque
-            # Debit: Collection, Credit: Bank
-            debit_line = {
-                'account_id': collection_account.id,
-                'partner_id': self.partner_id.id,
-                'name': _('Cashed: %s') % self.name,
-                'debit': company_amount,
-                'credit': 0,
-                'amount_currency': payment_amount,
-                'currency_id': line_currency_id,
-                'date_maturity': self.payment_date,
-            }
-            credit_line = {
-                'account_id': bank_account.id,
-                'partner_id': self.partner_id.id,
-                'name': _('Cashed: %s') % self.name,
-                'debit': 0,
-                'credit': company_amount,
-                'amount_currency': -payment_amount,
-                'currency_id': line_currency_id,
-                'date_maturity': self.payment_date,
-            }
-
-        move_vals = {
-            'date': cashed_date or fields.Date.today(),
-            'journal_id': self.deposit_journal_id.id or self.original_journal_id.id,
-            'ref': _('Cashed: %s') % self.name,
-            'line_ids': [(0, 0, debit_line), (0, 0, credit_line)]
-        }
-        move = Move.create(move_vals)
-        move.action_post()
-
-        # Reconcile with collection line
-        if self.collection_line_id:
-            (move.line_ids.filtered(lambda l: l.account_id == collection_account) + self.collection_line_id).reconcile()
+        self._create_transition_move(
+            debit_account=debit_account,
+            credit_account=credit_account,
+            journal_id=self.deposit_journal_id.id or self.original_journal_id.id,
+            date=cashed_date,
+            label=label,
+            reconcile_line=self.collection_line_id,
+        )
 
         # Update cheque with cashed date and state
         self.write({'cashed_date': cashed_date, 'state': 'cashed'})

@@ -1,5 +1,6 @@
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import ValidationError
+from ..constants import CHEQUE_NEW_CODES, CHEQUE_MOVE_CODES, CHEQUE_ALL_CODES
 
 
 class AccountPaymentRegister(models.TransientModel):
@@ -28,12 +29,10 @@ class AccountPaymentRegister(models.TransientModel):
 
     def _is_cheque_payment(self, check_subtype=False):
         if check_subtype == 'move_check':
-            codes = ['cheque_existing_in', 'cheque_existing_out', 'cheque_return']
+            return self.payment_method_code in CHEQUE_MOVE_CODES
         elif check_subtype == 'new_check':
-            codes = ['cheque_incoming', 'cheque_outgoing']
-        else:
-            codes = ['cheque_existing_in', 'cheque_existing_out', 'cheque_return', 'cheque_incoming', 'cheque_outgoing']
-        return self.payment_method_code in codes
+            return self.payment_method_code in CHEQUE_NEW_CODES
+        return self.payment_method_code in CHEQUE_ALL_CODES
 
     def _create_payment_vals_from_wizard(self, batch_result):
         vals = super()._create_payment_vals_from_wizard(batch_result)
