@@ -218,8 +218,11 @@ class AccountPayment(models.Model):
                 # Calculate total and individual amounts
                 checks_total = sum(cheques.mapped('amount'))
 
-                # Calculate original balance from debit and credit
-                original_balance = liquidity_line_vals.get('debit', 0.0) - liquidity_line_vals.get('credit', 0.0)
+                # Calculate original balance from balance key (Odoo 18) with fallback to debit/credit (backwards compatibility)
+                original_balance = liquidity_line_vals.get(
+                    'balance',
+                    liquidity_line_vals.get('debit', 0.0) - liquidity_line_vals.get('credit', 0.0)
+                )
                 liquidity_balance_total = 0.0
 
                 for check in cheques:
@@ -229,10 +232,10 @@ class AccountPayment(models.Model):
                     # Calculate balance for this cheque
                     if check == cheques[-1]:
                         # Last cheque gets the remaining balance to avoid rounding issues
-                        liquidity_balance = self.currency_id.round(original_balance - liquidity_balance_total)
+                        check_balance = self.currency_id.round(original_balance - liquidity_balance_total)
                     else:
-                        liquidity_balance = self.currency_id.round(original_balance * check.amount / checks_total)
-                        liquidity_balance_total += liquidity_balance
+                        check_balance = self.currency_id.round(original_balance * check.amount / checks_total)
+                        liquidity_balance_total += check_balance
 
                     # Determine amount_currency based on payment direction
                     amount_currency = check.amount if liquidity_line_vals['amount_currency'] > 0 else -check.amount
@@ -245,9 +248,12 @@ class AccountPayment(models.Model):
                             suffix=''.join([item[1] for item in self._get_aml_default_display_name_list()])),
                         'date_maturity': check.payment_date,
                         'amount_currency': amount_currency,
-                        'debit': max(0.0, liquidity_balance),
-                        'credit': -min(liquidity_balance, 0.0),
+                        'balance': check_balance,
                     })
+                    
+                    # Remove legacy keys so they don't conflict with the balance field
+                    check_line_vals.pop('debit', None)
+                    check_line_vals.pop('credit', None)
 
                     new_liquidity_lines.append(check_line_vals)
 

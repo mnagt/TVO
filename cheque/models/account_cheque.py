@@ -123,25 +123,23 @@ class AccountPaymentCheque(models.Model):
         counterpart_line = self.payment_id.move_id.line_ids.filtered(
             lambda l: l.account_id == self.payment_id.destination_account_id
         )
-        _logger.warning("VOID DEBUG: counterpart_lines=%s count=%d debit=%s credit=%s amount_currency=%s",
+        _logger.warning("VOID DEBUG: counterpart_lines=%s count=%d balance=%s amount_currency=%s",
             counterpart_line.ids, len(counterpart_line),
-            counterpart_line.debit, counterpart_line.credit, counterpart_line.amount_currency)
-        _logger.warning("VOID DEBUG: outstanding_line=%s debit=%s credit=%s amount_currency=%s",
+            counterpart_line.balance, counterpart_line.amount_currency)
+        _logger.warning("VOID DEBUG: outstanding_line=%s balance=%s amount_currency=%s",
             self.outstanding_line_id.id,
-            self.outstanding_line_id.debit, self.outstanding_line_id.credit,
-            self.outstanding_line_id.amount_currency)
+            self.outstanding_line_id.balance, self.outstanding_line_id.amount_currency)
         return {
             'ref': _('Void cheque %s') % self.name,
             'journal_id': self.payment_id.journal_id.id,
             'line_ids': [
                 Command.create({
                     'name': _('Void cheque %s') % self.name,
-                    'date_maturity': counterpart_line.date_maturity,
-                    'amount_currency': -counterpart_line.amount_currency,
-                    'currency_id': counterpart_line.currency_id.id,
-                    'debit': counterpart_line.credit,
-                    'credit': counterpart_line.debit,
-                    'partner_id': counterpart_line.partner_id.id,
+                    'date_maturity': self.outstanding_line_id.date_maturity,
+                    'amount_currency': self.outstanding_line_id.amount_currency,
+                    'currency_id': self.outstanding_line_id.currency_id.id,
+                    'balance': self.outstanding_line_id.balance,
+                    'partner_id': self.outstanding_line_id.partner_id.id,
                     'account_id': counterpart_line.account_id.id,
                 }),
                 Command.create({
@@ -149,8 +147,7 @@ class AccountPaymentCheque(models.Model):
                     'date_maturity': self.outstanding_line_id.date_maturity,
                     'amount_currency': -self.outstanding_line_id.amount_currency,
                     'currency_id': self.outstanding_line_id.currency_id.id,
-                    'debit': self.outstanding_line_id.credit,
-                    'credit': self.outstanding_line_id.debit,
+                    'balance': -self.outstanding_line_id.balance,
                     'partner_id': self.outstanding_line_id.partner_id.id,
                     'account_id': self.outstanding_line_id.account_id.id,
                 }),
