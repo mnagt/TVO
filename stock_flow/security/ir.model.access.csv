@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+user_stock_flow_manager,user_stock_flow_manager,model_stock_product_flow_report,stock.group_stock_manager,1,0,0,0
+user_stock_flow_user,user_stock_flow_user,model_stock_product_flow_report,stock.group_stock_user,1,0,0,0
