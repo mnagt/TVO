@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="account_extension_tl_gl.GeneralLedgerListView"
+       t-inherit="web.ListView"
+       t-inherit-mode="primary">
+        <xpath expr="//t[@t-set-slot='control-panel-navigation-additional']" position="inside">
+            <!-- Always shown: module being installed = feature is active -->
+            <div class="d-flex align-items-center gap-2 order-first">
+                <div class="btn-group" role="group">
+                    <button
+                        t-att-class="isTlView ? 'btn btn-primary btn-sm' : 'btn btn-outline-secondary btn-sm'"
+                        type="button"
+                        t-on-click="onTlReport">
+                        TL
+                    </button>
+                    <button
+                        t-att-class="!isTlView ? 'btn btn-primary btn-sm' : 'btn btn-outline-secondary btn-sm'"
+                        type="button"
+                        t-on-click="onUsdReport">
+                        USD
+                    </button>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

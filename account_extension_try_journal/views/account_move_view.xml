@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_move_line_tree_try_fields" model="ir.ui.view">
+        <field name="name">account.move.line.tree.try.fields</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="amount_currency" position="after">
+                <field name="tr_currency_id" optional="hide"/>
+                <field name="amount_tr_currency" string="TRY Value" optional="show"/>
+                <field name="tr_rate_display" string="TRY Rate" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

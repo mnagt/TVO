@@ -1,0 +1,1 @@
+# No models left - fields moved to parent account_extension module
