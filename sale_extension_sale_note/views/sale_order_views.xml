@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_bank_accounts" model="ir.ui.view">
+        <field name="name">sale.order.form.bank.accounts</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Add company_partner_id for domain computation -->
+            <field name="company_id" position="after">
+                <field name="company_partner_id" invisible="1"/>
+            </field>
+
+            <!-- Add Bank Accounts notebook page -->
+            <xpath expr="//notebook" position="inside">
+                <page name="bank_accounts" string="Bank Accounts">
+                    <field name="bank_account_ids" nolabel="1">
+                        <list create="true" delete="true">
+                            <field name="acc_number" string="IBAN"/>
+                            <field name="bank_id" string="Bank Name"/>
+                            <field name="currency_id" string="Currency"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

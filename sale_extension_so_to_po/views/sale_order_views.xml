@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit sale order form view -->
+        <record id="view_order_form_inherit_so_to_po" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit.so.to.po</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!-- Add button in header -->
+                <xpath expr="//header" position="inside">
+                    <!-- Create Intercompany PO button (visible before conversion) -->
+                    <button name="action_create_intercompany_po"
+                            string="Create Intercompany PO"
+                            type="object"
+                            class="btn-secondary"
+                            groups="sale_extension_so_to_po.group_so_to_po_user"
+                            invisible="state not in ('sale', 'done') or not intercompany_company_id or intercompany_po_id"/>
+                    
+                    <!-- Converted badge (visible after conversion) -->
+                    <button name="action_view_intercompany_po"
+                            string="Converted to PO"
+                            type="object"
+                            class="btn-secondary"
+                            groups="sale_extension_so_to_po.group_so_to_po_user"
+                            invisible="not intercompany_po_id"/>
+                </xpath>
+
+                <!-- Add invisible fields for computations -->
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="intercompany_company_id" invisible="1"/>
+                    <field name="intercompany_po_id" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

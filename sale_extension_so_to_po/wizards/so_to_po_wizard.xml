@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_so_to_po_wizard_form" model="ir.ui.view">
+            <field name="name">so.to.po.wizard.form</field>
+            <field name="model">so.to.po.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Create Intercompany Purchase Order">
+                    <group>
+                        <field name="sale_order_id" readonly="1"/>
+                        <field name="target_company_id" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button string="Confirm" name="action_confirm" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

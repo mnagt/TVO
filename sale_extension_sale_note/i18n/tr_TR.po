@@ -1,0 +1,35 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_note
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-04 12:00:00\n"
+"PO-Revision-Date: 2026-01-04 12:00:00\n"
+"Last-Translator: \n"
+"Language-Team: Turkish\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: sale_note
+#: code:addons/sale_note/models/sale_order.py:0
+#, python-format
+msgid "State: %s"
+msgstr "Cari hesap şehir: %s"
+
+#. module: sale_note
+#: code:addons/sale_note/models/sale_order.py:0
+#, python-format
+msgid "USD/TRY Rate: %s"
+msgstr "Döviz kuru: %s"
+
+#. module: sale_note
+#: code:addons/sale_note/models/sale_order.py:0
+#, python-format
+msgid "Total in TRY: %s"
+msgstr "TRY Toplamı: %s"

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.sale_extension</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='sale_management']" position="inside">
+                <block title="Sale Extension">
+                    <setting string="Sale Note with Bank Accounts"
+                             help="Auto-generate sale order notes with exchange rates and bank account selection.">
+                        <field name="module_sale_extension_sale_note"/>
+                    </setting>
+                    <setting string="Intercompany SO to PO"
+                             help="Convert confirmed sale orders to purchase orders for intercompany transactions.">
+                        <field name="module_sale_extension_so_to_po"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
