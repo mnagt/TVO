@@ -2,63 +2,96 @@
 <templates xml:space="preserve">
 
     <t t-name="partner_balance.PartnerBalanceToolbar">
-        <div class="partner-balance-toolbar d-flex align-items-center gap-3 px-3 py-2">
+        <div class="partner-balance-toolbar-wrapper">
 
-            <!-- Excel Export Button -->
-            <button class="btn btn-outline-success btn-sm"
-                    type="button"
-                    title="Export to Excel"
-                    t-on-click="handleExcelExport">
-                <i class="fa fa-file-excel-o"/>
-            </button>
+            <!-- TOP BAR: report type navigation -->
+            <div class="report-type-bar d-flex align-items-center justify-content-center gap-2 px-3 py-2 border-bottom">
+                <button t-if="props.userConfig.show_ledger"
+                        t-att-class="props.reportType === 'ledger' ? 'btn btn-secondary btn-sm' : 'btn btn-outline-secondary btn-sm'"
+                        type="button"
+                        t-on-click="handleLedgerReport">
+                    <i class="fa fa-list"/> Ledger
+                </button>
+                <button t-if="props.userConfig.show_aged"
+                        t-att-class="props.reportType === 'aged' ? 'btn btn-secondary btn-sm' : 'btn btn-outline-secondary btn-sm'"
+                        type="button"
+                        t-on-click="handleAgedReport">
+                    <i class="fa fa-clock-o"/> Aged
+                </button>
+            </div>
 
-            <!-- Date From -->
-            <label class="mb-0 text-muted small">From:</label>
-            <input type="date"
-                   class="form-control form-control-sm"
-                   style="width: auto;"
-                   t-ref="dateFrom"
-                   t-att-value="props.dateFrom"
-                   t-on-change="handleDateChange"/>
+            <!-- BOTTOM BAR: existing options -->
+            <div class="partner-balance-toolbar d-flex align-items-center gap-3 px-3 py-2">
 
-            <!-- Date To -->
-            <label class="mb-0 text-muted small">End:</label>
-            <input type="date"
-                   class="form-control form-control-sm"
-                   style="width: auto;"
-                   t-ref="dateTo"
-                   t-att-value="props.dateTo"
-                   t-on-change="handleDateChange"/>
+                <!-- Excel Export Button -->
+                <button t-if="props.userConfig.show_excel"
+                        class="btn btn-outline-success btn-sm"
+                        type="button"
+                        title="Export to Excel"
+                        t-on-click="handleExcelExport">
+                    <i class="fa fa-file-excel-o"/>
+                </button>
+
+                <t t-if="props.showDateInputs">
+                    <!-- Date From -->
+                    <label class="mb-0 text-muted small">From:</label>
+                    <input type="date"
+                           class="form-control form-control-sm"
+                           style="width: auto;"
+                           t-ref="dateFrom"
+                           t-att-value="props.dateFrom"
+                           t-on-change="handleDateChange"/>
+
+                    <!-- Date To -->
+                    <label class="mb-0 text-muted small">End:</label>
+                    <input type="date"
+                           class="form-control form-control-sm"
+                           style="width: auto;"
+                           t-ref="dateTo"
+                           t-att-value="props.dateTo"
+                           t-on-change="handleDateChange"/>
+                </t>
 
 
             <!-- TL Report Button -->
-            <button t-if="!props.isTrReport"
+            <button t-if="!props.isTrReport and props.userConfig.show_tl"
                     class="btn btn-outline-secondary btn-sm"
                     t-on-click="handleTrReport">
                 <i class="fa fa-try"/> TL
             </button>
 
             <!-- USD Report Button (shown only in TRY report) -->
-            <button t-if="props.isTrReport"
+            <button t-if="props.isTrReport and props.userConfig.show_usd"
                     class="btn btn-outline-secondary btn-sm"
                     t-on-click="handleUsdReport">
                 <i class="fa fa-usd"/> USD
             </button>
 
-            <button class="btn btn-sm"
+            <button t-if="props.userConfig.show_products"
+                    class="btn btn-sm"
                     t-att-class="props.showProducts ? 'btn-secondary' : 'btn-outline-secondary'"
                     t-on-click="handleToggleProducts">
                 <i class="fa fa-list-alt"/> Products
             </button>
 
+            <button t-if="props.showDateInputs and props.dateFrom and props.userConfig.show_skip_opening"
+                    class="btn btn-sm"
+                    t-att-class="props.skipOpening ? 'btn-warning' : 'btn-outline-warning'"
+                    t-on-click="handleToggleSkipOpening"
+                    title="Skip initial balance calculation">
+                <i class="fa fa-forward"/> Skip Opening
+            </button>
+
             <!-- Currency Summary Section -->
-            <div t-if="props.showSummary and currencyEntries.length > 0"
+            <div t-if="props.showSummary and currencyEntries.length > 0 and !props.skipOpening"
                  class="d-flex align-items-center gap-2 ms-auto">
                 <t t-foreach="currencyEntries" t-as="entry" t-key="entry[0]">
                     <span class="badge bg-info text-dark">
                         <t t-esc="entry[1].symbol or entry[0]"/>  <t t-esc="formatCurrency(entry[1].opening)"/>
                     </span>
                 </t>
+            </div>
+
             </div>
 
         </div>

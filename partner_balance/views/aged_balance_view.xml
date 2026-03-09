@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Search View -->
+    <record id="view_aged_balance_line_search" model="ir.ui.view">
+        <field name="name">account.aged.balance.line.search</field>
+        <field name="model">account.aged.balance.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <group expand="1" string="Group By">
+                    <filter name="group_by_bucket"  string="Bucket"  context="{'group_by': 'bucket'}"/>
+                    <filter name="group_by_account" string="Account" context="{'group_by': 'account_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- USD List View -->
+    <record id="view_aged_balance_line_tree" model="ir.ui.view">
+        <field name="name">account.aged.balance.line.tree</field>
+        <field name="model">account.aged.balance.line</field>
+        <field name="arch" type="xml">
+            <list string="Aged Balance"
+                  create="false" delete="false" edit="false"
+                  js_class="partner_balance"
+                  decoration-danger="days_overdue > 0 and line_type == 'summary'"
+                  decoration-info="line_type == 'product'">
+                <field name="reference"      string="Document"/>
+                <field name="date"           string="Date"/>
+                <field name="date_maturity"  string="Due Date"/>
+                <field name="days_overdue"   string="Days"/>
+                <field name="amount_residual" string="Residual"/>
+                <field name="bucket_display"  string="Bucket"/>
+                <!-- hidden -->
+                <field name="company_currency_id" column_invisible="True"/>
+                <field name="line_type"      column_invisible="True"/>
+                <field name="type_key"       column_invisible="True"/>
+                <field name="move_id"        column_invisible="True"/>
+                <field name="bucket"         column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- TRY List View -->
+    <record id="view_aged_balance_line_tr_tree" model="ir.ui.view">
+        <field name="name">account.aged.balance.line.tr.tree</field>
+        <field name="model">account.aged.balance.line</field>
+        <field name="arch" type="xml">
+            <list string="Aged Balance (TRY)"
+                  create="false" delete="false" edit="false"
+                  js_class="partner_balance"
+                  decoration-danger="days_overdue > 0 and line_type == 'summary'"
+                  decoration-info="line_type == 'product'">
+                <field name="reference"           string="Document"/>
+                <field name="date"                string="Date"/>
+                <field name="date_maturity"       string="Due Date"/>
+                <field name="days_overdue"        string="Days"/>
+                <field name="amount_residual_try" string="TRY Residual"/>
+                <field name="tr_rate_display"     string="Rate"/>
+                <field name="bucket_display"      string="Bucket"/>
+                <!-- hidden -->
+                <field name="tr_currency_id"      column_invisible="True"/>
+                <field name="company_currency_id" column_invisible="True"/>
+                <field name="line_type"           column_invisible="True"/>
+                <field name="type_key"            column_invisible="True"/>
+                <field name="move_id"             column_invisible="True"/>
+                <field name="bucket"              column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- USD Action -->
+    <record id="action_aged_balance" model="ir.actions.act_window">
+        <field name="name">Aged Balance</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.aged.balance.line</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="partner_balance.view_aged_balance_line_tree"/>
+        <field name="views" eval="[(ref('partner_balance.view_aged_balance_line_tree'), 'list')]"/>
+        <field name="target">current</field>
+        <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
+        <field name="context">{
+            'report_type': 'aged',
+            'search_default_group_by_bucket': 1
+        }</field>
+    </record>
+
+    <!-- TRY Action -->
+    <record id="action_aged_balance_tr" model="ir.actions.act_window">
+        <field name="name">Aged Balance in TRY</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">account.aged.balance.line</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="partner_balance.view_aged_balance_line_tr_tree"/>
+        <field name="views" eval="[(ref('partner_balance.view_aged_balance_line_tr_tree'), 'list')]"/>
+        <field name="target">current</field>
+        <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
+        <field name="context">{
+            'report_type': 'aged',
+            'search_default_group_by_bucket': 1,
+            'action_name': 'Statement in TRY'
+        }</field>
+    </record>
+
+</odoo>

@@ -9,12 +9,21 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <div name="button_box" position="inside">
+                <xpath expr="//div[@name='button_box']/*[1]" position="before">
                     <button name="action_view_move_line_report"
-                    type="object"
-                    string="SOA"
-                    class="btn-primary" />
-                </div>
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-book"
+                        groups="partner_balance.group_partner_balance_user">
+                        <div class="o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="partner_balance" widget="monetary"
+                                    options="{'currency_field': 'currency_id'}"/>
+                            </span>
+                            <span class="o_stat_text">Balance</span>
+                        </div>
+                    </button>
+                </xpath>
             </field>
         </record>
 
@@ -81,7 +90,7 @@
             <field name="views" eval="[(ref('partner_balance.view_account_move_line_report_tr_tree'), 'list')]"/>
             <field name="target">current</field>
             <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
-            <field name="context">{'search_default_group_by_account': 1}</field>
+            <field name="context">{'search_default_group_by_account': 1, 'report_type': 'ledger'}</field>
         </record>
         
         <record id="action_partner_move_line_usd" model="ir.actions.act_window">
@@ -93,7 +102,7 @@
             <field name="views" eval="[(ref('partner_balance.view_account_move_line_report_tree'), 'list')]"/>
             <field name="target">current</field>
             <field name="domain">[('partner_id', '=', active_id), ('line_type', '=', 'summary')]</field>
-            <field name="context">{'search_default_group_by_account': 1}</field>
+            <field name="context">{'search_default_group_by_account': 1, 'report_type': 'ledger'}</field>
         </record>
 
     </data>

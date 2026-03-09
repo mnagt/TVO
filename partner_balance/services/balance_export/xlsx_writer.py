@@ -429,3 +429,95 @@ class GroupedBalanceXlsxWriter(BalanceXlsxWriter):
             column += 1
 
         return row + 2, 0
+
+class AgedBalanceXlsxWriter(GroupedBalanceXlsxWriter):
+    """Writer for aged balance Excel exports (no debit/credit, bucket-grouped residuals)."""
+
+    def __init__(self, fields, row_count=0, is_tr_report=False):
+        super().__init__(fields, row_count)
+        self.is_tr_report = is_tr_report
+        residual_name = 'amount_residual_try' if is_tr_report else 'amount_residual'
+        self._residual_col_idx = next(
+            (i for i, f in enumerate(fields) if f['name'] == residual_name),
+            None
+        )
+
+    def write_metadata(self, ctx, data_service=None, summary_data=None):
+        """Aged metadata: no date range, shows 'As of today'."""
+        import datetime as dt
+        row = 0
+        today = dt.date.today().strftime('%Y-%m-%d')
+        col_span = len(self.field_names) - 1
+
+        if data_service and data_service.partner_id:
+            partner = request.env['res.partner'].sudo().browse(data_service.partner_id)
+            if partner.exists() and partner.company_id:
+                self.worksheet.merge_range(
+                    row, 0, row, col_span,
+                    partner.company_id.name,
+                    self.styles.company_header
+                )
+                row += 1
+
+        title = _("AGED BALANCE IN TRY") if self.is_tr_report else _("AGED BALANCE")
+        self.worksheet.merge_range(row, 0, row, col_span, title, self.styles.report_title)
+        row += 2
+
+        partner_name = ctx.get('partner_name', '')
+        if partner_name:
+            self.write(row, 0, _("Partner:"), self.styles.partner_name)
+            self.worksheet.merge_range(row, 1, row, col_span, partner_name, self.styles.partner_name)
+            row += 1
+
+        self.write(row, 0, _("As of:"), self.styles.summary_metric)
+        self.worksheet.merge_range(row, 1, row, 2, today, self.styles.base)
+        export_date = dt.datetime.now().strftime('%Y-%m-%d %H:%M')
+        self.write(row, 3, _("Generated:"), self.styles.summary_metric)
+        self.worksheet.merge_range(row, 4, row, col_span, export_date, self.styles.base)
+        row += 2
+
+        return row
+
+    def write_aged_group(self, row, label, rows, records=None, product_lines=None):
+        """Write one bucket group: header → column headers → data rows (+ products) → total."""
+        # Group header
+        label_text = f"{label} ({len(rows)})"
+        self.write(row, 0, label_text, self.styles.bold_bg)
+        for col in range(1, len(self.field_names)):
+            self.write(row, col, '', self.styles.bold_bg)
+        row += 1
+
+        # Column headers
+        row = self.write_group_header_row(row)
+
+        # Data rows
+        group_total = 0.0
+        for idx, record_row in enumerate(rows):
+            for col_idx, value in enumerate(record_row):
+                self.write_cell(row, col_idx, value)
+            if self._residual_col_idx is not None and self._residual_col_idx < len(record_row):
+                val = record_row[self._residual_col_idx]
+                if isinstance(val, (int, float)):
+                    group_total += val
+            row += 1
+
+            # Product sub-table
+            if product_lines and records and idx < len(records):
+                move_id = records[idx].move_id.id if records[idx].move_id else None
+                if move_id and move_id in product_lines:
+                    row = self._write_product_block(row, product_lines[move_id])
+
+        # Totals row
+        row = self._write_aged_totals_row(row, group_total)
+        return row
+
+    def _write_aged_totals_row(self, row, total):
+        """Write a bucket total row."""
+        for col in range(len(self.field_names)):
+            if col == 0:
+                self.write(row, col, _("Total"), self.styles.bold_bg)
+            elif col == self._residual_col_idx:
+                self.write(row, col, round(total, 2), self.styles.monetary)
+            else:
+                self.write(row, col, '', self.styles.bold_bg)
+        return row + 2

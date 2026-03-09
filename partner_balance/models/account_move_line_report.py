@@ -96,6 +96,10 @@ class AccountMoveLineReport(models.Model):
         Returns:
             Dict mapping partner_id -> initial balance float.
         """
+        # Skip if skip_opening is set in context
+        if self.env.context.get('skip_opening'):
+            return {}
+
         date_from = self.env.context.get('date_from')
         if not date_from or not self:
             return {}
@@ -121,6 +125,10 @@ class AccountMoveLineReport(models.Model):
         Returns:
             Dict mapping partner_id -> initial TRY balance float.
         """
+        # Skip if skip_opening is set in context
+        if self.env.context.get('skip_opening'):
+            return {}
+
         date_from = self.env.context.get('date_from')
         if not date_from or not self:
             return {}
@@ -288,7 +296,7 @@ class AccountMoveLineReport(models.Model):
             rec.type = type_translations.get(rec.type_key, rec.type_key)
 
     @api.depends('partner_id', 'date', 'move_id', 'balance')
-    @api.depends_context('date_from', 'action_name')
+    @api.depends_context('date_from', 'action_name', 'skip_opening')
     def _compute_cumulated_balance(self):
         """Compute cumulated balance with inline initial balance.
 
@@ -385,7 +393,7 @@ class AccountMoveLineReport(models.Model):
                 rec.tr_rate_display = "N/A"
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_tr_currency')
-    @api.depends_context('date_from')
+    @api.depends_context('date_from', 'skip_opening')
     def _compute_cumulated_amount_tr_currency(self):
         """Compute cumulative TRY value with initial balance support.
 

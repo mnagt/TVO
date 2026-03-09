@@ -15,7 +15,14 @@ export class PartnerBalanceToolbar extends Component {
         onDateChange: { type: Function },
         onExcelExport: { type: Function },
         showProducts: { type: Boolean, optional: true }, onToggleProducts: { type: Function },
+        skipOpening: { type: Boolean, optional: true },
+        onToggleSkipOpening: { type: Function },
         onUsdReport: { type: Function },
+        reportType: { type: String, optional: true },
+        showDateInputs: { type: Boolean, optional: true },
+        onLedgerReport: { type: Function },
+        onAgedReport: { type: Function },
+        userConfig: { type: Object, optional: true },
     };
 
     setup() {
@@ -49,6 +56,18 @@ export class PartnerBalanceToolbar extends Component {
 
     handleToggleProducts() { 
         this.props.onToggleProducts(); 
+    }
+
+    handleToggleSkipOpening() {
+        this.props.onToggleSkipOpening();
+    }
+
+    handleLedgerReport() {
+        this.props.onLedgerReport();
+    }
+
+    handleAgedReport() {
+        this.props.onAgedReport();
     }
 
     // -------------------------------------------------------------------------

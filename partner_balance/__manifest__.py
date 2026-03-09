@@ -21,9 +21,11 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         "views/partner_balance_view.xml",
-        
+        'views/aged_balance_view.xml',
+        'views/partner_balance_config_view.xml',
 
     ],
 

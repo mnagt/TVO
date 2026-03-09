@@ -5,7 +5,7 @@ import { _t } from "@web/core/l10n/translation";
 import { download } from "@web/core/network/download";
 import { useService } from "@web/core/utils/hooks";
 import { ListController } from "@web/views/list/list_controller";
-import { useState, onPatched } from "@odoo/owl";
+import { useState, onPatched, onMounted } from "@odoo/owl";
 import { PartnerBalanceToolbar } from "./components/partner_balance_toolbar";
 
 export class PartnerBalanceListController extends ListController {
@@ -32,6 +32,23 @@ export class PartnerBalanceListController extends ListController {
             initialBalance: 0,
         });
         this.state.showProducts = false;
+        this.state.skipOpening = false;
+
+        // User configuration for button visibility
+        this.userConfig = useState({
+            show_ledger: false,
+            show_aged: false,
+            show_excel: false,
+            show_tl: false,
+            show_usd: false,
+            show_products: false,
+            show_skip_opening: false,
+        });
+
+        onMounted(async () => {
+            const cfg = await this.orm.call('partner.balance.user.config', 'get_user_config', []);
+            Object.assign(this.userConfig, cfg);
+        });
 
         onPatched(() => {
             if (this.state.showProducts && this._productData) {
@@ -56,6 +73,13 @@ export class PartnerBalanceListController extends ListController {
         return this.context.action_name === 'Statement in TRY';
     }
 
+    get reportType() {
+        return this.context.report_type || 'ledger';
+    }
+
+    get showDateInputs() {
+        return this.reportType === 'ledger';
+    }
 
     get toolbarProps() {
         return {
@@ -66,40 +90,106 @@ export class PartnerBalanceListController extends ListController {
             isTrReport: this.isTrReport,
             showProducts: this.state.showProducts,
             onToggleProducts: this.onToggleProducts.bind(this),
+            skipOpening: this.state.skipOpening,
+            onToggleSkipOpening: this.onToggleSkipOpening.bind(this),
             onTrReport: this.onTrReport.bind(this),
             onUsdReport: this.onUsdReport.bind(this),
             onDateChange: this.onDateChange.bind(this),
             onExcelExport: this.onExcelExport.bind(this),
+            reportType: this.reportType,
+            showDateInputs: this.showDateInputs,
+            onLedgerReport: this.onLedgerReport.bind(this),
+            onAgedReport: this.onAgedReport.bind(this),
+            userConfig: this.userConfig,
         };
     }
 
 
     onTrReport() {
         if (!this.partnerId) return;
-
-        this.action.doAction('partner_balance.action_partner_move_line_tr_value', {
-            additionalContext: {
-                active_id: this.partnerId,
-                active_ids: [this.partnerId],
-                active_model: 'res.partner',
-                default_partner_id: this.partnerId,
-                partner_name: this.context.partner_name || '',
-                action_name: 'Statement in TRY',
-            },
-        });
+        if (this.reportType === 'aged') {
+            this.action.doAction('partner_balance.action_aged_balance_tr', {
+                additionalContext: {
+                    active_id: this.partnerId,
+                    active_ids: [this.partnerId],
+                    active_model: 'res.partner',
+                    default_partner_id: this.partnerId,
+                    partner_name: this.context.partner_name || '',
+                    report_type: 'aged',
+                    action_name: 'Statement in TRY',
+                },
+            });
+        } else {
+            this.action.doAction('partner_balance.action_partner_move_line_tr_value', {
+                additionalContext: {
+                    active_id: this.partnerId,
+                    active_ids: [this.partnerId],
+                    active_model: 'res.partner',
+                    default_partner_id: this.partnerId,
+                    partner_name: this.context.partner_name || '',
+                    action_name: 'Statement in TRY',
+                },
+            });
+        }
     }
 
     onUsdReport() {
         if (!this.partnerId) return;
+        if (this.reportType === 'aged') {
+            this.action.doAction('partner_balance.action_aged_balance', {
+                additionalContext: {
+                    active_id: this.partnerId,
+                    active_ids: [this.partnerId],
+                    active_model: 'res.partner',
+                    default_partner_id: this.partnerId,
+                    partner_name: this.context.partner_name || '',
+                    report_type: 'aged',
+                },
+            });
+        } else {
+            this.action.doAction('partner_balance.action_partner_move_line_usd', {
+                additionalContext: {
+                    active_id: this.partnerId,
+                    active_ids: [this.partnerId],
+                    active_model: 'res.partner',
+                    default_partner_id: this.partnerId,
+                    partner_name: this.context.partner_name || '',
+                    action_name: 'Statement of Account',
+                },
+            });
+        }
+    }
 
-        this.action.doAction('partner_balance.action_partner_move_line_usd', {
+    onLedgerReport() {
+        if (!this.partnerId) return;
+        const actionId = this.isTrReport
+            ? 'partner_balance.action_partner_move_line_tr_value'
+            : 'partner_balance.action_partner_move_line_usd';
+        this.action.doAction(actionId, {
             additionalContext: {
                 active_id: this.partnerId,
                 active_ids: [this.partnerId],
                 active_model: 'res.partner',
                 default_partner_id: this.partnerId,
                 partner_name: this.context.partner_name || '',
-                action_name: 'Statement of Account',
+                report_type: 'ledger',
+            },
+        });
+    }
+
+    onAgedReport() {
+        if (!this.partnerId) return;
+        const actionId = this.isTrReport
+            ? 'partner_balance.action_aged_balance_tr'
+            : 'partner_balance.action_aged_balance';
+        this.action.doAction(actionId, {
+            additionalContext: {
+                active_id: this.partnerId,
+                active_ids: [this.partnerId],
+                active_model: 'res.partner',
+                default_partner_id: this.partnerId,
+                partner_name: this.context.partner_name || '',
+                report_type: 'aged',
             },
         });
     }
@@ -158,6 +248,7 @@ export class PartnerBalanceListController extends ListController {
                 ...this.context,
                 date_from: dateFrom || null,
                 date_to: dateTo || null,
+                skip_opening: this.state.skipOpening,
             },
         });
 
@@ -176,6 +267,12 @@ export class PartnerBalanceListController extends ListController {
             this._productData = null;
             this._removeProductSubTables();
         }
+    }
+
+    async onToggleSkipOpening() {
+        this.state.skipOpening = !this.state.skipOpening;
+        // Reload data with new context to recalculate cumulated_balance
+        await this.updateViewWithDates(this.state.dateFrom, this.state.dateTo);
     }
 
     async _fetchProductData() {
@@ -350,6 +447,10 @@ export class PartnerBalanceListController extends ListController {
             ids = resIds.length > 0 && resIds;
         }
 
+        const exportUrl = this.reportType === 'aged'
+            ? '/web/aged_balance_export/xlsx'
+            : '/web/balance_export/xlsx';
+
         await download({
             data: {
                 data: JSON.stringify({
@@ -362,12 +463,13 @@ export class PartnerBalanceListController extends ListController {
                         ...this.context,
                         date_from: this.state.dateFrom || null,
                         date_to: this.state.dateTo || null,
-                        show_products: this.state.showProducts,  // <-- add this
+                        show_products: this.state.showProducts,
+                        skip_opening: this.state.skipOpening,
                     },
                     import_compat: false,
                 }),
             },
-            url: '/web/balance_export/xlsx',
+            url: exportUrl,
         });
     }
 }

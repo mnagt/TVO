@@ -3,4 +3,4 @@
 from .xlsx_styles import ExportStyles
 from .field_mapping import FieldMapping
 from .data_service import BalanceDataService
-from .xlsx_writer import BalanceXlsxWriter, GroupedBalanceXlsxWriter
+from .xlsx_writer import BalanceXlsxWriter, GroupedBalanceXlsxWriter, AgedBalanceXlsxWriter

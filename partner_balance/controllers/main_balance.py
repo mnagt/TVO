@@ -17,6 +17,7 @@ from ..services.balance_export import (
     BalanceDataService,
     BalanceXlsxWriter,
     GroupedBalanceXlsxWriter,
+    AgedBalanceXlsxWriter,
     FieldMapping,
 )
 
@@ -25,6 +26,25 @@ _logger = logging.getLogger(__name__)
 
 class BalanceExcelExport(BaseExportFormat, http.Controller):
     """Controller for exporting partner balance data to Excel."""
+
+    BUCKET_ORDER = ['current', '1_30', '31_60', '61_90', '91_120', 'older']
+    BUCKET_LABELS = {
+        'current': 'Current',
+        '1_30':    '1-30 Days',
+        '31_60':   '31-60 Days',
+        '61_90':   '61-90 Days',
+        '91_120':  '91-120 Days',
+        'older':   '> 120 Days',
+    }
+
+    def _build_export_filename(self, ctx):
+        """Build a descriptive filename: '{partner} - {ReportType} - {Currency} - {date}'"""
+        import datetime
+        partner_name = ctx.get('partner_name', '') or 'Export'
+        report_type = 'Aged' if ctx.get('report_type') == 'aged' else 'Ledger'
+        currency = 'TRY' if ctx.get('action_name') == 'Statement in TRY' else 'USD'
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        return osutil.clean_filename(f"{partner_name} - {report_type} - {currency} - {today}")
 
     @http.route('/web/balance_export/xlsx', type='http', auth="user")
     def index(self, data):
@@ -70,7 +90,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             response_data,
             headers=[
                 ('Content-Disposition', content_disposition(
-                    osutil.clean_filename(self.filename(model) + self.extension)
+                    self._build_export_filename(params.get('context', {})) + self.extension
                 )),
                 ('Content-Type', self.content_type),
             ],
@@ -112,20 +132,25 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         export_data = records.export_data(field_names).get('datas', [])
 
         ctx = params.get('context', {})
+        skip_opening = ctx.get('skip_opening', False)
         data_service = BalanceDataService.from_params(request.env, params)
 
         product_lines_by_move = self._fetch_product_lines(
             records, ctx.get('show_products', False)
         )
 
-        opening_data = data_service.get_opening_balance()
+        # Only fetch opening_data if not skipping
+        if skip_opening:
+            opening_data = {'balance': 0.0, 'debit': 0.0, 'credit': 0.0}
+        else:
+            opening_data = data_service.get_opening_balance()
 
         with BalanceXlsxWriter(columns_headers, len(export_data)) as writer:
             header_end_row = writer.write_metadata(ctx, data_service)
             data_start_row = writer.write_header(row=header_end_row)
 
-            # Write opening balance
-            if opening_data['balance'] != 0.0:
+            # Write opening balance only if not skipping AND balance is non-zero
+            if not skip_opening and opening_data['balance'] != 0.0:
                 period_start_row, opening_debit, opening_credit = writer.write_opening_balance_row(
                     data_start_row, opening_data
                 )
@@ -142,6 +167,79 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             # Write totals
             totals_row = period_start_row + len(export_data) + product_row_count + 1
             writer.write_totals(totals_row, export_data, opening_debit, opening_credit)
+
+        return writer.value
+
+    @http.route('/web/aged_balance_export/xlsx', type='http', auth="user")
+    def aged_index(self, data):
+        return self.aged_base(data)
+
+    def aged_base(self, data):
+        """Export handler for aged balance."""
+        params = json.loads(data)
+        model, fields, ids, domain, import_compat = operator.itemgetter(
+            'model', 'fields', 'ids', 'domain', 'import_compat'
+        )(params)
+
+        Model = request.env[model].with_context(
+            import_compat=import_compat,
+            **params.get('context', {})
+        )
+
+        if not Model._is_an_ordinary_table():
+            fields = [f for f in fields if f['name'] != 'id']
+
+        field_names = [f['name'] for f in fields]
+        groupby = params.get('groupby')
+
+        response_data = self._export_aged_grouped(Model, fields, field_names, ids, domain, groupby, params)
+
+        return request.make_response(
+            response_data,
+            headers=[
+                ('Content-Disposition', content_disposition(
+                    self._build_export_filename(params.get('context', {})) + self.extension
+                )),
+                ('Content-Type', self.content_type),
+            ],
+        )
+
+    def _export_aged_grouped(self, Model, fields, field_names, ids, domain, groupby, params):
+        """Export aged balance grouped by bucket — manual grouping, no read_group."""
+        domain = [('id', 'in', ids)] if ids else domain
+        all_records = Model.search(domain, offset=0, limit=False,
+                                   order='bucket asc, date_maturity asc, date asc, id asc')
+        export_data = all_records.export_data(field_names).get('datas', [])
+
+        # Group rows by bucket, preserving bucket order
+        groups = {k: [] for k in self.BUCKET_ORDER}
+        record_groups = {k: [] for k in self.BUCKET_ORDER}
+        for record, row in zip(all_records, export_data):
+            bucket = record.bucket or 'current'
+            if bucket in groups:
+                groups[bucket].append(row)
+                record_groups[bucket].append(record)
+
+        ctx = params.get('context', {})
+        is_tr = ctx.get('action_name') == 'Statement in TRY'
+        data_service = BalanceDataService.from_params(request.env, params)
+
+        # Add product fetch
+        show_products = ctx.get('show_products', False)
+        product_lines_by_move = self._fetch_product_lines(all_records, show_products)
+
+        with AgedBalanceXlsxWriter(fields, len(export_data), is_tr_report=is_tr) as writer:
+            row = writer.write_metadata(ctx, data_service)
+            for bucket_key in self.BUCKET_ORDER:
+                rows = groups[bucket_key]
+                if not rows:
+                    continue
+                label = self.BUCKET_LABELS[bucket_key]
+                row = writer.write_aged_group(
+                    row, label, rows,
+                    records=record_groups[bucket_key],
+                    product_lines=product_lines_by_move,
+                )
 
         return writer.value
 
@@ -162,6 +260,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             tree.insert_leaf(leaf)
 
         ctx = params.get('context', {})
+        skip_opening = ctx.get('skip_opening', False)
         data_service = BalanceDataService.from_params(request.env, params)
 
         all_records = Model.search(domain, offset=0, limit=False, order=False)
@@ -172,11 +271,12 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         # Determine groupby field
         groupby_field = groupby[0].split(':')[0] if groupby else ''
 
-        # Calculate opening balances for each group
-        opening_balances = data_service.get_opening_balances_by_group(tree, groupby_field)
-
-        # Update running balances
-        data_service.update_group_running_balances(tree, opening_balances)
+        # Calculate opening balances for each group (skip if flag set)
+        if skip_opening:
+            opening_balances = {}
+        else:
+            opening_balances = data_service.get_opening_balances_by_group(tree, groupby_field)
+            data_service.update_group_running_balances(tree, opening_balances)
 
         with GroupedBalanceXlsxWriter(fields, tree.count) as writer:
             summary = data_service.get_period_summary(tree)
