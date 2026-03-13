@@ -9,6 +9,7 @@ class PartnerBalanceUserConfig(models.Model):
     _rec_name = 'user_id'
 
     user_id = fields.Many2one('res.users', required=True, ondelete='cascade', index=True)
+    show_view = fields.Boolean(default=False)
     show_ledger = fields.Boolean(default=False)
     show_aged = fields.Boolean(default=False)
     show_excel = fields.Boolean(default=False)
@@ -24,7 +25,7 @@ class PartnerBalanceUserConfig(models.Model):
     # ── auto-manage group membership ────────────────────────────────────────
     def _has_any_access(self):
         """True if at least one show_* flag is enabled."""
-        flags = ['show_ledger', 'show_aged', 'show_excel',
+        flags = ['show_view', 'show_ledger', 'show_aged', 'show_excel',
                  'show_tl', 'show_usd', 'show_products', 'show_skip_opening']
         return any(getattr(self, f) for f in flags)
 
@@ -57,7 +58,7 @@ class PartnerBalanceUserConfig(models.Model):
     @api.model
     def get_user_config(self):
         config = self.search([('user_id', '=', self.env.uid)], limit=1)
-        defaults = dict(show_ledger=False, show_aged=False, show_excel=False,
+        defaults = dict(show_view=False, show_ledger=False, show_aged=False, show_excel=False,
                         show_tl=False, show_usd=False, show_products=False,
                         show_skip_opening=False)
         if not config:

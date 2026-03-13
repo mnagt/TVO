@@ -10,6 +10,7 @@
                     <separator string="PARTNER BALANCE REPORT"/>
                     <group>
                         <group>
+                            <field name="pb_view"/>
                             <field name="pb_show_ledger"/>
                             <field name="pb_show_excel"/>
                             <field name="pb_show_usd"/>

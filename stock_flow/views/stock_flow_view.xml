@@ -19,6 +19,7 @@
                     <field name="warehouse_id"/>
                     <field name="categ_id" optional="hide"/>
                     <field name="operation"/>
+                    <field name="partner_id" optional="show"/>
                     <field name="location_id" string="From" optional="hide"/>
                     <field name="location_dest_id" string="To" optional="hide"/>
                     <field name="signed_qty_done" string="Quantity"/>
@@ -36,6 +37,7 @@
                     <field name="product_id"/>
                     <field name="operation"/>
                     <field name="direction"/>
+                    <field name="partner_id"/>
                     <field name="date"/>
 
                     <!-- Group By section -->

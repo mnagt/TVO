@@ -39,4 +39,6 @@
             'partner_balance/static/src/xml/partner_balance_template.xml',
         ],
     },
+
+    'post_init_hook': 'post_init_hook',
 }

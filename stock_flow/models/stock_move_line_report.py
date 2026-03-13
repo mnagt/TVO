@@ -23,6 +23,7 @@ class StockProductFlowReport(models.Model):
     stock_balance = fields.Float(string="Stock Balance", readonly=True, group_operator=False)
     company_id = fields.Many2one('res.company', string="Company", readonly=True)
     categ_id = fields.Many2one('product.category', string="Product Category")
+    partner_id = fields.Char(string="Partner")
 
 
 
@@ -57,6 +58,7 @@ class StockProductFlowReport(models.Model):
                 sl.usage        AS src_usage,
                 sld.usage       AS dst_usage,
                 pt.categ_id,
+                rp.name         AS partner_name,
                 sw_out.id       AS out_warehouse_id,
                 sw_out.company_id AS out_company_id,
                 sw_in.id        AS in_warehouse_id,
@@ -67,6 +69,8 @@ class StockProductFlowReport(models.Model):
             JOIN product_template pt    ON pt.id  = pp.product_tmpl_id
             LEFT JOIN stock_location sl  ON sl.id  = sml.location_id
             LEFT JOIN stock_location sld ON sld.id = sml.location_dest_id
+            LEFT JOIN stock_picking sp ON sp.id = sm.picking_id
+            LEFT JOIN res_partner rp  ON rp.id = sp.partner_id
             LEFT JOIN stock_location l_out ON l_out.id = sml.location_id
             LEFT JOIN stock_warehouse sw_out ON
                 sw_out.view_location_id = l_out.id OR
@@ -110,13 +114,15 @@ class StockProductFlowReport(models.Model):
                 -quantity        AS signed_qty_done,
                 {operation_case} AS operation,
                 'out'            AS direction,
-                categ_id
+                categ_id,
+                {partner_case}   AS partner_id
             FROM base
             WHERE src_usage = 'internal'
               AND dst_usage = 'internal'
               AND out_company_id IS NOT NULL
         """.format(
-            operation_case=self._get_operation_case_statement()
+            operation_case=self._get_operation_case_statement(),
+            partner_case=self._get_partner_case_statement()
         )
 
     def _get_inbound_internal_query(self):
@@ -132,13 +138,15 @@ class StockProductFlowReport(models.Model):
                 quantity         AS signed_qty_done,
                 {operation_case} AS operation,
                 'in'             AS direction,
-                categ_id
+                categ_id,
+                {partner_case}   AS partner_id
             FROM base
             WHERE src_usage = 'internal'
               AND dst_usage = 'internal'
               AND in_company_id IS NOT NULL
         """.format(
-            operation_case=self._get_operation_case_statement()
+            operation_case=self._get_operation_case_statement(),
+            partner_case=self._get_partner_case_statement()
         )
 
     def _get_external_query(self):
@@ -158,7 +166,8 @@ class StockProductFlowReport(models.Model):
                 {signed_qty_case} AS signed_qty_done,
                 {operation_case}  AS operation,
                 {direction_case}  AS direction,
-                categ_id
+                categ_id,
+                {partner_case}    AS partner_id
             FROM base
             WHERE NOT (src_usage = 'internal' AND dst_usage = 'internal')
               AND (
@@ -169,7 +178,8 @@ class StockProductFlowReport(models.Model):
         """.format(
             signed_qty_case=self._get_signed_qty_case_statement(),
             operation_case=self._get_operation_case_statement(),
-            direction_case=self._get_direction_case_statement()
+            direction_case=self._get_direction_case_statement(),
+            partner_case=self._get_partner_case_statement()
         )
 
     def _get_operation_case_statement(self):
@@ -191,6 +201,10 @@ class StockProductFlowReport(models.Model):
                 ELSE move_name
             END
         """
+
+    def _get_partner_case_statement(self):
+        """Get the CASE statement for partner fallback to operation."""
+        return f"COALESCE(partner_name, ({self._get_operation_case_statement()}))"
 
     def _get_signed_qty_case_statement(self):
         """Get the CASE statement for signed quantity calculation."""
