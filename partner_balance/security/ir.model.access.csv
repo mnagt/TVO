@@ -1,8 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
-access_account_move_line_report_user,account.move.line.report.user,model_account_move_line_report,account.group_account_user,1,0,0,0
-access_account_move_line_report_manager,account.move.line.report.manager,model_account_move_line_report,account.group_account_manager,1,0,0,0
-access_account_aged_balance_line_user,account.aged.balance.line.user,model_account_aged_balance_line,account.group_account_user,1,0,0,0
-access_account_aged_balance_line_manager,account.aged.balance.line.manager,model_account_aged_balance_line,account.group_account_manager,1,0,0,0
-access_partner_balance_user_config_user,partner.balance.user.config.user,model_partner_balance_user_config,account.group_account_user,1,0,0,0
-access_partner_balance_user_config_manager,partner.balance.user.config.manager,model_partner_balance_user_config,account.group_account_manager,1,1,1,1
+access_account_move_line_report_user,account.move.line.report.user,model_account_move_line_report,partner_balance.group_partner_balance_user,1,0,0,0
+access_account_aged_balance_line_user,account.aged.balance.line.user,model_account_aged_balance_line,partner_balance.group_partner_balance_user,1,0,0,0
+access_partner_balance_user_config_user,partner.balance.user.config.user,model_partner_balance_user_config,partner_balance.group_partner_balance_user,1,0,0,0
