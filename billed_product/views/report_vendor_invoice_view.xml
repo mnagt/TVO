@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="view_vendor_bill_report_tree" model="ir.ui.view">
+            <field name="name">vendor.bill.report.tree</field>
+            <field name="model">vendor.bill.report</field>
+            <field name="arch" type="xml">
+                <list string="Billed Products Report" create="false" >
+                    <field name="invoice_date"/>
+                    <field name="invoice_id"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="categ_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="currency_id"/>
+                    <field name="currency_rate"/>
+                    <field name="purchase_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="company_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_vendor_bill_report_search" model="ir.ui.view">
+            <field name="name">vendor.bill.report.search</field>
+            <field name="model">vendor.bill.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="categ_id"/>
+                    <field name="purchase_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="company_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Product Category" name="group_category" domain="[]" context="{'group_by': 'categ_id'}"/>
+                        <filter string="Vendor" name="group_partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Purchase Order" name="group_purchase" domain="[]" context="{'group_by': 'purchase_id'}"/>
+                        <filter string="Warehouse" name="group_warehouse" domain="[]" context="{'group_by': 'warehouse_id'}"/>
+                        <filter string="Company" name="group_company" domain="[]" context="{'group_by': 'company_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_report_vendor_invoice_report" model="ir.actions.act_window">
+            <field name="name">Billed Products Report</field>
+            <field name="res_model">vendor.bill.report</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_vendor_bill_report_search"/>
+        </record>
+
+
+        <menuitem id="menu_report_vendor_invoice_report"
+                    name="Billed Products"
+                    parent="board.menu_board_my_dash"
+                    action="action_report_vendor_invoice_report"
+                    groups="billed_product.group_vendor_bill_report"
+                    sequence="4"/>
+
+
+        <record id="view_customer_invoice_report_tree" model="ir.ui.view">
+            <field name="name">customer.invoice.report.tree</field>
+            <field name="model">customer.invoice.report</field>
+            <field name="arch" type="xml">
+                <list string="Invoiced Products Report" create="false">
+                    <field name="invoice_date"/>
+                    <field name="invoice_id"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="categ_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="currency_id"/>
+                    <field name="currency_rate"/>
+                    <field name="sale_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="company_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_customer_invoice_report_search" model="ir.ui.view">
+            <field name="name">customer.invoice.report.search</field>
+            <field name="model">customer.invoice.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="categ_id"/>
+                    <field name="sale_id"/>
+                    <field name="warehouse_id"/>
+                    <field name="company_id"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Product Category" name="group_category" domain="[]" context="{'group_by': 'categ_id'}"/>
+                        <filter string="Customer" name="group_partner" domain="[]" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Sale Order" name="group_sale" domain="[]" context="{'group_by': 'sale_id'}"/>
+                        <filter string="Warehouse" name="group_warehouse" domain="[]" context="{'group_by': 'warehouse_id'}"/>
+                        <filter string="Company" name="group_company" domain="[]" context="{'group_by': 'company_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="action_customer_invoice_report" model="ir.actions.act_window">
+            <field name="name">Invoiced Products Report</field>
+            <field name="res_model">customer.invoice.report</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_customer_invoice_report_search"/>
+        </record>
+
+
+        <menuitem id="menu_customer_invoice_report"
+                    name="Invoiced Products"
+                    parent="board.menu_board_my_dash"
+                    action="action_customer_invoice_report"
+                    groups="billed_product.group_customer_invoice_report"
+                    sequence="5"/>
+
+        <!-- New actions for opening account.move with matching domains -->
+        <record id="action_vendor_bills_posted" model="ir.actions.act_window">
+            <field name="name">Vendor Bills</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('move_type', '=', 'in_invoice'), ('state', '=', 'posted')]</field>
+            <field name="context">{'default_move_type': 'in_invoice'}</field>
+        </record>
+
+        <menuitem id="menu_vendor_bills_posted"
+            name="Vendor Bills"
+            parent="board.menu_board_my_dash"
+            action="action_vendor_bills_posted"
+            groups="billed_product.group_vendor_bill_report"
+            sequence="6"/>
+
+        <record id="action_customer_invoices_posted" model="ir.actions.act_window">
+            <field name="name">Customer Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('move_type', 'in', ['out_invoice', 'out_refund']), ('state', '=', 'posted')]</field>
+            <field name="context">{'default_move_type': 'out_invoice'}</field>
+        </record>
+
+        <menuitem id="menu_customer_invoices_posted"
+            name="Customer Invoices"
+            parent="board.menu_board_my_dash"
+            action="action_customer_invoices_posted"
+            groups="billed_product.group_customer_invoice_report"
+            sequence="7"/>
+
+
+
+
+        
+    </data>
+</odoo>

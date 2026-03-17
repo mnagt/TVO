@@ -1,0 +1,521 @@
+{
+  "version": 21,
+  "sheets": [
+    {
+      "id": "sh-vb-dashboard",
+      "name": "Dashboard",
+      "colNumber": 8,
+      "rowNumber": 40,
+      "rows": {
+        "6": { "size": 40 },
+        "22": { "size": 40 },
+        "23": { "size": 27 },
+        "24": { "size": 27 },
+        "25": { "size": 27 },
+        "26": { "size": 27 },
+        "27": { "size": 27 },
+        "28": { "size": 27 },
+        "29": { "size": 27 },
+        "30": { "size": 27 },
+        "31": { "size": 27 },
+        "32": { "size": 27 },
+        "33": { "size": 27 }
+      },
+      "cols": {
+        "0": { "size": 180 },
+        "1": { "size": 160 },
+        "2": { "size": 140 },
+        "3": { "size": 80 },
+        "4": { "size": 100 },
+        "5": { "size": 160 }
+      },
+      "merges": [],
+      "cells": {
+        "A7": {
+          "content": "[Billed by Month](odoo://view/{\"viewType\":\"graph\",\"action\":{\"domain\":[\"&\",[\"state\",\"not in\",[\"draft\",\"cancel\"]],[\"move_type\",\"=\",\"in_invoice\"]],\"context\":{\"group_by\":[\"invoice_date\"],\"graph_measure\":\"price_subtotal\",\"graph_mode\":\"line\",\"graph_groupbys\":[\"invoice_date:month\"]},\"modelName\":\"account.invoice.report\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Bills Analysis\",\"positional\":true})"
+        },
+        "A23": {
+          "content": "[Top Vendor Bills](odoo://view/{\"viewType\":\"list\",\"action\":{\"domain\":[],\"context\":{},\"modelName\":\"vendor.bill.report\",\"views\":[[false,\"list\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Billed Products Report\"})"
+        },
+        "A24": { "content": "=_t(\"Reference\")" },
+        "B24": { "content": "=_t(\"Vendor\")" },
+        "C24": { "content": "=_t(\"Product\")" },
+        "D24": { "content": "=_t(\"Quantity\")" },
+        "E24": { "content": "=_t(\"Unit Price\")" },
+        "F24": { "content": "=_t(\"Purchase Order\")" },
+        "A25": { "content": "=ODOO.LIST(1,1,\"move_id\")" },
+        "B25": { "content": "=ODOO.LIST(1,1,\"partner_id\")" },
+        "C25": { "content": "=ODOO.LIST(1,1,\"product_id\")" },
+        "D25": { "content": "=ODOO.LIST(1,1,\"quantity\")" },
+        "E25": { "content": "=ODOO.LIST(1,1,\"price_unit\")" },
+        "F25": { "content": "=ODOO.LIST(1,1,\"purchase_order_id\")" },
+        "A26": { "content": "=ODOO.LIST(1,2,\"move_id\")" },
+        "B26": { "content": "=ODOO.LIST(1,2,\"partner_id\")" },
+        "C26": { "content": "=ODOO.LIST(1,2,\"product_id\")" },
+        "D26": { "content": "=ODOO.LIST(1,2,\"quantity\")" },
+        "E26": { "content": "=ODOO.LIST(1,2,\"price_unit\")" },
+        "F26": { "content": "=ODOO.LIST(1,2,\"purchase_order_id\")" },
+        "A27": { "content": "=ODOO.LIST(1,3,\"move_id\")" },
+        "B27": { "content": "=ODOO.LIST(1,3,\"partner_id\")" },
+        "C27": { "content": "=ODOO.LIST(1,3,\"product_id\")" },
+        "D27": { "content": "=ODOO.LIST(1,3,\"quantity\")" },
+        "E27": { "content": "=ODOO.LIST(1,3,\"price_unit\")" },
+        "F27": { "content": "=ODOO.LIST(1,3,\"purchase_order_id\")" },
+        "A28": { "content": "=ODOO.LIST(1,4,\"move_id\")" },
+        "B28": { "content": "=ODOO.LIST(1,4,\"partner_id\")" },
+        "C28": { "content": "=ODOO.LIST(1,4,\"product_id\")" },
+        "D28": { "content": "=ODOO.LIST(1,4,\"quantity\")" },
+        "E28": { "content": "=ODOO.LIST(1,4,\"price_unit\")" },
+        "F28": { "content": "=ODOO.LIST(1,4,\"purchase_order_id\")" },
+        "A29": { "content": "=ODOO.LIST(1,5,\"move_id\")" },
+        "B29": { "content": "=ODOO.LIST(1,5,\"partner_id\")" },
+        "C29": { "content": "=ODOO.LIST(1,5,\"product_id\")" },
+        "D29": { "content": "=ODOO.LIST(1,5,\"quantity\")" },
+        "E29": { "content": "=ODOO.LIST(1,5,\"price_unit\")" },
+        "F29": { "content": "=ODOO.LIST(1,5,\"purchase_order_id\")" },
+        "A30": { "content": "=ODOO.LIST(1,6,\"move_id\")" },
+        "B30": { "content": "=ODOO.LIST(1,6,\"partner_id\")" },
+        "C30": { "content": "=ODOO.LIST(1,6,\"product_id\")" },
+        "D30": { "content": "=ODOO.LIST(1,6,\"quantity\")" },
+        "E30": { "content": "=ODOO.LIST(1,6,\"price_unit\")" },
+        "F30": { "content": "=ODOO.LIST(1,6,\"purchase_order_id\")" },
+        "A31": { "content": "=ODOO.LIST(1,7,\"move_id\")" },
+        "B31": { "content": "=ODOO.LIST(1,7,\"partner_id\")" },
+        "C31": { "content": "=ODOO.LIST(1,7,\"product_id\")" },
+        "D31": { "content": "=ODOO.LIST(1,7,\"quantity\")" },
+        "E31": { "content": "=ODOO.LIST(1,7,\"price_unit\")" },
+        "F31": { "content": "=ODOO.LIST(1,7,\"purchase_order_id\")" },
+        "A32": { "content": "=ODOO.LIST(1,8,\"move_id\")" },
+        "B32": { "content": "=ODOO.LIST(1,8,\"partner_id\")" },
+        "C32": { "content": "=ODOO.LIST(1,8,\"product_id\")" },
+        "D32": { "content": "=ODOO.LIST(1,8,\"quantity\")" },
+        "E32": { "content": "=ODOO.LIST(1,8,\"price_unit\")" },
+        "F32": { "content": "=ODOO.LIST(1,8,\"purchase_order_id\")" },
+        "A33": { "content": "=ODOO.LIST(1,9,\"move_id\")" },
+        "B33": { "content": "=ODOO.LIST(1,9,\"partner_id\")" },
+        "C33": { "content": "=ODOO.LIST(1,9,\"product_id\")" },
+        "D33": { "content": "=ODOO.LIST(1,9,\"quantity\")" },
+        "E33": { "content": "=ODOO.LIST(1,9,\"price_unit\")" },
+        "F33": { "content": "=ODOO.LIST(1,9,\"purchase_order_id\")" },
+        "A34": { "content": "=ODOO.LIST(1,10,\"move_id\")" },
+        "B34": { "content": "=ODOO.LIST(1,10,\"partner_id\")" },
+        "C34": { "content": "=ODOO.LIST(1,10,\"product_id\")" },
+        "D34": { "content": "=ODOO.LIST(1,10,\"quantity\")" },
+        "E34": { "content": "=ODOO.LIST(1,10,\"price_unit\")" },
+        "F34": { "content": "=ODOO.LIST(1,10,\"purchase_order_id\")" }
+      },
+      "styles": {
+        "A7": 1,
+        "A23": 1,
+        "A24:F24": 2
+      },
+      "formats": {},
+      "borders": {
+        "A7:F7": 1,
+        "A8:F8": 2,
+        "A23:F23": 1,
+        "A24:F24": 2,
+        "A25": 3,
+        "A26:A34": 4
+      },
+      "conditionalFormats": [],
+      "figures": [
+        {
+          "id": "vbfig01-0001-4001-8001-000000000001",
+          "x": 0,
+          "y": 11,
+          "width": 200,
+          "height": 109,
+          "tag": "chart",
+          "data": {
+            "baselineColorDown": "#DC6965",
+            "baselineColorUp": "#00A04A",
+            "baselineMode": "text",
+            "title": { "text": "Total Billed", "color": "#434343", "bold": true },
+            "type": "scorecard",
+            "background": "#EFF6FF",
+            "baseline": "Data!C4",
+            "baselineDescr": "unpaid",
+            "keyValue": "Data!C1",
+            "humanize": false
+          }
+        },
+        {
+          "id": "vbfig02-0002-4002-8002-000000000002",
+          "x": 210,
+          "y": 11,
+          "width": 200,
+          "height": 109,
+          "tag": "chart",
+          "data": {
+            "baselineColorDown": "#DC6965",
+            "baselineColorUp": "#00A04A",
+            "baselineMode": "text",
+            "title": { "text": "Avg Bill", "color": "#434343", "bold": true },
+            "type": "scorecard",
+            "background": "#EFF6FF",
+            "baseline": "Data!C3",
+            "baselineDescr": "Bills",
+            "keyValue": "Data!C2",
+            "humanize": false
+          }
+        },
+        {
+          "id": "vbfig03-0003-4003-8003-000000000003",
+          "x": 420,
+          "y": 11,
+          "width": 200,
+          "height": 109,
+          "tag": "chart",
+          "data": {
+            "baselineColorDown": "#DC6965",
+            "baselineColorUp": "#00A04A",
+            "baselineMode": "text",
+            "title": { "text": "# Bills", "color": "#434343", "bold": true },
+            "type": "scorecard",
+            "background": "#EFF6FF",
+            "baseline": "Data!C4",
+            "baselineDescr": "unpaid",
+            "keyValue": "Data!C3",
+            "humanize": false
+          }
+        },
+        {
+          "id": "vbfig04-0004-4004-8004-000000000004",
+          "x": 0,
+          "y": 178,
+          "width": 1000,
+          "height": 345,
+          "tag": "chart",
+          "data": {
+            "title": { "text": "" },
+            "background": "#FFFFFF",
+            "legendPosition": "none",
+            "metaData": {
+              "groupBy": ["invoice_date:month"],
+              "measure": "price_subtotal",
+              "order": null,
+              "resModel": "account.invoice.report",
+              "mode": "line"
+            },
+            "searchParams": {
+              "comparison": null,
+              "context": { "group_by": ["invoice_date"] },
+              "domain": [
+                "&",
+                ["state", "not in", ["draft", "cancel"]],
+                ["move_type", "=", "in_invoice"]
+              ],
+              "groupBy": ["invoice_date"],
+              "orderBy": []
+            },
+            "type": "odoo_line",
+            "verticalAxisPosition": "left",
+            "stacked": false,
+            "fillArea": true,
+            "fieldMatching": {
+              "vbfilt1-0001-4001-8001-000000000001": {
+                "chain": "invoice_date",
+                "type": "date",
+                "offset": 0
+              },
+              "vbfilt2-0002-4002-8002-000000000002": {
+                "chain": "product_categ_id",
+                "type": "many2one"
+              },
+              "vbfilt3-0003-4003-8003-000000000003": {
+                "chain": "product_id",
+                "type": "many2one"
+              },
+              "vbfilt4-0004-4004-8004-000000000004": {
+                "chain": "partner_id",
+                "type": "many2one"
+              }
+            }
+          }
+        }
+      ],
+      "tables": [],
+      "areGridLinesVisible": true,
+      "isVisible": true,
+      "headerGroups": { "ROW": [], "COL": [] },
+      "dataValidationRules": [],
+      "comments": {}
+    },
+    {
+      "id": "sh-vb-data",
+      "name": "Data",
+      "colNumber": 26,
+      "rowNumber": 20,
+      "rows": {},
+      "cols": { "0": { "size": 142 }, "1": { "size": 128 } },
+      "merges": [],
+      "cells": {
+        "A1": { "content": "=_t(\"KPI - Total Billed\")" },
+        "A2": { "content": "=_t(\"KPI - Avg Bill\")" },
+        "A3": { "content": "=_t(\"KPI - Bill Count\")" },
+        "A4": { "content": "=_t(\"KPI - Unpaid Bills\")" },
+        "B1": { "content": "=PIVOT.VALUE(1,\"price_subtotal\")" },
+        "B2": { "content": "=IFERROR(PIVOT.VALUE(2,\"price_subtotal\")/PIVOT.VALUE(2,\"move_id\"))" },
+        "B3": { "content": "=PIVOT.VALUE(2,\"move_id\")" },
+        "B4": { "content": "=PIVOT.VALUE(3,\"price_subtotal\")" },
+        "C1": { "content": "=FORMAT.LARGE.NUMBER(B1)" },
+        "C2": { "content": "=FORMAT.LARGE.NUMBER(B2)" },
+        "C3": { "content": "=FORMAT.LARGE.NUMBER(B3)" },
+        "C4": { "content": "=FORMAT.LARGE.NUMBER(B4)" }
+      },
+      "styles": { "C1:C4": 6 },
+      "formats": {},
+      "borders": {},
+      "conditionalFormats": [],
+      "figures": [],
+      "tables": [],
+      "areGridLinesVisible": true,
+      "isVisible": false,
+      "headerGroups": { "ROW": [], "COL": [] },
+      "dataValidationRules": [],
+      "comments": {}
+    }
+  ],
+  "styles": {
+    "1": { "textColor": "#01666b", "bold": true, "fontSize": 16 },
+    "2": { "textColor": "#434343", "bold": true, "fontSize": 11 },
+    "3": { "textColor": "#01666B", "verticalAlign": "middle" },
+    "4": { "textColor": "#434343", "verticalAlign": "middle" },
+    "6": { "fillColor": "#f8f9fa" }
+  },
+  "formats": { "1": "#,##0.00" },
+  "borders": {
+    "1": { "bottom": { "style": "thin", "color": "#CCCCCC" } },
+    "2": { "top": { "style": "thin", "color": "#CCCCCC" } },
+    "3": {
+      "bottom": { "style": "thick", "color": "#FFFFFF" },
+      "right": { "style": "thick", "color": "#FFFFFF" }
+    },
+    "4": {
+      "top": { "style": "thick", "color": "#FFFFFF" },
+      "bottom": { "style": "thick", "color": "#FFFFFF" },
+      "right": { "style": "thick", "color": "#FFFFFF" }
+    }
+  },
+  "revisionId": "START_REVISION",
+  "uniqueFigureIds": true,
+  "settings": {
+    "locale": {
+      "name": "English (US)",
+      "code": "en_US",
+      "thousandsSeparator": ",",
+      "decimalSeparator": ".",
+      "dateFormat": "mm/dd/yyyy",
+      "timeFormat": "hh:mm:ss",
+      "formulaArgSeparator": ",",
+      "weekStart": 7
+    }
+  },
+  "pivots": {
+    "1": {
+      "type": "ODOO",
+      "id": "1",
+      "formulaId": "1",
+      "name": "KPI - Total Billed",
+      "model": "account.invoice.report",
+      "domain": [
+        "&",
+        ["state", "not in", ["draft", "cancel"]],
+        ["move_type", "=", "in_invoice"]
+      ],
+      "context": { "group_by": ["invoice_date"] },
+      "measures": [
+        { "id": "price_subtotal", "fieldName": "price_subtotal" }
+      ],
+      "columns": [],
+      "rows": [],
+      "sortedColumn": null,
+      "fieldMatching": {
+        "vbfilt1-0001-4001-8001-000000000001": {
+          "chain": "invoice_date",
+          "type": "date",
+          "offset": 0
+        },
+        "vbfilt2-0002-4002-8002-000000000002": {
+          "chain": "product_categ_id",
+          "type": "many2one"
+        },
+        "vbfilt3-0003-4003-8003-000000000003": {
+          "chain": "product_id",
+          "type": "many2one"
+        },
+        "vbfilt4-0004-4004-8004-000000000004": {
+          "chain": "partner_id",
+          "type": "many2one"
+        }
+      }
+    },
+    "2": {
+      "type": "ODOO",
+      "id": "2",
+      "formulaId": "2",
+      "name": "KPI - Avg Bill",
+      "model": "account.invoice.report",
+      "domain": [
+        "&",
+        ["state", "not in", ["draft", "cancel"]],
+        ["move_type", "=", "in_invoice"]
+      ],
+      "context": { "group_by": ["invoice_date"] },
+      "measures": [
+        { "id": "move_id", "fieldName": "move_id" },
+        { "id": "price_subtotal", "fieldName": "price_subtotal" }
+      ],
+      "columns": [],
+      "rows": [],
+      "sortedColumn": null,
+      "fieldMatching": {
+        "vbfilt1-0001-4001-8001-000000000001": {
+          "chain": "invoice_date",
+          "type": "date",
+          "offset": 0
+        },
+        "vbfilt2-0002-4002-8002-000000000002": {
+          "chain": "product_categ_id",
+          "type": "many2one"
+        },
+        "vbfilt3-0003-4003-8003-000000000003": {
+          "chain": "product_id",
+          "type": "many2one"
+        },
+        "vbfilt4-0004-4004-8004-000000000004": {
+          "chain": "partner_id",
+          "type": "many2one"
+        }
+      }
+    },
+    "3": {
+      "type": "ODOO",
+      "id": "3",
+      "formulaId": "3",
+      "name": "KPI - Unpaid Bills",
+      "model": "account.invoice.report",
+      "domain": [
+        "&",
+        ["state", "not in", ["draft", "cancel"]],
+        "&",
+        ["move_type", "=", "in_invoice"],
+        ["payment_state", "=", "not_paid"]
+      ],
+      "context": { "group_by": ["invoice_date"] },
+      "measures": [
+        { "id": "price_subtotal", "fieldName": "price_subtotal" }
+      ],
+      "columns": [],
+      "rows": [],
+      "sortedColumn": null,
+      "fieldMatching": {
+        "vbfilt1-0001-4001-8001-000000000001": {
+          "chain": "invoice_date",
+          "type": "date",
+          "offset": 0
+        },
+        "vbfilt2-0002-4002-8002-000000000002": {
+          "chain": "product_categ_id",
+          "type": "many2one"
+        },
+        "vbfilt3-0003-4003-8003-000000000003": {
+          "chain": "product_id",
+          "type": "many2one"
+        },
+        "vbfilt4-0004-4004-8004-000000000004": {
+          "chain": "partner_id",
+          "type": "many2one"
+        }
+      }
+    }
+  },
+  "pivotNextId": 4,
+  "lists": {
+    "1": {
+      "id": "1",
+      "name": "Top Vendor Bills",
+      "model": "account.move.line",
+      "domain": [
+        ["move_id.move_type", "=", "in_invoice"],
+        ["move_id.state", "not in", ["draft", "cancel"]],
+        ["product_id", "!=", false]
+      ],
+      "context": {},
+      "columns": [
+        "move_id",
+        "partner_id",
+        "product_id",
+        "quantity",
+        "price_unit",
+        "purchase_order_id"
+      ],
+      "orderBy": [{ "name": "price_unit", "asc": false }],
+      "fieldMatching": {
+        "vbfilt1-0001-4001-8001-000000000001": {
+          "chain": "date",
+          "type": "date",
+          "offset": 0
+        },
+        "vbfilt2-0002-4002-8002-000000000002": {
+          "chain": "product_id.categ_id",
+          "type": "many2one"
+        },
+        "vbfilt3-0003-4003-8003-000000000003": {
+          "chain": "product_id",
+          "type": "many2one"
+        },
+        "vbfilt4-0004-4004-8004-000000000004": {
+          "chain": "partner_id",
+          "type": "many2one"
+        }
+      }
+    }
+  },
+  "listNextId": 2,
+  "customTableStyles": {},
+  "globalFilters": [
+    {
+      "id": "vbfilt1-0001-4001-8001-000000000001",
+      "type": "date",
+      "label": "Period",
+      "defaultValue": "last_three_months",
+      "rangeType": "relative"
+    },
+    {
+      "id": "vbfilt2-0002-4002-8002-000000000002",
+      "type": "relation",
+      "label": "Product Category",
+      "modelName": "product.category",
+      "defaultValue": [],
+      "defaultValueDisplayNames": [],
+      "rangeType": "year"
+    },
+    {
+      "id": "vbfilt3-0003-4003-8003-000000000003",
+      "type": "relation",
+      "label": "Product",
+      "modelName": "product.product",
+      "defaultValue": [],
+      "defaultValueDisplayNames": [],
+      "rangeType": "year"
+    },
+    {
+      "id": "vbfilt4-0004-4004-8004-000000000004",
+      "type": "relation",
+      "label": "Vendor",
+      "modelName": "res.partner",
+      "defaultValue": [],
+      "defaultValueDisplayNames": [],
+      "rangeType": "year"
+    }
+  ],
+  "odooVersion": 12,
+  "chartOdooMenusReferences": {
+    "vbfig04-0004-4004-8004-000000000004": "billed_product.menu_vendor_bills_posted",
+    "vbfig01-0001-4001-8001-000000000001": "billed_product.menu_vendor_bills_posted",
+    "vbfig02-0002-4002-8002-000000000002": "billed_product.menu_vendor_bills_posted",
+    "vbfig03-0003-4003-8003-000000000003": "billed_product.menu_vendor_bills_posted"
+  }
+}
