@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_nilvera_edespatch" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.nilvera.edespatch</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="l10n_tr_nilvera_einvoice_usd.res_config_settings_view_form_nilvera_usd"/>
+        <field name="arch" type="xml">
+            <block id="nilvera" position="inside">
+                <setting string="E-Despatch"
+                         help="Enable e-despatch picking field and XML references (per company)">
+                    <field name="l10n_tr_edespatch" widget="boolean_toggle"/>
+                </setting>
+            </block>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,169 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l10n_tr_nilvera_einvoice_usd
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-12 14:45+0000\n"
+"PO-Revision-Date: 2026-02-12 14:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-javascript
+#: code:addons/l10n_tr_nilvera_einvoice_usd/static/src/components/tax_totals/tax_totals_try.xml:0
+msgid "(TL)"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model_terms:ir.ui.view,arch_db:l10n_tr_nilvera_einvoice_usd.view_move_form_tcmb_rate_type
+msgid "<span>1</span>"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model_terms:ir.ui.view,arch_db:l10n_tr_nilvera_einvoice_usd.view_move_form_tcmb_rate_type
+msgid "<span>=</span>"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model_terms:ir.ui.view,arch_db:l10n_tr_nilvera_einvoice_usd.view_move_form_tcmb_rate_type
+msgid "<span>TRY</span>"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields.selection,name:l10n_tr_nilvera_einvoice_usd.selection__account_move__tcmb_rate_type__rate
+msgid "Döviz Alış"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields.selection,name:l10n_tr_nilvera_einvoice_usd.selection__account_move__tcmb_rate_type__forex_selling_rate
+msgid "Döviz Satış"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_bank_statement_line__l10n_tr_edespatch_picking_ids
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_move__l10n_tr_edespatch_picking_ids
+msgid "E-Despatch References"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields,help:l10n_tr_nilvera_einvoice_usd.field_account_bank_statement_line__l10n_tr_edespatch_picking_ids
+#: model:ir.model.fields,help:l10n_tr_nilvera_einvoice_usd.field_account_move__l10n_tr_edespatch_picking_ids
+msgid ""
+"E-despatches to reference in invoice XML DespatchDocumentReference section"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields.selection,name:l10n_tr_nilvera_einvoice_usd.selection__account_move__tcmb_rate_type__banknote_buying_rate
+msgid "Efektif Alış"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields.selection,name:l10n_tr_nilvera_einvoice_usd.selection__account_move__tcmb_rate_type__banknote_selling_rate
+msgid "Efektif Satış"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields,help:l10n_tr_nilvera_einvoice_usd.field_account_bank_statement_line__l10n_tr_tcmb_rate
+#: model:ir.model.fields,help:l10n_tr_nilvera_einvoice_usd.field_account_move__l10n_tr_tcmb_rate
+msgid "Exchange rate from TCMB used for Turkish e-invoice XML generation"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-python
+#: code:addons/l10n_tr_nilvera_einvoice_usd/models/account_move.py:0
+msgid "Invoice already submitted."
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-python
+#: code:addons/l10n_tr_nilvera_einvoice_usd/models/account_move.py:0
+msgid "Invoice sent successfully."
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model,name:l10n_tr_nilvera_einvoice_usd.model_account_move
+msgid "Journal Entry"
+msgstr "Yevmiye Kaydı"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model,name:l10n_tr_nilvera_einvoice_usd.model_account_move_line
+msgid "Journal Item"
+msgstr "Yevmiye Kalemi"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model_terms:ir.ui.view,arch_db:l10n_tr_nilvera_einvoice_usd.product_template_form_view_nilvera_desc
+msgid "Nilvera"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_move_line__nilvera_product_desc
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_product_product__nilvera_product_desc
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_product_template__nilvera_product_desc
+msgid "Nilvera Product Description"
+msgstr "Nilvera Ürün Açıklaması"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-python
+#: code:addons/l10n_tr_nilvera_einvoice_usd/models/account_move.py:0
+msgid ""
+"Oops, seems like you're unauthorised to do this. Try another API key with "
+"more rights or contact Nilvera."
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model,name:l10n_tr_nilvera_einvoice_usd.model_product_template
+msgid "Product"
+msgstr "Ürün"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-python
+#: code:addons/l10n_tr_nilvera_einvoice_usd/models/account_move.py:0
+msgid "Server error from Nilvera, please try again later."
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model_terms:ir.ui.view,arch_db:l10n_tr_nilvera_einvoice_usd.view_move_form_tcmb_rate_type
+msgid "TCMB Rate"
+msgstr "Kur"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_bank_statement_line__l10n_tr_tcmb_rate
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_move__l10n_tr_tcmb_rate
+msgid "TCMB Rate (XML)"
+msgstr "Kur"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_bank_statement_line__tcmb_rate_type
+#: model:ir.model.fields,field_description:l10n_tr_nilvera_einvoice_usd.field_account_move__tcmb_rate_type
+msgid "TCMB Rate Type"
+msgstr "Kur Tipi"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-python
+#: code:addons/l10n_tr_nilvera_einvoice_usd/models/account_move.py:0
+msgid "The invoice has been successfully sent to Nilvera."
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-javascript
+#: code:addons/l10n_tr_nilvera_einvoice_usd/static/src/components/tax_totals/tax_totals_try.xml:0
+msgid "Total (TL)"
+msgstr "Toplam Tutar (TL)"
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#: model:ir.model,name:l10n_tr_nilvera_einvoice_usd.model_account_edi_xml_ubl_tr
+msgid "UBL-TR 1.2"
+msgstr ""
+
+#. module: l10n_tr_nilvera_einvoice_usd
+#. odoo-javascript
+#: code:addons/l10n_tr_nilvera_einvoice_usd/static/src/components/tax_totals/tax_totals_try.xml:0
+msgid "Untaxed (TL)"
+msgstr "Vergi Hariç Tutar (TL)"

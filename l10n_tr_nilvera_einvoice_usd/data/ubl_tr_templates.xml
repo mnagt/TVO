@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="ubl_tr_usd_InvoiceType"
+              inherit_id="l10n_tr_nilvera_einvoice.ubl_tr_InvoiceType"
+              primary="True">
+        <!-- Replace OrderReference with DespatchDocumentReference when e-despatch data exists -->
+        <xpath expr="//*[local-name()='OrderReference']" position="replace">
+            <t xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+               xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+                <cac:DespatchDocumentReference
+                    t-foreach="vals.get('despatch_document_reference_list', [])"
+                    t-as="despatch_ref">
+                    <cbc:ID t-out="despatch_ref.get('id')"/>
+                    <cbc:IssueDate t-out="despatch_ref.get('issue_date')"/>
+                </cac:DespatchDocumentReference>
+            </t>
+        </xpath>
+    </template>
+</odoo>
+
+ 

@@ -1,6 +1,6 @@
 
 import logging
-from odoo import _, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.addons.l10n_tr_nilvera.lib.nilvera_client import _get_nilvera_client
 
@@ -8,8 +8,9 @@ _logger = logging.getLogger(__name__)
 
 
 class AccountMove(models.Model):
-    _name = 'account.move'
-    _inherit = ['account.move']
+    _inherit = 'account.move'
+
+
 
 
 
@@ -22,7 +23,7 @@ class AccountMove(models.Model):
             _logger.info(f"=== NILVERA REQUEST ===")
             _logger.info(f"Endpoint: {endpoint}")
             _logger.info(f"File: {xml_file.name}")
-            # _logger.info(f"XML:\n{xml_content.decode('utf-8')}")  # Changed to .info
+            _logger.info(f"XML:\n{xml_content.decode('utf-8')}")  # Changed to .info
             
             response = client.request(
                 "POST",
@@ -71,23 +72,4 @@ class AccountMove(models.Model):
                 raise UserError(_("Server error from Nilvera, please try again later."))
     
             self.message_post(body=_("The invoice has been successfully sent to Nilvera."))
-
-
-    def button_draft(self):
-        """Override to allow draft reset for invoices sent to Nilvera (skip l10n_tr_nilvera_einvoice check)"""
-        # Skip ONLY odoo.addons.l10n_tr_nilvera_einvoice (not _usd or _extended)
-        mro = self.__class__.__mro__
-        
-        for i, cls in enumerate(mro):
-            # Find the EXACT l10n_tr_nilvera_einvoice module (not _usd, not _extended)
-            if cls.__module__ == 'odoo.addons.l10n_tr_nilvera_einvoice.models.account_move':
-                # Look for button_draft in classes AFTER this one
-                for next_cls in mro[i+1:]:
-                    method = next_cls.__dict__.get('button_draft')
-                    if method:
-                        return method(self)
-                break
-        
-        # Fallback to super() if we don't find it
-        return super(AccountMove, self).button_draft()
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+ <templates>
+     <t t-name="account.TaxTotalsField" t-inherit="account.TaxTotalsField" t-inherit-mode="extension">
+         <xpath expr="//tr[.//span[@name='amount_total']]" position="after">
+             <t t-if="totals.display_try_amounts">
+                 <!-- Iterate subtotals to show Untaxed (TL) + individual tax groups -->
+                 <t t-foreach="totals.subtotals" t-as="subtotal" t-key="subtotal_index">
+                     <tr t-if="subtotal_index === 0" class="border-top">
+                         <td class="o_td_label">
+                             <label class="o_form_label o_tax_total_label text-muted">Untaxed (TL)</label>
+                         </td>
+                         <td class="o_list_monetary text-muted">
+                             <span t-out="formatTryMonetary(subtotal.try_base_amount)" style="white-space: nowrap;"/>
+                         </td>
+                     </tr>
+                     <t t-foreach="subtotal.tax_groups" t-as="group" t-key="group_index">
+                         <tr>
+                             <td class="o_td_label">
+                                 <label class="o_form_label o_tax_total_label text-muted" t-out="group.tax_group_name + ' (TL)'"/>
+                             </td>
+                             <td class="o_list_monetary text-muted">
+                                 <span t-out="formatTryMonetary(group.try_tax_amount)" style="white-space: nowrap;"/>
+                             </td>
+                         </tr>
+                     </t>
+                 </t>
+
+                 <!-- Total (TL) row -->
+                 <tr class="border-top">
+                     <td class="o_td_label">
+                         <label class="o_form_label fw-bold text-muted">Total (TL)</label>
+                     </td>
+                     <td class="o_list_monetary fw-bold text-muted">
+                         <span t-out="formatTryMonetary(totals.try_total_amount)" style="white-space: nowrap;"/>
+                     </td>
+                 </tr>
+             </t>
+         </xpath>
+     </t>
+ </templates>

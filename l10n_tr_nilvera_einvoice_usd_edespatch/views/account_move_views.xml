@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_edespatch_picking" model="ir.ui.view">
+        <field name="name">account.move.form.edespatch.picking</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@id='other_tab']//group[@name='sale_info_group']//field[@name='delivery_date']" position="after">
+                <field name="l10n_tr_edespatch_picking_ids"
+                       widget="many2many_tags"
+                       options="{'no_create': True}"
+                       readonly="state != 'draft'"
+                       invisible="not l10n_tr_edespatch"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

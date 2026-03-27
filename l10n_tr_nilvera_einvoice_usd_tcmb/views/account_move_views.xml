@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_tcmb_rate_type" model="ir.ui.view">
+        <field name="name">account.move.form.tcmb.rate.type</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='journal_div']" position="after">
+                <label for="tcmb_rate_type" string="TCMB Rate"
+                    invisible="move_type not in ('out_invoice','out_refund','in_invoice','in_refund') or not l10n_tr_tcmb"/>
+                <div name="tcmb_rate_div" class="d-flex gap-2 align-items-baseline"
+                    invisible="move_type not in ('out_invoice','out_refund','in_invoice','in_refund') or not l10n_tr_tcmb">
+                    <field name="tcmb_rate_type" class="w-auto"/>
+                    <div name="currency_tcmb_div"
+                        class="d-flex gap-1 align-items-baseline text-muted">
+                        <span>1</span>
+                        <field name="company_currency_id" readonly="True"
+                                options="{'no_open': True}" class="w-auto"/>
+                        <span>=</span>
+                        <field name="l10n_tr_tcmb_rate" digits="[12,4]"
+                                readonly="state != 'draft'" class="oe_inline" style="max-width: 10ch;"/>
+                        <span>TRY</span>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='currency_conversion_div']" position="attributes">
+                <attribute name="invisible">
+                    currency_id == company_currency_id or move_type in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')
+                </attribute>
+            </xpath>
+            <xpath expr="//button[@name='refresh_invoice_currency_rate']/.." position="attributes">                                    
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
