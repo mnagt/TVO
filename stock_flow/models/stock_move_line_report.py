@@ -20,7 +20,7 @@ class StockProductFlowReport(models.Model):
     signed_qty_done = fields.Float(string="Signed Qty")
     operation = fields.Char(string="Operation")
     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
-    stock_balance = fields.Float(string="Stock Balance", readonly=True, group_operator=False)
+    stock_balance = fields.Float(string="Stock Balance", readonly=True, aggregator=False)
     company_id = fields.Many2one('res.company', string="Company", readonly=True)
     categ_id = fields.Many2one('product.category', string="Product Category")
     partner_id = fields.Char(string="Partner")
