@@ -210,7 +210,8 @@ class AccountMoveLineReport(models.Model):
                         WHEN am.move_type = 'out_refund' THEN 'out_refund'
                         WHEN am.move_type = 'in_refund' THEN 'in_refund'
                         WHEN aj.type = 'bank' THEN 'bank_payment'
-                        WHEN aj.type = 'cash' THEN 'check_payment'
+                        WHEN aj.type = 'cash' AND ca.check_numbers IS NOT NULL THEN 'check_payment'
+                        WHEN aj.type = 'cash' AND ca.check_numbers IS NULL THEN 'manual_payment'
                         WHEN aj.type = 'purchase' THEN 'purchase'
                         WHEN aj.type = 'sale' THEN 'sale'
                         ELSE 'journal_entry'
@@ -287,6 +288,7 @@ class AccountMoveLineReport(models.Model):
             'in_refund': _('Credit Note'),
             'bank_payment': _('Bank Payment'),
             'check_payment': _('Check'),
+            'manual_payment': _('Manual Payment'),
             'purchase': _('Purchase'),
             'sale': _('Sale'),
             'journal_entry': _('Journal Entry'),
