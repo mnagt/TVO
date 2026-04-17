@@ -1,8 +1,11 @@
 # pylint: disable=protected-access
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
+import logging
 import stdnum
 
 from odoo import models, fields, api, Command, _
+
+_logger = logging.getLogger(__name__)
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import index_exists
 from .mixins import ChequeIssuerMixin
@@ -52,7 +55,9 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
         selection=[
             ('draft', 'Draft'),
             ('register', 'Registered'),
+            ('paid', 'Paid'),
             ('deposit', 'Deposited'),
+            ('warranty', 'Warranty'),
             ('cashed', 'Cashed'),
             ('bounce', 'Bounced'),
             ('voided', 'Voided'),
@@ -75,6 +80,11 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
         string='Payment Type',
         store=True,
     )
+    paid_partner_id = fields.Many2one(
+        'res.partner',
+        string='Paid To',
+        readonly=True,
+    )
     cashed_date = fields.Date(
         string='Cashed Date',
         readonly=True,
@@ -92,13 +102,7 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
         readonly=True,
         help='Date when the cheque was deposited to the bank'
     )
-    collection_line_id = fields.Many2one(
-        'account.move.line',
-        string='Collection Line',
-        readonly=True,
-        check_company=True,
-        help='The debit line in collection account from deposit move'
-    )
+
 
     def _auto_init(self):
         super()._auto_init()
@@ -114,10 +118,9 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
     def _get_move_amounts(self):
         """Return (company_amount, payment_amount, currency_id) for the current cheque.
 
-        Source priority: collection_line_id (post-deposit) → outstanding_line_id (pre-deposit)
-        → cheque.amount (no line yet, e.g. legacy records).
+        Source: outstanding_line_id (current open line) → cheque.amount (no line yet, e.g. legacy records).
         """
-        line = self.collection_line_id or self.outstanding_line_id
+        line = self.outstanding_line_id
         if line:
             company_amount = line.debit or line.credit
             payment_amount = abs(line.amount_currency) if line.amount_currency else company_amount
@@ -156,6 +159,17 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
         :param reconcile_line: account.move.line to reconcile with (optional)
         :return: posted account.move
         """
+        if reconcile_line and reconcile_line.reconciled:
+            raise UserError(_(
+                'Cannot process cheque "%s": the linked accounting line '
+                '(ID: %s, account: %s) is already fully reconciled.\n'
+                'Possible causes:\n'
+                '- This line was reconciled via Odoo\'s bank reconciliation '
+                '(cheque state should have updated automatically).\n'
+                '- The outstanding_line_id was not updated correctly after a '
+                'previous operation (legacy data issue).\n'
+                'Please verify the accounting entries for this cheque.'
+            ) % (self.name, reconcile_line.id, reconcile_line.account_id.display_name))
         company_amount, payment_amount, line_currency_id = self._get_move_amounts()
         debit  = self._build_move_line_vals(debit_account.id,  label, company_amount, payment_amount, line_currency_id, True)
         credit = self._build_move_line_vals(credit_account.id, label, company_amount, payment_amount, line_currency_id, False)
@@ -167,7 +181,45 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
         })
         move.action_post()
         if reconcile_line:
+            if reconcile_line.move_id.state != 'posted':
+                raise UserError(_(
+                    'Cannot process cheque "%s": the linked journal entry (ID: %s, ref: "%s") '
+                    'is not posted (current state: "%s"). '
+                    'Please re-post that journal entry before continuing.'
+                ) % (
+                    self.name,
+                    reconcile_line.move_id.id,
+                    reconcile_line.move_id.ref or reconcile_line.move_id.name,
+                    reconcile_line.move_id.state,
+                ))
+            (move.line_ids + reconcile_line).flush_recordset(['parent_state'])
             target = move.line_ids.filtered(lambda l: l.account_id == reconcile_line.account_id)
+
+            # --- DIAGNOSTIC LOG ---
+            all_lines = target + reconcile_line
+            _logger.warning(
+                "CHEQUE RECONCILE [_create_transition_move] cheque=%s\n"
+                "  NEW move.id=%s  move.state=%s\n"
+                "  target line ids=%s\n"
+                "    target parent_states (ORM)=%s\n"
+                "    target move_id.state (ORM)=%s\n"
+                "  reconcile_line.id=%s\n"
+                "    reconcile_line.parent_state (ORM)=%s\n"
+                "    reconcile_line.move_id.state (ORM)=%s\n"
+                "    reconcile_line.reconciled=%s\n"
+                "  NON-POSTED lines (ORM check): %s",
+                self.name, move.id, move.state,
+                target.ids,
+                target.mapped('parent_state'),
+                target.mapped('move_id.state'),
+                reconcile_line.id,
+                reconcile_line.parent_state,
+                reconcile_line.move_id.state,
+                reconcile_line.reconciled,
+                [(l.id, l.parent_state, l.move_id.state) for l in all_lines if l.parent_state != 'posted'],
+            )
+            # --- END DIAGNOSTIC LOG ---
+
             (target + reconcile_line).reconcile()
         return move
 
@@ -221,25 +273,42 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
             if not rec.outstanding_line_id:
                 continue
 
-            # Find the line to reconcile with
-            if rec.outstanding_line_id.reconciled:
-                # For bounced cheques, find unreconciled outstanding line from bounce move
-                outstanding_account = rec.payment_id.outstanding_account_id
-                bounce_line = rec.env['account.move.line'].search([
-                    ('account_id', '=', outstanding_account.id),
-                    ('partner_id', '=', rec.partner_id.id),
-                    ('reconciled', '=', False),
-                    ('name', 'ilike', 'Bounce: %s' % rec.name),
-                ], limit=1)
-                if not bounce_line:
-                    continue
-                reconcile_line = bounce_line
-            else:
-                reconcile_line = rec.outstanding_line_id
+            reconcile_line = rec.outstanding_line_id
 
+            if reconcile_line.move_id.state != 'posted':
+                raise UserError(_(
+                    'Cannot void cheque "%s": the linked journal entry (ID: %s, ref: "%s") '
+                    'is not posted (current state: "%s"). '
+                    'Please re-post that journal entry before voiding.'
+                ) % (
+                    rec.name,
+                    reconcile_line.move_id.id,
+                    reconcile_line.move_id.ref or reconcile_line.move_id.name,
+                    reconcile_line.move_id.state,
+                ))
             void_move = rec.env['account.move'].create(rec._prepare_void_move_vals())
             void_move.action_post()
+            all_void_lines = void_move.line_ids + reconcile_line
+            all_void_lines.flush_recordset(['parent_state'])
+            _logger.warning(
+                "CHEQUE RECONCILE [action_void] cheque=%s\n"
+                "  void_move.id=%s  void_move.state=%s\n"
+                "  void_move line ids=%s  parent_states=%s  move_states=%s\n"
+                "  reconcile_line.id=%s  parent_state=%s  move_id.state=%s  reconciled=%s\n"
+                "  NON-POSTED lines: %s",
+                rec.name, void_move.id, void_move.state,
+                void_move.line_ids.ids,
+                void_move.line_ids.mapped('parent_state'),
+                void_move.line_ids.mapped('move_id.state'),
+                reconcile_line.id,
+                reconcile_line.parent_state,
+                reconcile_line.move_id.state,
+                reconcile_line.reconciled,
+                [(l.id, l.parent_state, l.move_id.state)
+                 for l in all_void_lines if l.parent_state != 'posted'],
+            )
             (void_move.line_ids[1] + reconcile_line).reconcile()
+            rec.outstanding_line_id = void_move.line_ids[0]
             voided |= rec
         # Update state for successfully voided checks only
         if voided:
@@ -254,8 +323,8 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
 
         # If cheque was deposited, reverse the deposit move
         if self.state == 'deposit' and self.deposit_journal_id:
-            if self.collection_line_id:
-                collection_account = self.collection_line_id.account_id
+            if self.outstanding_line_id:
+                collection_account = self.outstanding_line_id.account_id
             else:
                 # Fallback for old cheques
                 collection_account = self.deposit_journal_id.default_account_id
@@ -269,19 +338,132 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
                 journal_id=self.deposit_journal_id.id,
                 date=fields.Date.today(),
                 label=label,
-                reconcile_line=self.collection_line_id,
+                reconcile_line=self.outstanding_line_id,
             )
 
             # Update outstanding_line_id to the new debit line for later void/re-deposit
             new_outstanding_line = move.line_ids.filtered(lambda l: l.account_id == outstanding_account)
             self.write({
                 'state': 'bounce',
-                'collection_line_id': False,
                 'outstanding_line_id': new_outstanding_line.id,
             })
             return True
 
         return self.write({'state': 'bounce'})
+
+    def action_take_back(self):
+        """Reverse the outbound use of the cheque. State: paid → register."""
+        self.ensure_one()
+        if self.state != 'paid':
+            raise UserError(_('Only paid cheques can be taken back.'))
+
+        # --- DIAGNOSTIC LOG ---
+        _logger.warning(
+            "CHEQUE TAKE BACK [%s] state=%s\n"
+            "  payment_id: id=%s  code=%s  state=%s  type=%s\n"
+            "  operation_ids (%d total):\n%s",
+            self.name, self.state,
+            self.payment_id.id,
+            self.payment_id.payment_method_code,
+            self.payment_id.state,
+            self.payment_id.payment_type,
+            len(self.operation_ids),
+            '\n'.join(
+                '    [%d] id=%s  code=%s  state=%s  type=%s' % (
+                    i, p.id, p.payment_method_code, p.state, p.payment_type
+                )
+                for i, p in enumerate(self.operation_ids)
+            ) or '    (none)',
+        )
+        # --- END DIAGNOSTIC LOG ---
+
+        op_posted = self.operation_ids.filtered(
+            lambda p: p.payment_method_code == 'cheque_existing_out'
+            and p.move_id.state == 'posted'
+        )[:1]
+        op_cancelled = self.operation_ids.filtered(
+            lambda p: p.payment_method_code == 'cheque_existing_out' and p.state == 'cancel'
+        )[:1]
+
+        if op_posted:
+            debit_account = self.outstanding_line_id.account_id
+            credit_account = op_posted.destination_account_id
+            label = _('Take Back: %s') % self.name
+
+            # JE_A_line: original receipt line on the outstanding account
+            je_a_line = self.payment_id.move_id.line_ids.filtered(
+                lambda l: l.account_id == debit_account
+            )[:1]
+
+            # Create JE_C without internal Rec1 (reconcile_line=None)
+            je = self._create_transition_move(
+                debit_account=debit_account,
+                credit_account=credit_account,
+                journal_id=op_posted.journal_id.id,
+                date=fields.Date.today(),
+                label=label,
+                reconcile_line=None,
+            )
+
+            jec_dr = je.line_ids.filtered(lambda l: l.account_id == debit_account)
+            jec_cr = je.line_ids.filtered(lambda l: l.account_id == credit_account)
+
+            # Guard: undo auto-reconcile if action_post() closed jec_dr
+            if jec_dr and jec_dr.reconciled:
+                jec_dr.remove_move_reconcile()
+
+            # Rec1: close JE_A_line ↔ JE_B_line; leaves jec_dr OPEN
+            if je_a_line and self.outstanding_line_id and not self.outstanding_line_id.reconciled:
+                (je_a_line + self.outstanding_line_id).reconcile()
+
+            # Rec2: unreconcile op_dr from vendor bills if needed, then reconcile with jec_cr
+            op_dr = op_posted.move_id.line_ids.filtered(
+                lambda l: l.account_id == credit_account
+            )[:1]
+            if op_dr and jec_cr:
+                if op_dr.reconciled:
+                    op_dr.remove_move_reconcile()
+                (jec_cr + op_dr).reconcile()
+
+            # outstanding_line_id → jec_dr (OPEN, points to JE_C)
+            new_outstanding_line = jec_dr[:1]
+
+        elif op_cancelled:
+            pass  # Accounting already reversed by cancellation
+            # Restore to JE_A_line for cancelled case
+            new_outstanding_line = self.payment_id.move_id.line_ids.filtered(
+                lambda l: l.account_id == self.payment_id.outstanding_account_id
+            )[:1]
+        else:
+            raise UserError(_('Cannot take back: no linked payment found for cheque %s.') % self.name)
+
+        self.write({
+            'state': 'register',
+            'paid_partner_id': False,
+            'outstanding_line_id': new_outstanding_line.id if new_outstanding_line else False,
+        })
+
+    def action_reset_to_register(self):
+        """Reset a bounced cheque to register state. State: bounce → register."""
+        self.ensure_one()
+        if self.state != 'bounce':
+            raise UserError(_('Only bounced cheques can be reset to register.'))
+        self.write({'state': 'register'})
+
+    def action_transfer(self):
+        self.ensure_one()
+        return {
+            'name': _('Transfer Cheque'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'cheque.transfer.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_cheque_id': self.id,
+                'active_id': self.id,
+                'active_model': 'account.cheque',
+            },
+        }
 
     def action_draft(self):
         self.ensure_one()
@@ -325,14 +507,14 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
             label=label,
             reconcile_line=self.outstanding_line_id,
         )
-        collection_line = move.line_ids.filtered(lambda l: l.account_id == collection_account)
+        collection_line = move.line_ids.filtered(lambda l: l.debit > 0)[:1]
 
         # Update cheque
         self.write({
             'state': 'deposit',
             'deposit_journal_id': bank_journal_id,
             'deposit_date': deposit_date,
-            'collection_line_id': collection_line.id,
+            'outstanding_line_id': collection_line.id,
         })
 
         return True
@@ -380,6 +562,8 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
     def action_show_reconciled_move(self):
         self.ensure_one()
         move = self._get_reconciled_move()
+        if not move:
+            raise UserError(_('No reconciled journal entry found for this cheque.'))
         return move._get_records_action()
 
     def action_show_journal_entry(self):
@@ -433,8 +617,8 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
 
         bank_account = self.env['account.account'].browse(bank_account_id)
 
-        if self.collection_line_id:
-            collection_account = self.collection_line_id.account_id
+        if self.outstanding_line_id:
+            collection_account = self.outstanding_line_id.account_id
         else:
             # Fallback for cheques deposited before this change
             collection_account = self.payment_id.outstanding_account_id
@@ -446,16 +630,80 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
         else:
             debit_account, credit_account = collection_account, bank_account
 
-        self._create_transition_move(
+        move = self._create_transition_move(
             debit_account=debit_account,
             credit_account=credit_account,
             journal_id=self.deposit_journal_id.id or self.original_journal_id.id,
             date=cashed_date,
             label=label,
-            reconcile_line=self.collection_line_id,
+            reconcile_line=self.outstanding_line_id,
         )
 
+        bank_line = move.line_ids.filtered(lambda l: l.account_id == bank_account)
         # Update cheque with cashed date and state
-        self.write({'cashed_date': cashed_date, 'state': 'cashed'})
+        self.write({'cashed_date': cashed_date, 'state': 'cashed', 'outstanding_line_id': bank_line.id})
 
         return True
+
+    def _audit_outstanding_consistency(self):
+        """Return a list of dicts for cheques whose outstanding_line_id is
+        inconsistent with their state.
+
+        Covers:
+          - state='deposit' + outstanding_line_id missing
+          - state='deposit' + outstanding_line_id.reconciled=True (stale pointer)
+        """
+        issues = []
+        deposit_cheques = self.search([('state', '=', 'deposit')])
+        for cheque in deposit_cheques:
+            line = cheque.outstanding_line_id
+            if not line:
+                issues.append({
+                    'cheque': cheque,
+                    'type': 'missing_outstanding',
+                    'detail': 'No outstanding_line_id while state=deposit',
+                })
+            elif line.reconciled:
+                issues.append({
+                    'cheque': cheque,
+                    'type': 'stale_outstanding',
+                    'detail': (
+                        'outstanding_line_id=%s (account=%s) '
+                        'is reconciled — stale pointer'
+                    ) % (line.id, line.account_id.name),
+                })
+        return issues
+
+    def _cron_audit_outstanding(self):
+        """Cron entry point: audit and log outstanding_line_id anomalies."""
+        issues = self._audit_outstanding_consistency()
+        if not issues:
+            _logger.info("Cheque cron audit: no anomalies found.")
+            return
+        for issue in issues:
+            _logger.warning(
+                "Cheque cron audit: %s (ID=%s) — %s: %s",
+                issue['cheque'].name, issue['cheque'].id,
+                issue['type'], issue['detail'],
+            )
+        _logger.warning("Cheque cron audit: %d anomalies found.", len(issues))
+
+    def action_audit_outstanding(self):
+        """Server action entry point: audit and log outstanding_line_id anomalies."""
+        issues = self._audit_outstanding_consistency()
+        if not issues:
+            _logger.info("Cheque audit: no outstanding_line_id anomalies found.")
+            raise UserError(_('No anomalies found. All deposited cheques have consistent outstanding lines.'))
+        for issue in issues:
+            _logger.warning(
+                "Cheque audit: %s (ID=%s) — %s: %s",
+                issue['cheque'].name, issue['cheque'].id,
+                issue['type'], issue['detail'],
+            )
+        summary = '\n'.join(
+            '• %s (ID %s): %s' % (i['cheque'].name, i['cheque'].id, i['detail'])
+            for i in issues
+        )
+        raise UserError(_(
+            'Found %d anomalous cheque(s):\n\n%s'
+        ) % (len(issues), summary))

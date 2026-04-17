@@ -25,7 +25,7 @@
                             </field>
                             <field name="move_cheque_ids" invisible="payment_method_code not in ['cheque_existing_in', 'cheque_existing_out', 'cheque_return']"
                                 domain="
-                                    [('payment_method_code', '=', 'cheque_incoming'), ('current_journal_id', '=', journal_id), ('company_id', '=', company_id)]
+                                    [('payment_method_code', '=', 'cheque_incoming'), ('state', '=', 'register'), ('current_journal_id', '=', journal_id), ('company_id', '=', company_id)]
                                         if payment_type == 'outbound' else
                                     [('payment_method_code', '=', 'cheque_incoming'), ('current_journal_id', '=', False), ('company_id', '=', company_id)]" options="{'no_create': True}"
                                     nolabel="1" colspan="2" readonly="state != 'draft'">

@@ -116,9 +116,18 @@
                             invisible="payment_method_code != 'cheque_incoming' or state != 'deposit'"/>
                     <button name="action_bounce" type="object" string="Bounced" class="oe_highlight"
                             invisible="payment_method_code != 'cheque_incoming' or state != 'deposit'"/>
+                    <button name="action_transfer" string="Transfer" type="object"
+                            class="oe_highlight"
+                            invisible="state != 'deposit' or payment_method_code != 'cheque_incoming'"/>
                     <button name="action_void" type="object" string="Voided" class="oe_highlight"
-                            invisible="payment_method_code != 'cheque_incoming' or state not in ('register', 'bounce')"
+                            invisible="payment_method_code != 'cheque_incoming' or state not in ('register', 'bounce', 'paid')"
                             confirm="This will void the cheque and reopen the original debt."/>
+                    <button name="action_take_back" type="object" string="Take Back" class="oe_highlight"
+                            invisible="payment_method_code != 'cheque_incoming' or state != 'paid'"
+                            confirm="This will mark the cheque as registered and undo the outbound use."/>
+                    <button name="action_reset_to_register" type="object" string="Reset to Register" class="oe_highlight"
+                            invisible="payment_method_code != 'cheque_incoming' or state != 'bounce'"
+                            confirm="This will make the cheque available again for deposit or payment."/>
                     <field name="state" widget="badge"/>
                 </header>
                 <sheet>
@@ -131,9 +140,6 @@
                         </button>
                         <button  icon="fa-bars" type="object" invisible="not outstanding_line_id" name="action_show_journal_entry" groups="account.group_account_user,account.group_account_readonly">
                             <span>Journal Entry</span>
-                        </button>
-                        <button  icon="fa-bars" type="object" invisible="state not in ('voided', 'cashed')" name="action_show_reconciled_move" groups="account.group_account_user,account.group_account_readonly">
-                            <span>Reconciled move</span>
                         </button>
                     </div>
                     <group>
@@ -152,6 +158,7 @@
                     <group>
                         <group string="Partner">
                             <field name="partner_id" string="Owner"/>
+                            <field name="paid_partner_id" invisible="state != 'paid'"/>
                         </group>
                         <group string="Issuer Details" invisible="payment_method_code != 'cheque_incoming'">
                             <field name="issuer_name"/>

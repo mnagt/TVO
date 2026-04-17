@@ -1,7 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
     'name': 'Cheque Management',
-    'version': "18.0.1.0.3",
+    'version': "18.0.1.0.18",
     'category': 'Accounting',
     'summary': 'Cheques Management',
     'description': """
@@ -15,15 +15,19 @@
     'license': 'LGPL-3',
     'depends': [
         'account',
+        'mis_builder_cash_flow',
     ],
     'data': [
         'data/account_payment_method_data.xml',
         'data/cheque_state_option_data.xml',
+        'data/server_actions.xml',
+        'data/cron.xml',
         'security/ir.model.access.csv',
         'security/security.xml',
         'wizards/cheque_cash_wizard.xml',
         'wizards/cheque_bulk_state_update_view.xml',
         'wizards/cheque_deposit_wizard.xml',
+        'wizards/cheque_transfer_wizard.xml',
         'views/account_payment_view.xml',
         'views/account_journal_view.xml',
         'views/cheque_view.xml',

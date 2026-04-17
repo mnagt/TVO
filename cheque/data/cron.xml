@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ir_cron_audit_cheque_outstanding" model="ir.cron">
+        <field name="name">Cheque: Audit Outstanding Line Consistency</field>
+        <field name="model_id" ref="cheque.model_account_cheque"/>
+        <field name="state">code</field>
+        <field name="code">env['account.cheque']._cron_audit_outstanding()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

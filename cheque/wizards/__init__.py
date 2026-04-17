@@ -5,3 +5,4 @@ from . import payment_register_cheque
 from . import cheque_cash_wizard
 from . import cheque_bulk_state_update
 from . import cheque_deposit_wizard
+from . import cheque_transfer_wizard

@@ -79,6 +79,14 @@ class AccountPayment(models.Model):
         if incoming_checks:
             incoming_checks.write({'state': 'register'})
 
+        # Set paid state for outbound existing cheque payments
+        for payment in self.filtered(lambda p: p.payment_method_code == 'cheque_existing_out'):
+            if payment.move_cheque_ids:
+                payment.move_cheque_ids.write({
+                    'state': 'paid',
+                    'paid_partner_id': payment.partner_id.id,
+                })
+
     def _get_cheques(self):
         self.ensure_one()
         if self._is_cheque_payment(check_subtype='new_check'):
@@ -269,6 +277,17 @@ class AccountPayment(models.Model):
                     'date_maturity': check.payment_date,
                 })
 
+        # For cheque_existing_out, replace the liquidity account with the cheque's
+        # original outstanding account so the JE credits the correct account
+        if self.payment_method_code == 'cheque_existing_out' and self.move_cheque_ids:
+            outstanding_line = self.move_cheque_ids[0].outstanding_line_id
+            if outstanding_line:
+                outstanding_account_id = outstanding_line.account_id.id
+                liquidity_account_ids = {a.id for a in self._get_valid_liquidity_accounts()}
+                for line_vals in res:
+                    if line_vals.get('account_id') in liquidity_account_ids:
+                        line_vals['account_id'] = outstanding_account_id
+
         return res
 
     @api.depends('move_cheque_ids')
@@ -276,7 +295,16 @@ class AccountPayment(models.Model):
         # EXTENDS 'account'
         super()._compute_destination_account_id()
         for payment in self:
-            if payment.move_cheque_ids and (not payment.partner_id or payment.partner_id == payment.company_id.partner_id):
+            if payment.move_cheque_ids and payment.payment_method_code == 'cheque_existing_out':
+                # Force payable account regardless of partner_type default
+                if payment.partner_id:
+                    payment.destination_account_id = (
+                        payment.partner_id.with_company(payment.company_id)
+                        .property_account_payable_id
+                    )
+            elif payment.move_cheque_ids \
+                    and payment.payment_method_code != 'cheque_existing_out' \
+                    and (not payment.partner_id or payment.partner_id == payment.company_id.partner_id):
                 payment.destination_account_id = payment.company_id.transfer_account_id.id
 
     def _is_cheque_transfer(self):
