@@ -31,11 +31,11 @@ class StockQuant(models.Model):
                 quant.value = 0
                 continue
             if quant.product_id.cost_method == 'fifo':
-                quantity = quant.product_id.with_context(warehouse_dest_id = quant.location_id.warehouse_id.id).with_company(quant.company_id).quantity_svl
+                quantity = quant.product_id.with_context(warehouse_id = quant.location_id.warehouse_id.id).with_company(quant.company_id).quantity_svl
                 if float_is_zero(quantity, precision_rounding=quant.product_id.uom_id.rounding):
                     quant.value = 0.0
                     continue
-                average_cost = quant.product_id.with_context(warehouse_dest_id = quant.location_id.warehouse_id.id).with_company(quant.company_id).value_svl / quantity
+                average_cost = quant.product_id.with_context(warehouse_id = quant.location_id.warehouse_id.id).with_company(quant.company_id).value_svl / quantity
                 quant.value = quant.quantity * average_cost
                 quant.unit_value = average_cost
             else:

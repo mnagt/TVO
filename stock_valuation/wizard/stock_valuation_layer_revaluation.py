@@ -24,8 +24,8 @@ class StockValuationLayerRevaluation(models.TransientModel):
                 reval.current_quantity_svl = reval.lot_id.quantity_svl
                 reval.current_value_svl = reval.lot_id.value_svl
             else:
-                reval.current_quantity_svl = reval.product_id.with_context(warehouse_dest_id=reval.warehouse_id.id).quantity_svl
-                reval.current_value_svl = reval.product_id.with_context(warehouse_dest_id=reval.warehouse_id.id).value_svl
+                reval.current_quantity_svl = reval.product_id.with_context(warehouse_id=reval.warehouse_id.id).quantity_svl
+                reval.current_value_svl = reval.product_id.with_context(warehouse_id=reval.warehouse_id.id).value_svl
 
 
 
@@ -76,7 +76,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
             total_product_qty = sum(layers_with_qty.mapped('remaining_qty'))
             if lot_id:
                 lot_id.with_context(disable_auto_svl=True).standard_price += self.added_value / total_product_qty
-            warehouse_cost.cost += self.added_value / product_id.with_context(warehouse_dest_id=self.warehouse_id.id).quantity_svl
+            warehouse_cost.cost += self.added_value / product_id.with_context(warehouse_id=self.warehouse_id.id).quantity_svl
             product_id.with_company(self.company_id).with_context(disable_auto_svl=True).sudo().write({'standard_price': warehouse_cost.cost})
             if self.lot_id:
                 description += _(
