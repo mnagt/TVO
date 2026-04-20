@@ -12,7 +12,7 @@ class StockValuationLayer(models.Model):
     warehouse_id = fields.Many2one(
         'stock.warehouse', 
         string='Warehouse', 
-        readonly=True, 
+        readonly=False, 
         index=True,
         store=True,)
 
