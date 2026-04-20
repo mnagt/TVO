@@ -116,7 +116,7 @@ class StockLandedCost(models.Model):
                 cost_val = warehouse_cost.cost if warehouse_cost else 0.0
                 
                 # Cache quantity_svl to avoid computing twice
-                qty_svl = product.with_context(warehouse_dest_id=self.warehouse_id.id).quantity_svl
+                qty_svl = product.with_context(warehouse_id=self.warehouse_id.id).quantity_svl
                 
                 if not float_is_zero(qty_svl, precision_rounding=product.uom_id.rounding):
                     cost_val += cost_to_add_byproduct[product] / qty_svl
