@@ -225,6 +225,13 @@ class StockMove(models.Model):
             if self.product_id.lot_valuated:
                 return {lot: lot.standard_price or self.product_id.standard_price for lot in self.lot_ids}
             else:
-                return {self.env['stock.lot']: 0.0}
+                warehouse_id = (self.location_dest_id.warehouse_id.id if self._is_in()
+                            else self.location_id.warehouse_id.id)
+                warehouse_cost = self.env['product.location.cost'].search([
+                    ('product_id', '=', self.product_id.id),
+                    ('warehouse_id', '=', warehouse_id)
+                ], order='id desc', limit=1) if warehouse_id else False
+                cost = warehouse_cost.cost if warehouse_cost else 0.0
+                return {self.env['stock.lot']: cost}
     
     
