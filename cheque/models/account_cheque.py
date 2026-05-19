@@ -232,7 +232,12 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
     def _prepare_void_move_vals(self):
         """Prepare journal entry to void/return cheque and reopen the original debt."""
         counterpart_line = self.payment_id.move_id.line_ids.filtered(
-            lambda l: l.account_id == self.payment_id.destination_account_id
+            lambda l: l.account_id != self.payment_id.outstanding_account_id
+        )[:1]
+        counterpart_account_id = (
+            counterpart_line.account_id.id
+            if counterpart_line
+            else False
         )
         return {
             'ref': _('Void cheque %s') % self.name,
@@ -245,7 +250,7 @@ class AccountPaymentCheque(ChequeIssuerMixin, models.Model):
                     'currency_id': self.outstanding_line_id.currency_id.id,
                     'balance': self.outstanding_line_id.balance,
                     'partner_id': self.outstanding_line_id.partner_id.id,
-                    'account_id': counterpart_line.account_id.id,
+                    'account_id': counterpart_account_id,
                 }),
                 Command.create({
                     'name': _('Void cheque %s') % self.name,
