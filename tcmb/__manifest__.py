@@ -1,11 +1,8 @@
-# Copyright 2008-2016 Camptocamp
-# Copyright 2019 Brainbean Apps (https://brainbeanapps.com)
-# Copyright 2020 CorporateHub (https://corporatehub.eu)
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+# -*- coding: utf-8 -*-
 
 {
     "name": "Currency Rate Update - TCMB",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.1.0",
     "author": "Camptocamp, CorporateHub, Odoo Community Association (OCA)",
     "maintainers": "Yaser Akhras",
     "website": "https://yaserakhras.com",

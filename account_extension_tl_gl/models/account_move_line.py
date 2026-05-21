@@ -9,12 +9,14 @@ class AccountMoveLine(models.Model):
         string="TL Debit",
         compute="_compute_tr_debit_credit",
         currency_field="tr_currency_id",
+        store=True,
     )
 
     tr_credit = fields.Monetary(
         string="TL Credit",
         compute="_compute_tr_debit_credit",
         currency_field="tr_currency_id",
+        store=True,
     )
 
     cumulated_tr_balance = fields.Monetary(

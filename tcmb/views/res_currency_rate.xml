@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-    Copyright 2019 Brainbean Apps (https://brainbeanapps.com)
-    License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
--->
 <odoo>
     <record model="ir.ui.view" id="view_tcmb_form">
         <field name="name">res.currency.rate.form</field>
@@ -13,6 +9,9 @@
                 <chatter />
             </form>
             <field name="rate" position="after">
+                <field name="forex_selling_rate" />
+                <field name="banknote_buying_rate" />
+                <field name="banknote_selling_rate" />
                 <field name="provider_id" readonly="1" />
             </field>
         </field>

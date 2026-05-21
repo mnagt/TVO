@@ -32,14 +32,15 @@
             <!-- Swap debit column: USD → TL -->
             <field name="debit" position="replace">
                 <field name="tr_currency_id" optional="hide"/>
-                <field name="tr_debit" string="Debit" optional="show" readonly="1"/>
+                <field name="tr_debit" string="Debit" optional="show" readonly="1" sum="Total TL Debit"/>
             </field>
             <!-- Swap credit column: USD → TL -->
             <field name="credit" position="replace">
-                <field name="tr_credit" string="Credit" optional="show" readonly="1"/>
+                <field name="tr_credit" string="Credit" optional="show" readonly="1" sum="Total TL Debit"/>
             </field>
             <!-- Replace balance with cumulated TL balance only (amount_tr_currency already exists from try_fields) -->
             <field name="balance" position="replace">
+                <field name="amount_tr_currency" string="Balance" optional="show" readonly="1"/>
                 <field name="cumulated_tr_balance" string="Cumulated Balance" optional="show" readonly="1"/>
             </field>
         </field>

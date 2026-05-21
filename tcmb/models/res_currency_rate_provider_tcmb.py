@@ -1,9 +1,7 @@
-# Copyright 2009 Camptocamp
-# Copyright 2009 Grzegorz Grzelak
-# Copyright 2019 Brainbean Apps (https://brainbeanapps.com)
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+# -*- coding: utf-8 -*-
 
 import xml.sax
+
 from collections import defaultdict
 from datetime import datetime, time
 from datetime import date, timedelta
@@ -58,14 +56,29 @@ class ResCurrencyRateProviderTCMB(models.Model):
             parser = make_parser()
             parser.setContentHandler(tcmb_handler)
             parser.parse(response)
-        content = tcmb_handler.content
+        
+        # Collect all 4 rate types
+        forex_buying = dict(tcmb_handler.content)
+        forex_selling = dict(tcmb_handler.forex_selling)
+        banknote_buying = dict(tcmb_handler.banknote_buying)
+        banknote_selling = dict(tcmb_handler.banknote_selling)
+        
         if invert_calculation:
-            for k in content.keys():
-                base_rate = float(content[k][base_currency])
-                for rate in content[k].keys():
-                    content[k][rate] = str(base_rate / float(content[k][rate]))
-                content[k]["TRY"] = str(base_rate)
-        return content
+            # Apply inversion to all 4 rate dictionaries
+            for rate_dict in [forex_buying, forex_selling, banknote_buying, banknote_selling]:
+                for k in rate_dict.keys():
+                    if base_currency in rate_dict[k]:
+                        base_rate = float(rate_dict[k][base_currency])
+                        for rate in rate_dict[k].keys():
+                            rate_dict[k][rate] = str(base_rate / float(rate_dict[k][rate]))
+                        rate_dict[k]["TRY"] = str(base_rate)
+        
+        return {
+            'forex_buying': forex_buying,
+            'forex_selling': forex_selling,
+            'banknote_buying': banknote_buying,
+            'banknote_selling': banknote_selling,
+        }
 
 class TcmbRatesHandler(xml.sax.ContentHandler):
     def __init__(self, currencies, date_from, date_to):
@@ -75,7 +88,10 @@ class TcmbRatesHandler(xml.sax.ContentHandler):
         self.date = None
         self.currency_code = None
         self.current_text = ""
-        self.content = defaultdict(dict)
+        self.content = defaultdict(dict)  # ForexBuying
+        self.forex_selling = defaultdict(dict)
+        self.banknote_buying = defaultdict(dict)
+        self.banknote_selling = defaultdict(dict)
 
     def startElement(self, name, attrs):
         if name == "Tarih_Date":
@@ -91,7 +107,18 @@ class TcmbRatesHandler(xml.sax.ContentHandler):
         self.current_text += content
     
     def endElement(self, name):
-        if name == "ForexBuying" and self.currency_code in self.currencies:
-            if self.date_from <= self.date <= self.date_to:
-                self.content[self.date.isoformat()][self.currency_code] = self.current_text.strip()
+        if not self.date or not self.currency_code:
+            return
+        if self.currency_code not in self.currencies:
+            return
+        if not (self.date_from <= self.date <= self.date_to):
+            return
+        if name == "ForexBuying":
+            self.content[self.date.isoformat()][self.currency_code] = self.current_text.strip()
+        elif name == "ForexSelling":
+            self.forex_selling[self.date.isoformat()][self.currency_code] = self.current_text.strip()
+        elif name == "BanknoteBuying":
+            self.banknote_buying[self.date.isoformat()][self.currency_code] = self.current_text.strip()
+        elif name == "BanknoteSelling":
+            self.banknote_selling[self.date.isoformat()][self.currency_code] = self.current_text.strip()
 

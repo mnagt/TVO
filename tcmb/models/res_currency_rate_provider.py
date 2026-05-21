@@ -1,14 +1,9 @@
-# Copyright 2009-2016 Camptocamp
-# Copyright 2010 Akretion
-# Copyright 2019-2020 Brainbean Apps (https://brainbeanapps.com)
-# Copyright 2021 Tecnativa - Víctor Martínez
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
+# -*- coding: utf-8 -*-
 
 import logging
+
 from datetime import datetime, time
-
 from dateutil.relativedelta import relativedelta
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -131,12 +126,23 @@ class ResCurrencyRateProvider(models.Model):
         is_scheduled = self.env.context.get("scheduled")
         for provider in self:
             try:
-                data = provider._obtain_rates(
+                result = provider._obtain_rates(
                     provider.company_id.currency_id.name,
                     provider.currency_ids.mapped("name"),
                     date_from,
                     date_to,
                 )
+                # Handle dict return with all 4 rate types from TCMB provider
+                if isinstance(result, dict) and 'forex_buying' in result:
+                    data = result.get('forex_buying', {})
+                    forex_selling_data = result.get('forex_selling', {})
+                    banknote_buying_data = result.get('banknote_buying', {})
+                    banknote_selling_data = result.get('banknote_selling', {})
+                else:
+                    data = result
+                    forex_selling_data = {}
+                    banknote_buying_data = {}
+                    banknote_selling_data = {}
                 if data:
                     data = data.items()
             except BaseException as e:
@@ -185,6 +191,25 @@ class ResCurrencyRateProvider(models.Model):
                         )
                     rate = provider._process_rate(currency, rate)
 
+                    # Get all other rate types if available
+                    forex_selling_rate = None
+                    if forex_selling_data and content_date in forex_selling_data:
+                        fs_rate = forex_selling_data[content_date].get(currency_name)
+                        if fs_rate:
+                            forex_selling_rate = provider._process_rate(currency, fs_rate)
+
+                    banknote_buying_rate = None
+                    if banknote_buying_data and content_date in banknote_buying_data:
+                        bb_rate = banknote_buying_data[content_date].get(currency_name)
+                        if bb_rate:
+                            banknote_buying_rate = provider._process_rate(currency, bb_rate)
+
+                    banknote_selling_rate = None
+                    if banknote_selling_data and content_date in banknote_selling_data:
+                        bs_rate = banknote_selling_data[content_date].get(currency_name)
+                        if bs_rate:
+                            banknote_selling_rate = provider._process_rate(currency, bs_rate)
+
                     record = CurrencyRate.search(
                         [
                             ("company_id", "=", provider.company_id.id),
@@ -193,16 +218,22 @@ class ResCurrencyRateProvider(models.Model):
                         ],
                         limit=1,
                     )
+                    write_vals = {"rate": rate, "provider_id": provider.id}
+                    if forex_selling_rate is not None:
+                        write_vals["forex_selling_rate"] = forex_selling_rate
+                    if banknote_buying_rate is not None:
+                        write_vals["banknote_buying_rate"] = banknote_buying_rate
+                    if banknote_selling_rate is not None:
+                        write_vals["banknote_selling_rate"] = banknote_selling_rate
                     if record:
-                        record.write({"rate": rate, "provider_id": provider.id})
+                        record.write(write_vals)
                     else:
                         record = CurrencyRate.create(
                             {
                                 "company_id": provider.company_id.id,
                                 "currency_id": currency.id,
                                 "name": timestamp,
-                                "rate": rate,
-                                "provider_id": provider.id,
+                                **write_vals,
                             }
                         )
 
@@ -248,7 +279,9 @@ class ResCurrencyRateProvider(models.Model):
             inverted = 1 / rate
 
         value = direct
-        if (
+        if self.company_id.currency_id.name == "TRY":
+            value = inverted
+        elif (
             currency_rate_inverted
             and currency.with_company(self.company_id).rate_inverted
         ):

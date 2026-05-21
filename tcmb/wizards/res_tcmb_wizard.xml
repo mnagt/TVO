@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!--
-    Copyright 2019 Brainbean Apps (https://brainbeanapps.com)
-    License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
--->
 <odoo>
     <record id="res_tcmb_wizard_form" model="ir.ui.view">
         <field name="name">res.currency.rate.update.wizard.form</field>
