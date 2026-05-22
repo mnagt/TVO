@@ -114,9 +114,10 @@ class AccountMoveLineReport(models.Model):
             WHERE amlr.date < %s
             AND amlr.partner_id IN %s
             AND amlr.line_type = 'summary'
+            AND amlr.company_id = ANY(%s)
             AND aj.code NOT IN %s
             GROUP BY amlr.partner_id
-        """, (date_from, tuple(partners.ids), ReportConstants.EXCLUDED_JOURNAL_CODES))
+        """, (date_from, tuple(partners.ids), list(self.env.companies.ids), ReportConstants.EXCLUDED_JOURNAL_CODES))
         return dict(self.env.cr.fetchall())
 
     def _fetch_initial_tr_balances(self):
@@ -139,6 +140,7 @@ class AccountMoveLineReport(models.Model):
             ('date', '<', date_from),
             ('partner_id', 'in', partners.ids),
             ('line_type', '=', 'summary'),
+            ('company_id', 'in', self.env.companies.ids),
             ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
         ])
         initial_balances = {}
@@ -449,6 +451,7 @@ class AccountMoveLineReport(models.Model):
                 ('partner_id', '=', partner_id),
                 ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
                 ('date', '<', date_from),
+                ('company_id', 'in', self.env.companies.ids),
             ]
             if filter_field and filter_value:
                 domain.append((filter_field, '=', filter_value))
@@ -483,6 +486,7 @@ class AccountMoveLineReport(models.Model):
                 ('date', '<', date_from),
                 ('partner_id', '=', partner_id),
                 ('line_type', '=', 'summary'),
+                ('company_id', 'in', self.env.companies.ids),
                 ('move_id.journal_id.code', 'not in', ReportConstants.EXCLUDED_JOURNAL_CODES),
             ])
             total = sum(r.amount_tr_currency for r in prior_records)
@@ -505,9 +509,10 @@ class AccountMoveLineReport(models.Model):
             WHERE amlr.date < %s
             AND amlr.partner_id = %s
             AND amlr.line_type = 'summary'
+            AND amlr.company_id = ANY(%s)
             AND aj.code NOT IN %s
             GROUP BY rc.name, rc.symbol
-        """, (date_from, partner_id, ReportConstants.EXCLUDED_JOURNAL_CODES))
+        """, (date_from, partner_id, list(self.env.companies.ids), ReportConstants.EXCLUDED_JOURNAL_CODES))
 
         result = {}
         for currency_name, symbol, debit, credit, balance in self.env.cr.fetchall():

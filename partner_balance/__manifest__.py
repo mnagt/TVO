@@ -17,7 +17,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account'],
+    'depends': ['base', 'account', 'sale'],
 
     # always loaded
     'data': [
@@ -26,7 +26,7 @@
         "views/partner_balance_view.xml",
         'views/aged_balance_view.xml',
         'views/partner_balance_config_view.xml',
-
+        'views/partner_balance_list_view.xml',
     ],
 
     'assets': {
@@ -35,6 +35,8 @@
             'partner_balance/static/src/js/components/partner_balance_toolbar.js',
             'partner_balance/static/src/js/partner_balance_list_controller.js',
             'partner_balance/static/src/js/partner_balance_list_view.js',
+            'partner_balance/static/src/js/partner_balance_sale_list_controller.js',
+            'partner_balance/static/src/js/partner_balance_sale_list_view.js',
             'partner_balance/static/src/xml/partner_balance_toolbar.xml',
             'partner_balance/static/src/xml/partner_balance_template.xml',
         ],
