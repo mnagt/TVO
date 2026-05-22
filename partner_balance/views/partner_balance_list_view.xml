@@ -20,10 +20,6 @@
             <search string="Partner Balance">
                 <field name="name" string="Customer"/>
                 <field name="user_id" string="Salesperson"/>
-                <group expand="0" string="Group By">
-                    <filter string="Salesperson" name="group_by_salesperson"
-                            context="{'group_by': 'user_id'}"/>
-                </group>
             </search>
         </field>
     </record>
