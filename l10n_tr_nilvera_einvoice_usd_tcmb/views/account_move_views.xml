@@ -11,15 +11,17 @@
                     invisible="move_type not in ('out_invoice','out_refund','in_invoice','in_refund') or not l10n_tr_tcmb"/>
                 <div name="tcmb_rate_div" class="d-flex gap-2 align-items-baseline"
                     invisible="move_type not in ('out_invoice','out_refund','in_invoice','in_refund') or not l10n_tr_tcmb">
-                    <field name="tcmb_rate_type" class="w-auto"/>
+                    <field name="tcmb_rate_type" class="w-auto"
+                        readonly="(move_type in ('out_invoice','out_refund') and l10n_tr_nilvera_send_status != 'not_sent') or (state != 'draft')"/>
                     <div name="currency_tcmb_div"
                         class="d-flex gap-1 align-items-baseline text-muted">
                         <span>1</span>
-                        <field name="company_currency_id" readonly="True"
+                        <field name="l10n_tr_tcmb_display_currency_id" readonly="True"
                                 options="{'no_open': True}" class="w-auto"/>
                         <span>=</span>
                         <field name="l10n_tr_tcmb_rate" digits="[12,4]"
-                                readonly="state != 'draft'" class="oe_inline" style="max-width: 10ch;"/>
+                            readonly="(move_type in ('out_invoice','out_refund') and l10n_tr_nilvera_send_status != 'not_sent') or (state != 'draft')"
+                            class="oe_inline" style="max-width: 10ch;"/>
                         <span>TRY</span>
                     </div>
                 </div>
