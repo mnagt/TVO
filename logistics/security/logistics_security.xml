@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Module Category -->
+    <record id="module_category_logistics" model="ir.module.category">
+        <field name="name">Logistics</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- User Group -->
+    <record id="group_logistics_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_logistics"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Manager Group -->
+    <record id="group_logistics_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="module_category_logistics"/>
+        <field name="implied_ids" eval="[(4, ref('group_logistics_user'))]"/>
+    </record>
+
+    <!-- Multi-company rules -->
+    <record id="rule_logistics_bill_lading_comp" model="ir.rule">
+        <field name="name">Bill of Lading: multi-company</field>
+        <field name="model_id" ref="model_logistics_bill_lading"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_logistics_container_comp" model="ir.rule">
+        <field name="name">Container: multi-company</field>
+        <field name="model_id" ref="model_logistics_container"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_logistics_container_line_comp" model="ir.rule">
+        <field name="name">Container Line: multi-company</field>
+        <field name="model_id" ref="model_logistics_container_line"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="rule_logistics_transit_trip_comp" model="ir.rule">
+        <field name="name">Transit Trip: multi-company</field>
+        <field name="model_id" ref="model_logistics_transit_trip"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

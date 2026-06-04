@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_logistics_container" model="ir.sequence">
+            <field name="name">Container</field>
+            <field name="code">logistics.container</field>
+            <field name="prefix">CNT/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <record id="seq_logistics_transit_trip" model="ir.sequence">
+            <field name="name">Transit Trip</field>
+            <field name="code">logistics.transit.trip</field>
+            <field name="prefix">TT/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="seq_logistics_bill_lading" model="ir.sequence">
+            <field name="name">Bill of Lading</field>
+            <field name="code">logistics.bill.lading</field>
+            <field name="prefix">BL/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="use_date_range">True</field>
+        </record>
+
+        <record id="seq_logistics_container_line" model="ir.sequence">
+            <field name="name">Container Line</field>
+            <field name="code">logistics.container.line</field>
+            <field name="prefix">CL/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

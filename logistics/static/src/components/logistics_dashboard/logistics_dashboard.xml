@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="logistics.LogisticsDashboard">
+    <div class="o_logistics_dashboard p-4">
+        <t t-if="!state.loaded">
+            <div class="text-center p-5 text-muted">Loading...</div>
+        </t>
+        <t t-else="">
+
+            <!-- Deals by status -->
+            <h5 class="mb-3">Import Deals</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-2">
+                    <div class="card text-center p-3 h-100 cursor-pointer"
+                         t-on-click="() => this.openDeals('purchasing')">
+                        <div class="fs-1 fw-bold text-info" t-esc="state.kpis.deals_purchasing"/>
+                        <div class="small text-muted">Purchasing</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="card text-center p-3 h-100 cursor-pointer"
+                         t-on-click="() => this.openDeals('oversea')">
+                        <div class="fs-1 fw-bold text-warning" t-esc="state.kpis.deals_oversea"/>
+                        <div class="small text-muted">Oversea</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="card text-center p-3 h-100 cursor-pointer"
+                         t-on-click="() => this.openDeals('at_port')">
+                        <div class="fs-1 fw-bold text-danger" t-esc="state.kpis.deals_at_port"/>
+                        <div class="small text-muted">At Port</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="card text-center p-3 h-100 cursor-pointer"
+                         t-on-click="() => this.openDeals('arrived')">
+                        <div class="fs-1 fw-bold text-success" t-esc="state.kpis.deals_arrived"/>
+                        <div class="small text-muted">Arrived</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="card text-center p-3 h-100 cursor-pointer"
+                         t-on-click="() => this.openDeals('completed')">
+                        <div class="fs-1 fw-bold text-secondary" t-esc="state.kpis.deals_completed"/>
+                        <div class="small text-muted">Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline KPIs -->
+            <h5 class="mb-3">Pipeline</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="card text-center p-3 h-100">
+                        <div class="fs-1 fw-bold text-warning" t-esc="state.kpis.containers_in_transit"/>
+                        <div class="small text-muted">Containers In Transit</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center p-3 h-100 cursor-pointer"
+                         t-on-click="() => this.openOverdue()">
+                        <div class="fs-1 fw-bold text-danger" t-esc="state.kpis.overdue_arrivals"/>
+                        <div class="small text-muted">Overdue Arrivals</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Arrivals -->
+            <h5 class="mb-3">Upcoming Arrivals</h5>
+            <table class="table table-sm table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Reference</th>
+                        <th>B/L Number</th>
+                        <th>Vessel</th>
+                        <th>ETA</th>
+                        <th>Containers</th>
+                        <th>Forwarder</th>
+                        <th>Port of Discharge</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="state.upcomingArrivals" t-as="bl" t-key="bl.id">
+                        <tr class="cursor-pointer" t-on-click="() => this.openBillLading(bl.id)">
+                            <td t-esc="bl.name"/>
+                            <td t-esc="bl.number"/>
+                            <td t-esc="bl.vessel || ''"/>
+                            <td t-esc="bl.arrival_date"/>
+                            <td t-esc="bl.container_count"/>
+                            <td t-esc="bl.forwarder_id ? bl.forwarder_id[1] : ''"/>
+                            <td t-esc="bl.port_of_discharge_id ? bl.port_of_discharge_id[1] : ''"/>
+                        </tr>
+                    </t>
+                    <t t-if="!state.upcomingArrivals.length">
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-3">
+                                No upcoming arrivals
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+
+        </t>
+    </div>
+</t>
+</templates>

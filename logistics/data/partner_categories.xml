@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="partner_category_supplier" model="res.partner.category">
+            <field name="name">Supplier</field>
+        </record>
+        <record id="partner_category_forwarder" model="res.partner.category">
+            <field name="name">Forwarder</field>
+        </record>
+        <record id="partner_category_shipping_line" model="res.partner.category">
+            <field name="name">Shipping Line</field>
+        </record>
+        <record id="partner_category_customs_broker" model="res.partner.category">
+            <field name="name">Customs Broker</field>
+        </record>
+        <record id="partner_category_customer" model="res.partner.category">
+            <field name="name">Customer</field>
+        </record>
+        <record id="partner_category_customer_forwarder" model="res.partner.category">
+            <field name="name">Customer Forwarder</field>
+        </record>
+    </data>
+</odoo>

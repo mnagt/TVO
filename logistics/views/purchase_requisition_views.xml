@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_purchase_requisition_form_inherit_logistics" model="ir.ui.view">
+        <field name="name">purchase.requisition.form.inherit.logistics</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Smart buttons -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object"
+                        name="action_view_containers" icon="fa-cubes">
+                    <field string="Containers" name="container_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object"
+                        name="action_view_bill_ladings" icon="fa-ship">
+                    <field string="B/Ls" name="bill_lading_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object"
+                        name="action_view_container_lines" icon="fa-list">
+                    <field string="Lines" name="container_line_count" widget="statinfo"/>
+                </button>
+            </xpath>
+
+            <!-- New fields after vendor_id -->
+            <xpath expr="//field[@name='vendor_id']" position="after">
+                <field name="pi_date"/>
+            </xpath>
+
+            <!-- Container Lines notebook page after Products -->
+            <xpath expr="//page[@name='products']" position="after">
+                <page string="Container Lines" name="container_lines">
+                    <field name="container_ids" mode="list" readonly="1">
+                        <list>
+                            <field name="container_number"/>
+                            <field name="container_type"/>
+                            <field name="state"/>
+                            <field name="container_line_ids" widget="many2many_tags" string="Lines"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Extend native list view -->
+    <record id="view_purchase_requisition_tree_inherit_logistics" model="ir.ui.view">
+        <field name="name">purchase.requisition.list.inherit.logistics</field>
+        <field name="model">purchase.requisition</field>
+        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="pi_date" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_logistics_requisition_pivot" model="ir.ui.view">
+        <field name="name">purchase.requisition.pivot.logistics</field>
+        <field name="model">purchase.requisition</field>
+        <field name="arch" type="xml">
+            <pivot string="Import Deals">
+                <field name="vendor_id" type="row"/>
+                <field name="origin_country_id" type="row"/>
+                <field name="logistics_state" type="col"/>
+                <field name="total_shipped_qty" type="measure"/>
+                <field name="remaining_qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+</odoo>

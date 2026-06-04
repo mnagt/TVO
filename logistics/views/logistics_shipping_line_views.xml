@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_logistics_shipping_line_form" model="ir.ui.view">
+        <field name="name">logistics.shipping.line.form</field>
+        <field name="model">logistics.shipping.line</field>
+        <field name="arch" type="xml">
+            <form string="Shipping Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_logistics_shipping_line_list" model="ir.ui.view">
+        <field name="name">logistics.shipping.line.list</field>
+        <field name="model">logistics.shipping.line</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_logistics_shipping_line_search" model="ir.ui.view">
+        <field name="name">logistics.shipping.line.search</field>
+        <field name="model">logistics.shipping.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <separator/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <filter name="inactive" string="Archived" domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

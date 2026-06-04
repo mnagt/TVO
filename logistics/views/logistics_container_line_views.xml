@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_logistics_container_line_form" model="ir.ui.view">
+        <field name="name">logistics.container.line.form</field>
+        <field name="model">logistics.container.line</field>
+        <field name="arch" type="xml">
+            <form string="Container Line">
+                <header>
+                    <field name="state" statusbar_visible="purchase,oversea,at_port,arrived"/>
+                </header>
+                <sheet>
+                    <group string="Identity">
+                        <group>
+                            <field name="internal_ref" readonly="1"/>
+                            <field name="container_id"/>
+                            <field name="requisition_id"/>
+                            <field name="bill_lading_id" readonly="1"/>
+                            <field name="purchase_order_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Product" name="product">
+                            <group>
+                                <group>
+                                    <field name="allowed_product_ids" invisible="1"/>
+                                    <field name="product_id"
+                                           domain="[('id', 'in', allowed_product_ids)]"/>
+                                    <field name="product_template" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="category_id" readonly="1"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="old_sku"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Quantities &amp; Pricing" name="quantities_pricing">
+                            <group>
+                                <group>
+                                    <field name="product_qty"/>
+                                    <field name="sku_weight"/>
+                                    <field name="total_weight" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="sku_price" readonly="1"/>
+                                    <field name="subtotal" readonly="1"/>
+                                    <field name="mt_price"/>
+                                    <field name="currency_id" groups="base.group_multi_currency"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Shipping" name="shipping">
+                            <group string="From Bill of Lading">
+                                <group>
+                                    <field name="forwarder_id" readonly="1"/>
+                                    <field name="port_of_loading_id" readonly="1"/>
+                                    <field name="port_of_discharge_id" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="departure_date" readonly="1"/>
+                                    <field name="arrival_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="vendor_id" readonly="1"/>
+                                    <field name="origin_country_id" readonly="1"/>
+                                    <field name="pi_date"/>
+                                </group>
+                                <group>
+                                    <field name="invoice_no"/>
+                                    <field name="invoice_date"/>
+                                    <field name="readiness_date"/>
+                                    <field name="port_exiting_date"/>
+                                    <field name="available_to_sale_date"/>
+                                    <field name="collection_date"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Customs &amp; Transit" name="customs_transit">
+                            <group>
+                                <group>
+                                    <field name="transit_trip_id"/>
+                                </group>
+                                <group>
+                                    <field name="antrepo_arrival_date"/>
+                                    <field name="wh_arriving_date"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Post-Arrival / Customer" name="post_arrival_customer">
+                            <group>
+                                <group>
+                                    <field name="destination_country_id"/>
+                                    <field name="transit_invoice_no"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_logistics_container_line_list" model="ir.ui.view">
+        <field name="name">logistics.container.line.list</field>
+        <field name="model">logistics.container.line</field>
+        <field name="arch" type="xml">
+            <list editable="top">
+                <!-- Always visible -->
+                <button name="action_open_form" type="object"
+                        icon="fa-external-link"/>
+                <field name="internal_ref" readonly="1"/>
+                <field name="allowed_requisition_ids" column_invisible="1"/>
+                <field name="requisition_id" domain="[('id', 'in', allowed_requisition_ids)]"/>
+                <field name="purchase_order_id"/>
+                <field name="vendor_id" readonly="1"/>
+                <field name="allowed_product_ids" column_invisible="1"/>
+                <field name="product_id" domain="[('id', 'in', allowed_product_ids)]"/>
+                <field name="product_qty" sum="Total Qty"/>
+                <field name="sku_price" readonly="1"/>
+                <field name="total_weight" readonly="1" sum="Total Weight"/>
+                <field name="subtotal" readonly="1" sum="Subtotal"/>
+                <field name="container_id" domain="[('has_remaining_allocation', '=', True)]"/>
+                <field name="bill_lading_id"/>
+                <!-- Pricing (optional) -->
+                <field name="sku_weight" optional="hide" sum="Total SKU Weight"/>
+                <field name="mt_price" optional="hide" sum="Total MT Price"/>
+                <!-- Shipping (optional) -->
+                <field name="forwarder_id" optional="hide"/>
+                <field name="port_of_loading_id" optional="hide"/>
+                <field name="port_of_discharge_id" optional="hide"/>
+                <field name="departure_date" optional="hide"/>
+                <field name="arrival_date" optional="hide"/>
+                <field name="origin_country_id" optional="hide"/>
+                <field name="pi_date" optional="hide"/>
+                <field name="invoice_no" optional="hide"/>
+                <field name="invoice_date" optional="hide"/>
+                <field name="readiness_date" optional="hide"/>
+                <field name="port_exiting_date" optional="hide"/>
+                <field name="antrepo_arrival_date" optional="hide"/>
+                <!-- Post-Arrival (optional) -->
+                <field name="wh_arriving_date" optional="hide"/>
+                <field name="dest_city_id" optional="hide"/>
+                <!-- Status (optional) -->
+                <field name="state" optional="show" widget="badge"
+                       decoration-muted="state == 'purchase'"
+                       decoration-warning="state in ('oversea', 'at_port')"
+                       decoration-danger="state == 'arrived'"
+                       decoration-success="state == 'antrepo'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_logistics_container_line_pivot" model="ir.ui.view">
+        <field name="name">logistics.container.line.pivot</field>
+        <field name="model">logistics.container.line</field>
+        <field name="arch" type="xml">
+            <pivot string="All Lines">
+                <field name="product_id" type="row"/>
+                <field name="vendor_id" type="row"/>
+                <field name="product_qty" type="measure"/>
+                <field name="total_weight" type="measure"/>
+                <field name="subtotal" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_logistics_container_line_search" model="ir.ui.view">
+        <field name="name">logistics.container.line.search</field>
+        <field name="model">logistics.container.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="internal_ref"/>
+                <field name="container_id"/>
+                <field name="bill_lading_id"/>
+                <field name="requisition_id"/>
+                <field name="state"/>
+                <separator/>
+                <filter name="state_purchase"   string="Purchasing" domain="[('state','=','purchase')]"/>
+                <filter name="state_oversea"    string="Oversea"    domain="[('state','=','oversea')]"/>
+                <filter name="state_at_port"    string="At Port"    domain="[('state','=','at_port')]"/>
+                <filter name="state_arrived"    string="Arrived"    domain="[('state','=','arrived')]"/>
+                <filter name="state_antrepo"    string="Antrepo"    domain="[('state','=','antrepo')]"/>
+                <separator/>
+                <filter name="filter_supplier" string="By Supplier"
+                    domain="[]" context="{'group_by': 'vendor_id'}"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_requisition" string="Import Deal"
+                            context="{'group_by': 'requisition_id'}"/>
+                    <filter name="group_vendor" string="Supplier"
+                        context="{'group_by': 'vendor_id'}"/>
+                    <filter name="group_container" string="Container"
+                            context="{'group_by': 'container_id'}"/>
+                    <filter name="group_bill_lading" string="Bill of Lading"
+                            context="{'group_by': 'bill_lading_id'}"/>
+                    <filter name="group_category" string="Category"
+                            context="{'group_by': 'category_id'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

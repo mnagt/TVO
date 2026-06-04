@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_logistics_container_form" model="ir.ui.view">
+        <field name="name">logistics.container.form</field>
+        <field name="model">logistics.container</field>
+        <field name="arch" type="xml">
+            <form string="Container">
+                <header>
+                    <field name="state"
+                           statusbar_visible="purchase,oversea,at_port,arrived"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_lines" icon="fa-list">
+                            <field string="Lines" name="line_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="container_number" />
+                            <field name="container_type" />
+                            <field name="bill_lading_id" />
+                            <field name="requisition_ids" widget="many2many_tags"
+                                 domain="[('remaining_qty', '>', 0)]"/>
+                            <field name="purchase_order_id"
+                                domain="[('requisition_id', 'in', requisition_ids)]"/>
+                            <field name="invoice_no"/>
+                            <field name="invoice_date"/>
+                            <field name="wh_arriving_date"/>
+                                <field name="readiness_date"/>
+                                <field name="port_exiting_date"/>
+                                <field name="antrepo_arrival_date"/>
+                                <field name="declaration_type_id"/>
+                        </group>
+                        <group>
+                            <field name="ship_fee_amount" />
+                            <field name="ship_fee_currency_id" groups="base.group_multi_currency"/>
+                            <field name="extra_fee_payment_term_id" />
+                        </group>
+                    </group>
+                    <group string="From Bill of Lading">
+                        <group>
+                            <field name="forwarder_id" readonly="1"/>
+                            <field name="port_of_loading_id" readonly="1"/>
+                            <field name="port_of_discharge_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="departure_date" readonly="1"/>
+                            <field name="arrival_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Destination">
+                        <group>
+                            <field name="destination_country_id"/>
+                            <field name="dest_city_id" domain="[('country_id', '=', destination_country_id)]"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Container Lines" name="container_lines">
+                            <field name="container_line_ids" >
+                                <list editable="bottom">
+                                    <field name="internal_ref" readonly="1"/>
+                                    <field name="requisition_id"
+                                           domain="[('id', 'in', parent.requisition_ids)]"/>
+                                    <field name="allowed_product_ids" column_invisible="1"/>
+                                     <field name="sku_weight" column_invisible="1"/>
+                                    <field name="product_id"
+                                         domain="[('id', 'in', allowed_product_ids)]"
+                                         options="{'no_create': True, 'no_create_edit': True}"/>
+                                    <field name="product_qty"/>
+                                    <field name="sku_price" readonly="1"/>
+                                    <field name="subtotal" readonly="1"/>
+                                    <field name="total_weight" readonly="1"/>
+                                     <field name="readiness_date" readonly="1"/>
+                                      <field name="port_exiting_date" readonly="1"/>
+                                                                            <field name="antrepo_arrival_date" readonly="1"/>
+                                </list>
+                            </field>
+
+                        </page>
+                    </notebook>
+
+                    <group col="6" class="mt-2 mt-md-0">
+                        <group colspan="4"/>
+                        <group class="oe_subtotal_footer" colspan="2" name="container_total">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_subtotal" readonly="1"/>
+                            <field name="ship_fee_amount" string="Shipping Fee" readonly="1"/>
+                            <field name="amount_total"
+                                   class="oe_subtotal_footer_separator" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_logistics_container_list" model="ir.ui.view">
+        <field name="name">logistics.container.list</field>
+        <field name="model">logistics.container</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="container_number"/>
+                <field name="container_type"/>
+                <field name="bill_lading_id"/>
+                <field name="requisition_ids" widget="many2many_tags"/>
+                <field name="ship_fee_amount"/>
+                                <field name="amount_subtotal" sum="Subtotal"/>
+                                <field name="amount_total" sum="Total"/>
+                  <field name="destination_country_id" optional="hide"/>
+                  <field name="dest_city_id" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-muted="state == 'purchase'"
+                       decoration-warning="state in ('oversea', 'at_port')"
+                       decoration-danger="state == 'arrived'"
+                       decoration-success="state == 'antrepo'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_logistics_container_pivot" model="ir.ui.view">
+        <field name="name">logistics.container.pivot</field>
+        <field name="model">logistics.container</field>
+        <field name="arch" type="xml">
+            <pivot string="Containers">
+                <field name="destination_country_id" type="row"/>
+                <field name="container_type" type="col"/>
+                <field name="amount_subtotal" type="measure"/>
+                <field name="ship_fee_amount" type="measure"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_logistics_container_search" model="ir.ui.view">
+        <field name="name">logistics.container.search</field>
+        <field name="model">logistics.container</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="container_number"/>
+                <field name="name"/>
+                <field name="bill_lading_id"/>
+                <field name="requisition_ids"/>
+                <field name="dest_city_id"/>
+                <separator/>
+                <filter name="state_purchase" string="Purchasing"
+                        domain="[('state','=','purchase')]"/>
+                <filter name="state_oversea"  string="Oversea"
+                        domain="[('state','=','oversea')]"/>
+                <filter name="state_at_port"  string="At Port"
+                        domain="[('state','=','at_port')]"/>
+                <filter name="state_arrived"  string="Arrived"
+                        domain="[('state','=','arrived')]"/>
+                <filter name="state_antrepo"  string="Antrepo"
+                        domain="[('state','=','antrepo')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_bl" string="Bill of Lading"
+                            context="{'group_by': 'bill_lading_id'}"/>
+                    <filter name="group_requisition" string="Import Deal"
+                            context="{'group_by': 'requisition_ids'}"/>
+                        <filter name="group_dest_city" string="Destination City"
+                            context="{'group_by': 'dest_city_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_logistics_container_kanban" model="ir.ui.view">
+        <field name="name">logistics.container.kanban</field>
+        <field name="model">logistics.container</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <field name="name"/>
+                <field name="container_number"/>
+                <field name="container_type"/>
+                <field name="bill_lading_id"/>
+                <field name="line_count"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold"/>
+                        <div class="row">
+                            <span class="col-5 text-muted">Number</span>
+                            <span class="col-7"><field name="container_number"/></span>
+                        </div>
+                        <div class="row">
+                            <span class="col-5 text-muted">Type</span>
+                            <span class="col-7"><field name="container_type"/></span>
+                        </div>
+                        <div class="row">
+                            <span class="col-5 text-muted">BL</span>
+                            <span class="col-7"><field name="bill_lading_id"/></span>
+                        </div>
+                        <div class="row">
+                            <span class="col-5 text-muted">Products</span>
+                            <span class="col-7"><field name="line_count"/></span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+</odoo>

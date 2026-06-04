@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_logistics_declaration_type_form" model="ir.ui.view">
+        <field name="name">logistics.declaration.type.form</field>
+        <field name="model">logistics.declaration.type</field>
+        <field name="arch" type="xml">
+            <form string="Declaration Type">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_logistics_declaration_type_list" model="ir.ui.view">
+        <field name="name">logistics.declaration.type.list</field>
+        <field name="model">logistics.declaration.type</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_logistics_declaration_type_search" model="ir.ui.view">
+        <field name="name">logistics.declaration.type.search</field>
+        <field name="model">logistics.declaration.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>
