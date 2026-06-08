@@ -22,6 +22,32 @@ class AccountMove(models.Model):
         help='Exchange rate from TCMB used for Turkish e-invoice XML generation',
     )
 
+    l10n_tr_tcmb_display_currency_id = fields.Many2one(
+        'res.currency',
+        string='TCMB Display Currency',
+        compute='_compute_tcmb_display_currency',
+        help='Currency to display in TCMB rate format (always the non-TRY currency)',
+    )
+
+    @api.depends('currency_id', 'company_id.currency_id')
+    def _compute_tcmb_display_currency(self):
+        """Compute which currency to display in TCMB rate format.
+
+        The rate is always human-readable "TRY per non-TRY currency" (e.g., 44.4).
+        Display format: "1 [non-TRY currency] = [rate] TRY"
+
+        Examples:
+        - TRY company + USD invoice → "1 USD = 44.4 TRY" (show invoice currency)
+        - USD company + TRY invoice → "1 USD = 44.4 TRY" (show company currency)
+        - USD company + EUR invoice → "1 EUR = 48.5 TRY" (show invoice currency)
+        """
+        try_currency = self.env.ref('base.TRY', raise_if_not_found=False)
+        for move in self:
+            if move.currency_id and move.currency_id != try_currency:
+                move.l10n_tr_tcmb_display_currency_id = move.currency_id
+            else:
+                move.l10n_tr_tcmb_display_currency_id = move.company_id.currency_id
+
 
 
     @api.onchange('tcmb_rate_type', 'currency_id', 'invoice_date')
@@ -33,9 +59,6 @@ class AccountMove(models.Model):
         company_currency = self.company_id.currency_id
         invoice_currency = self.currency_id
 
-        # Determine which currency's rate record to look up:
-        # - Same currency (e.g., USD company + USD invoice): look up TRY for the TRY/USD rate.
-        # - Different currencies (e.g., TRY company + USD invoice): look up the invoice currency.
         if invoice_currency == company_currency:
             lookup_currency = self.env.ref('base.TRY')
         else:
@@ -43,6 +66,7 @@ class AccountMove(models.Model):
 
         rate_record = self.env['res.currency.rate'].search([
             ('currency_id', '=', lookup_currency.id),
+            ('company_id', '=', self.company_id.id),
             ('name', '<=', self.invoice_date or fields.Date.today()),
         ], order='name desc', limit=1)
 
@@ -53,42 +77,24 @@ class AccountMove(models.Model):
         if not rate_value:
             return
 
-        # Odoo stores rates as "foreign per company" (e.g., USD per TRY for TRY company).
-        # l10n_tr_tcmb_rate must store the human-readable rate: TRY per invoice currency.
-        #
-        # - Looked up TRY (USD company + USD invoice): rate_value = TRY per USD → already correct.
-        # - Looked up invoice currency (TRY company + USD invoice): rate_value = USD per TRY → invert.
         if lookup_currency != self.env.ref('base.TRY'):
-            human_rate = round(1.0 / rate_value, 6)
+            human_rate = round(1.0 / rate_value, 10)
         else:
             human_rate = rate_value
 
         self.l10n_tr_tcmb_rate = human_rate
         if invoice_currency != company_currency:
-            # invoice_currency_rate = how much company currency per 1 invoice currency
-            # = _get_conversion_rate(invoice_currency → company_currency)
-            if lookup_currency != self.env.ref('base.TRY'):
-                # TRY company + foreign invoice: TRY/foreign = human_rate
-                self.invoice_currency_rate = human_rate
-            else:
-                # Foreign company + TRY invoice: foreign/TRY = 1/human_rate
-                self.invoice_currency_rate = round(1.0 / human_rate, 6)
+            self.invoice_currency_rate = rate_value
 
     @api.onchange('l10n_tr_tcmb_rate')
     def _onchange_l10n_tr_tcmb_rate(self):
         if not self.l10n_tr_tcmb or not self.l10n_tr_tcmb_rate or self.currency_id == self.company_id.currency_id:
             return
-        # l10n_tr_tcmb_rate = human rate = TRY per invoice_currency.
-        # invoice_currency_rate = Odoo internal = invoice_currency per company_currency.
-        #
-        # - TRY company + USD invoice: invoice_currency_rate = TRY per USD = human_rate
-        # - USD company + TRY invoice: invoice_currency_rate = USD per TRY = 1 / human_rate
+        
         if self.currency_id.name == 'TRY':
-            # Foreign company + TRY invoice: foreign/TRY = 1/human_rate
-            self.invoice_currency_rate = round(1.0 / self.l10n_tr_tcmb_rate, 6)
-        else:
-            # TRY company + foreign invoice: TRY/foreign = human_rate
             self.invoice_currency_rate = self.l10n_tr_tcmb_rate
+        else:
+            self.invoice_currency_rate = round(1.0 / self.l10n_tr_tcmb_rate, 10)
 
     @api.model
     def default_get(self, fields_list):
