@@ -77,19 +77,6 @@ class LogisticsBillLading(models.Model):
         for rec in self:
             rec.display_name = rec.number or rec.name
 
-    def write(self, vals):
-        result = super().write(vals)
-
-        if 'requisition_ids' in vals and not self.env.context.get('from_bl_req_sync'):
-            for bl in self:
-                if bl.container_ids and bl.requisition_ids:
-                    bl.container_ids.with_context(from_bl_req_sync=True).write({
-                        'requisition_ids': [
-                            Command.link(req.id) for req in bl.requisition_ids
-                        ],
-                    })
-
-        return result
 
     def action_confirm(self):
         self.write({'state': 'confirmed'})
