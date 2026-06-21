@@ -102,4 +102,70 @@
         }</field>
     </record>
 
+    <record id="view_aged_balance_summary_tree" model="ir.ui.view">
+        <field name="name">account.aged.balance.summary.tree</field>
+        <field name="model">account.aged.balance.summary</field>
+        <field name="arch" type="xml">
+            <list string="Aged Balance Summary" create="false" delete="false" edit="false"
+                  js_class="aged_balance_summary">
+                <field name="partner_id"    string="Partner"/>
+                <field name="amount_current" string="Current"   widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="amount_1_30"    string="1-30"       widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="amount_31_60"   string="31-60"      widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="amount_61_90"   string="61-90"      widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="amount_91_120"  string="91-120"     widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="amount_older"   string="&gt;120"    widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="amount_total"   string="Total"      widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                <field name="company_currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- TRY Summary View -->
+    <record id="view_aged_balance_summary_tr_tree" model="ir.ui.view">
+        <field name="name">account.aged.balance.summary.tr.tree</field>
+        <field name="model">account.aged.balance.summary</field>
+        <field name="arch" type="xml">
+            <list string="Aged Balance Summary TL" create="false" delete="false" edit="false"
+                  js_class="aged_balance_summary">
+                <field name="partner_id" string="Partner"/>
+                <field name="amount_current_try"  string="Current"  widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="amount_1_30_try"     string="1-30"     widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="amount_31_60_try"    string="31-60"    widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="amount_61_90_try"    string="61-90"    widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="amount_91_120_try"   string="91-120"   widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="amount_older_try"    string="&gt;120"  widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="amount_total_try"    string="Total"    widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                <field name="try_currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- TRY Action -->
+    <record id="action_aged_balance_summary_tr" model="ir.actions.act_window">
+        <field name="name">Aged Balance TL</field>
+        <field name="res_model">account.aged.balance.summary</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_aged_balance_summary_tr_tree"/>
+        <field name="domain">[]</field>
+        <field name="context">{'action_name': 'Aged Balance in TRY'}</field>
+    </record>
+
+    <record id="action_aged_balance_summary" model="ir.actions.act_window">
+        <field name="name">Aged Balance</field>
+        <field name="res_model">account.aged.balance.summary</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_aged_balance_summary_tree"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem
+        id="menu_aged_balance_summary"
+        name="Aged Balance"
+        parent="account.account_reports_partners_reports_menu"
+        action="action_aged_balance_summary"
+        groups="account.group_account_manager,account.group_account_user"
+        sequence="20"/>
+
 </odoo>

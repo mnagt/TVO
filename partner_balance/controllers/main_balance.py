@@ -290,3 +290,101 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 x, y = writer.write_group(x, y, group_name, group, opening_balances)
 
         return writer.value
+
+    @http.route('/web/ledger_balance_export/xlsx', type='http', auth="user")
+    def ledger_balance_export(self):
+        import io
+        import datetime
+        import xlsxwriter
+
+        records = request.env['account.ledger.balance'].search([
+            ('company_id', 'in', request.env.companies.ids)
+        ])
+        currency = request.env.company.currency_id
+
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet('Ledger Balance')
+
+        header_fmt = workbook.add_format({
+            'bold': True, 'border': 1,
+            'bg_color': '#475569', 'font_color': 'white', 'font_size': 9,
+        })
+        text_fmt = workbook.add_format({'border': 1, 'font_size': 9})
+        money_fmt = workbook.add_format({'border': 1, 'font_size': 9, 'num_format': '#,##0.00'})
+
+        worksheet.set_column(0, 0, 42)
+        worksheet.set_column(1, 1, 18)
+
+        worksheet.write(0, 0, 'Partner', header_fmt)
+        worksheet.write(0, 1, f'Balance ({currency.name})', header_fmt)
+
+        for i, rec in enumerate(records, start=1):
+            worksheet.write(i, 0, rec.partner_id.name or '', text_fmt)
+            worksheet.write(i, 1, rec.balance, money_fmt)
+
+        workbook.close()
+        output.seek(0)
+
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        filename = osutil.clean_filename(f'Ledger Balance - {today}.xlsx')
+
+        return request.make_response(
+            output.read(),
+            headers=[
+                ('Content-Type', self.content_type),
+                ('Content-Disposition', content_disposition(filename)),
+            ]
+        )
+
+    @http.route('/web/aged_balance_summary_export/xlsx', type='http', auth="user")
+    def aged_balance_summary_export(self):
+        import io
+        import datetime
+        import xlsxwriter
+
+        records = request.env['account.aged.balance.summary'].search([
+            ('company_id', 'in', request.env.companies.ids)
+        ])
+        currency = request.env.company.currency_id
+
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet('Aged Balance')
+
+        header_fmt = workbook.add_format({
+            'bold': True, 'border': 1,
+            'bg_color': '#475569', 'font_color': 'white', 'font_size': 9,
+        })
+        text_fmt  = workbook.add_format({'border': 1, 'font_size': 9})
+        money_fmt = workbook.add_format({'border': 1, 'font_size': 9, 'num_format': '#,##0.00'})
+
+        headers = ['Partner', 'Current', '1-30', '31-60', '61-90', '91-120', '>120', f'Total ({currency.name})']
+        for col, h in enumerate(headers):
+            worksheet.write(0, col, h, header_fmt)
+        worksheet.set_column(0, 0, 40)
+        worksheet.set_column(1, 7, 16)
+
+        for i, rec in enumerate(records, start=1):
+            worksheet.write(i, 0, rec.partner_id.name or '', text_fmt)
+            worksheet.write(i, 1, rec.amount_current,  money_fmt)
+            worksheet.write(i, 2, rec.amount_1_30,     money_fmt)
+            worksheet.write(i, 3, rec.amount_31_60,    money_fmt)
+            worksheet.write(i, 4, rec.amount_61_90,    money_fmt)
+            worksheet.write(i, 5, rec.amount_91_120,   money_fmt)
+            worksheet.write(i, 6, rec.amount_older,    money_fmt)
+            worksheet.write(i, 7, rec.amount_total,    money_fmt)
+
+        workbook.close()
+        output.seek(0)
+
+        today = datetime.date.today().strftime('%Y-%m-%d')
+        filename = osutil.clean_filename(f'Aged Balance - {today}.xlsx')
+
+        return request.make_response(
+            output.read(),
+            headers=[
+                ('Content-Type', self.content_type),
+                ('Content-Disposition', content_disposition(filename)),
+            ]
+        )

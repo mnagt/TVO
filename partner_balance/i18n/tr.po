@@ -1,0 +1,389 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* partner_balance
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-19 06:45+0000\n"
+"PO-Revision-Date: 2026-02-19 06:45+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__account_id
+msgid "Account"
+msgstr "Hesap"
+
+#. module: partner_balance
+#: model:ir.model,name:partner_balance.model_account_move_line_report
+msgid "Account Move Line Report"
+msgstr "Hesap Hareket Satırı Raporu"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__amount_currency
+msgid "Amount Currency"
+msgstr "Döviz Tutarı"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__balance
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tree
+msgid "Balance"
+msgstr "Bakiye"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Bank Payment"
+msgstr "Banka Ödemesi"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Bill"
+msgstr "Tedarikçi Faturası"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Binary fields cannot be exported to Excel unless base64-encoded."
+msgstr ""
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Check"
+msgstr "Çek"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__company_id
+msgid "Company"
+msgstr "Şirket"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__company_currency_id
+msgid "Company Currency"
+msgstr "Şirket Para Birimi"
+
+#. module: partner_balance
+#: model:ir.model,name:partner_balance.model_res_partner
+msgid "Contact"
+msgstr "Kontak"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Content too long for XLSX (more than %s characters)."
+msgstr ""
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__amount_tr_credit
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__credit
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+msgid "Credit"
+msgstr "Alacak"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Credit Note"
+msgstr "İade Faturası"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__cumulated_balance
+msgid "Cumulated Balance"
+msgstr "Kümülatif Bakiye"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__cumulated_amount_tr_currency
+msgid "Cumulated TL"
+msgstr "Kümülatif TL"
+
+#. module: partner_balance
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+msgid "Currency"
+msgstr "Döviz"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__date
+msgid "Date"
+msgstr "Tarih"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Days:"
+msgstr "Gün:"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__amount_tr_debit
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__debit
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+msgid "Debit"
+msgstr "Borç"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__discount
+msgid "Discount (%)"
+msgstr "İndirim (%)"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__display_name
+msgid "Display Name"
+msgstr "Görünen Ad"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "EXECUTIVE SUMMARY"
+msgstr "Özeti"
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/js/partner_balance_list_controller.js:0
+msgid "End date must be after start date"
+msgstr "Bitiş tarihi, başlangıç tarihinden sonra olmalıdır."
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/xml/partner_balance_toolbar.xml:0
+msgid "End:"
+msgstr "Bitiş:"
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/xml/partner_balance_toolbar.xml:0
+msgid "Export to Excel"
+msgstr "Excel’e Aktar"
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/xml/partner_balance_toolbar.xml:0
+msgid "From:"
+msgstr "Başlangıç:"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Generated:"
+msgstr "Oluşturuldu:"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__id
+msgid "ID"
+msgstr "ID"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Invoice"
+msgstr "Fatura"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Journal Entry"
+msgstr "Yevmiye Kaydı"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__line_sort
+msgid "Line Sort"
+msgstr "Satır Sıralaması"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__line_type
+msgid "Line Type"
+msgstr "Satır Türü"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__note
+msgid "Note"
+msgstr "Açıklama"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/field_mapping.py:0
+msgid "Opening Balance"
+msgstr "Açılış Bakiyesi"
+
+#. module: partner_balance
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tree
+msgid "Origin Amount"
+msgstr "Orijinal Tutar"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__currency_id
+msgid "Original Currency"
+msgstr "Orijinal Para Birimi"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__partner_id
+msgid "Partner"
+msgstr "İş Ortağı"
+
+#. module: partner_balance
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tree
+msgid "Partner Ledger"
+msgstr "İş Ortağı Defteri"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Partner:"
+msgstr "İş Ortağı"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__product_id
+#: model:ir.model.fields.selection,name:partner_balance.selection__account_move_line_report__line_type__product
+msgid "Product"
+msgstr "Ürün"
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/xml/partner_balance_toolbar.xml:0
+msgid "Products"
+msgstr "Ürünler"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Purchase"
+msgstr "Satın Alma"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__quantity
+msgid "Quantity"
+msgstr "Miktar"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__tr_rate_display
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+msgid "Rate"
+msgstr "Kur"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__move_id
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__reference
+msgid "Reference"
+msgstr "Referans"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Report Period:"
+msgstr "Rapor Dönemi:"
+
+#. module: partner_balance
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_partner_form_inherit_custom_button
+msgid "SOA"
+msgstr "Hesap Ekstresi"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/account_move_line_report.py:0
+msgid "Sale"
+msgstr "Satış"
+
+#. module: partner_balance
+#: model:ir.actions.act_window,name:partner_balance.action_partner_move_line_tr_value
+msgid "Statement in TRY"
+msgstr "TL Para Biriminde Ekstre"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/models/res_partner.py:0
+#: model:ir.actions.act_window,name:partner_balance.action_partner_move_line_usd
+msgid "Statement of Account"
+msgstr "Hesap Ekstresi"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__price_subtotal
+msgid "Subtotal"
+msgstr "Ara Toplam"
+
+#. module: partner_balance
+#: model:ir.model.fields.selection,name:partner_balance.selection__account_move_line_report__line_type__summary
+msgid "Summary"
+msgstr "Özet"
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/xml/partner_balance_toolbar.xml:0
+msgid "TL"
+msgstr "TL"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__amount_tr_currency
+msgid "TL Value"
+msgstr "TL Değeri"
+
+#. module: partner_balance
+#: model_terms:ir.ui.view,arch_db:partner_balance.view_account_move_line_report_tr_tree
+msgid "TL Value Report"
+msgstr "TL Değer Raporu"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__tr_currency_id
+msgid "TRY Currency"
+msgstr "TL Para Birimi"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__tax_amount
+msgid "Tax"
+msgstr "KDV"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid ""
+"Too many rows (%s rows, limit: %s) for Excel format. Consider splitting the "
+"export."
+msgstr ""
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__price_total
+msgid "Total"
+msgstr "Toplam"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__type
+msgid "Type"
+msgstr "Tür"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__type_key
+msgid "Type Key"
+msgstr "Tür Anahtarı"
+
+#. module: partner_balance
+#. odoo-javascript
+#: code:addons/partner_balance/static/src/xml/partner_balance_toolbar.xml:0
+msgid "USD"
+msgstr "USD"
+
+#. module: partner_balance
+#. odoo-python
+#: code:addons/partner_balance/services/balance_export/xlsx_writer.py:0
+msgid "Undefined"
+msgstr "Tanımsız"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__price_unit
+msgid "Unit Price"
+msgstr "Birim Fiyat"
+
+#. module: partner_balance
+#: model:ir.model.fields,field_description:partner_balance.field_account_move_line_report__product_uom_id
+msgid "UoM"
+msgstr "Ölçü Birimi"

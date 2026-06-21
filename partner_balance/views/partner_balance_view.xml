@@ -105,5 +105,102 @@
             <field name="context">{'search_default_group_by_account': 1, 'report_type': 'ledger'}</field>
         </record>
 
+        <record id="view_account_ledger_balance_search" model="ir.ui.view">
+            <field name="name">account.ledger.balance.search</field>
+            <field name="model">account.ledger.balance</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="user_id" string="Salesperson"/>
+                    <group expand="1" string="Group By">
+                        <filter name="group_by_salesperson"
+                                string="Salesperson"
+                                context="{'group_by': 'user_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_account_ledger_balance_tree" model="ir.ui.view">
+            <field name="name">account.ledger.balance.tree</field>
+            <field name="model">account.ledger.balance</field>
+            <field name="arch" type="xml">
+                <list string="Ledger Balance" create="false" delete="false" edit="false" js_class="ledger_balance">
+                    <field name="partner_id" string="Partner"/>
+                    <field name="user_id" optional="show" string="Salesperson"/>
+                    <field name="balance" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                    <field name="company_currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- TRY tree view for ledger balance -->
+        <record id="view_account_ledger_balance_tr_tree" model="ir.ui.view">
+            <field name="name">account.ledger.balance.tr.tree</field>
+            <field name="model">account.ledger.balance</field>
+            <field name="arch" type="xml">
+                <list string="Ledger Balance TL" create="false" delete="false" edit="false" js_class="ledger_balance">
+                    <field name="partner_id" string="Partner"/>
+                    <field name="balance_try" widget="monetary" options="{'currency_field': 'try_currency_id'}"/>
+                    <field name="try_currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- TRY action — all partners -->
+        <record id="action_ledger_balance_tr" model="ir.actions.act_window">
+            <field name="name">Ledger Balance TL</field>
+            <field name="res_model">account.ledger.balance</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_account_ledger_balance_tr_tree"/>
+            <field name="domain">[]</field>
+            <field name="context">{'action_name': 'Ledger Balance in TRY'}</field>
+        </record>
+
+        <!-- TRY action — sale partners only -->
+        <record id="action_sale_ledger_balance_tr" model="ir.actions.act_window">
+            <field name="name">Sales Ledger Balance TL</field>
+            <field name="res_model">account.ledger.balance</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_account_ledger_balance_tr_tree"/>
+            <field name="domain">[('partner_id.sale_order_ids', '!=', False)]</field>
+            <field name="context">{'is_sale_view': True, 'action_name': 'Ledger Balance in TRY'}</field>
+        </record>
+
+        <record id="action_partner_balance_menu_report" model="ir.actions.act_window">
+            <field name="name">Partner Balance</field>
+            <field name="res_model">account.ledger.balance</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_account_ledger_balance_tree"/>
+            <field name="search_view_id" ref="view_account_ledger_balance_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <menuitem
+            id="menu_partner_balance_report"
+            name="Ledger Balance"
+            parent="account.account_reports_partners_reports_menu"
+            action="action_partner_balance_menu_report"
+            groups="account.group_account_manager,account.group_account_user"
+            sequence="10"/>
+
+        <record id="action_sale_partner_balance_report" model="ir.actions.act_window">
+            <field name="name">Sales Ledger Balance</field>
+            <field name="res_model">account.ledger.balance</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_account_ledger_balance_tree"/>
+            <field name="search_view_id" ref="view_account_ledger_balance_search"/>
+            <field name="domain">[('partner_id.sale_order_ids', '!=', False)]</field>
+            <field name="context">{'is_sale_view': True, 'search_default_group_by_salesperson': 1}</field>
+        </record>
+
+        <menuitem
+            id="menu_sale_partner_balance_report"
+            name="Ledger Balance"
+            parent="sale.menu_sale_report"
+            action="action_sale_partner_balance_report"
+            groups="account.group_account_manager,account.group_account_user,sales_team.group_sale_salesman"
+            sequence="50"/>
+
     </data>
 </odoo>

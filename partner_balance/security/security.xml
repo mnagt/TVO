@@ -5,19 +5,39 @@
             <field name="name">Partner Balance: Access</field>
             <field name="category_id" ref="base.module_category_accounting"/>
         </record>
-
-        <record id="rule_account_move_line_report_company" model="ir.rule">
-            <field name="name">Account Move Line Report: multi-company</field>
-            <field name="model_id" ref="model_account_move_line_report"/>
+        <record model="ir.rule" id="rule_account_ledger_balance_company">
+            <field name="name">Ledger Balance: Multi-Company</field>
+            <field name="model_id" ref="model_account_ledger_balance"/>
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record model="ir.rule" id="rule_account_aged_balance_summary_company">
+            <field name="name">Aged Balance Summary: Multi-Company</field>
+            <field name="model_id" ref="model_account_aged_balance_summary"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
         </record>
 
-        <record id="rule_account_aged_balance_line_company" model="ir.rule">
-            <field name="name">Account Aged Balance Line: multi-company</field>
-            <field name="model_id" ref="model_account_aged_balance_line"/>
-            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <!-- Sale Ledger: Own Documents — partner has a sale order assigned to current user -->
+        <record model="ir.rule" id="rule_ledger_balance_sale_own">
+            <field name="name">Ledger Balance: Sale Own Documents</field>
+            <field name="model_id" ref="model_account_ledger_balance"/>
+            <field name="domain_force">[('partner_id.sale_order_ids.user_id', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+        </record>
+
+        <!-- Sale Ledger: Team Documents — partner has a sale order in current user's sales team -->
+        <record model="ir.rule" id="rule_ledger_balance_sale_team">
+            <field name="name">Ledger Balance: Sale Team Documents</field>
+            <field name="model_id" ref="model_account_ledger_balance"/>
+            <field name="domain_force">[('partner_id.sale_order_ids.team_id.member_ids', 'in', [user.id])]</field>
+            <field name="groups" eval="[(4, ref('sale_extension_team_security.group_sale_team_manager'))]"/>
+        </record>
+
+        <!-- Sale Ledger: Admin — see all partners -->
+        <record model="ir.rule" id="rule_ledger_balance_sale_admin_all">
+            <field name="name">Ledger Balance: Sale Admin See All</field>
+            <field name="model_id" ref="model_account_ledger_balance"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('sales_team.group_sale_manager'))]"/>
         </record>
     </data>
 </odoo>

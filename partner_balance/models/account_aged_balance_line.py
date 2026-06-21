@@ -118,15 +118,19 @@ class AccountAgedBalanceLine(models.Model):
         """Compute rate display string for TRY view. amount_residual_try is SQL-stored."""
         try_currency = self._get_try_currency()
         has_tcmb_rate = 'l10n_tr_tcmb_rate' in self.env['account.move']._fields
+        has_try_rate = 'l10n_tr_tcmb_try_rate' in self.env['account.move']._fields
 
         summary_recs = self.filtered(lambda r: r.line_type != 'product')
         for rec in self.filtered(lambda r: r.line_type == 'product'):
             rec.tr_rate_display = ""
 
-        # Batch-fetch fallback rates
+        # Batch-fetch fallback rates (only needed when no direct TRY rate and no TCMB rate)
         rate_lookup_keys = set()
         for rec in summary_recs:
             if rec.currency_id and rec.date and rec.company_id:
+                try_rate_field = rec.move_id.l10n_tr_tcmb_try_rate if has_try_rate and rec.move_id else 0.0
+                if try_rate_field:
+                    continue
                 tcmb_rate = rec.move_id.l10n_tr_tcmb_rate if has_tcmb_rate and rec.move_id else 0.0
                 if not tcmb_rate:
                     rate_lookup_keys.add((rec.company_id.id, str(rec.date)))
@@ -153,6 +157,11 @@ class AccountAgedBalanceLine(models.Model):
             if not rec.currency_id:
                 rec.tr_rate_display = "N/A"
                 continue
+            # Highest priority: direct TRY rate on the invoice
+            try_rate_field = rec.move_id.l10n_tr_tcmb_try_rate if has_try_rate and rec.move_id else 0.0
+            if try_rate_field:
+                rec.tr_rate_display = f"{try_rate_field:.4f}"
+                continue
             tcmb_rate = rec.move_id.l10n_tr_tcmb_rate if has_tcmb_rate and rec.move_id else 0.0
             if tcmb_rate:
                 rec.tr_rate_display = f"{tcmb_rate:.4f}"
@@ -168,7 +177,9 @@ class AccountAgedBalanceLine(models.Model):
         """Initialize the aged balance view"""
         tools.drop_view_if_exists(self.env.cr, self._table)
         has_tcmb = 'l10n_tr_tcmb_rate' in self.env['account.move']._fields
+        has_try_rate = 'l10n_tr_tcmb_try_rate' in self.env['account.move']._fields
         tcmb_expr = 'COALESCE(am.l10n_tr_tcmb_rate, 0)' if has_tcmb else '0::numeric'
+        try_rate_expr = 'COALESCE(am.l10n_tr_tcmb_try_rate, 0)' if has_try_rate else '0::numeric'
         self.env.cr.execute(f"""
             CREATE OR REPLACE VIEW account_aged_balance_line AS (
                 WITH check_aggregates AS (
@@ -215,6 +226,8 @@ class AccountAgedBalanceLine(models.Model):
                     CASE
                         WHEN aml.currency_id = try_cur.id
                             THEN aml.amount_residual_currency
+                        WHEN {try_rate_expr} > 0
+                            THEN aml.amount_residual_currency * {try_rate_expr}
                         WHEN {tcmb_expr} > 0
                             THEN aml.amount_residual * {tcmb_expr}
                         ELSE

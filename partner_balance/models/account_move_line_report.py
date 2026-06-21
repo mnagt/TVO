@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import logging
+
 from odoo import models, fields, api, _
 from odoo.tools import float_round
 from odoo import tools
+
 
 from ..constants import ReportConstants
 
@@ -311,90 +314,213 @@ class AccountMoveLineReport(models.Model):
         self._cumulate_by_group('balance', 'cumulated_balance', initial_balances)
 
 
-    @api.depends('currency_id', 'amount_currency', 'balance', 'date', 'company_id', 'move_id')
-    def _compute_amount_tr_currency(self):
-        """Compute TRY equivalent value for the transaction.
+    def _collect_rate_keys(self, summary_recs, try_currency, has_tcmb_rate, has_try_rate=False):
+        """Collect unique (company, date) and (company, date, currency) keys for batch SQL.
 
-        - TRY document: amount_tr_currency = amount_currency (already TRY)
-        - Non-TRY invoice with l10n_tr_tcmb_rate: balance × l10n_tr_tcmb_rate
-        - Non-TRY other: balance × res.currency.rate for TRY (batch-fetched)
+        USD lines need try_rate only when no per-record TCMB rate is set (fallback path).
+        3rd-currency lines (e.g. EUR) always need try_rate + inv_rate for the cross-rate
+        calculation regardless of TCMB presence, because TCMB rate is USD/TRY and cannot
+        be used directly for EUR/TRY conversion.
+        Records with l10n_tr_tcmb_try_rate set skip all cache lookups (direct TRY rate).
         """
-        try_currency = self._get_try_currency()
-        has_tcmb_rate = 'l10n_tr_tcmb_rate' in self.env['account.move']._fields
-
-        # --- Zero out product lines upfront ---
-        summary_recs = self._zero_product_fields('amount_tr_currency', 'tr_rate_display')
-
-        # --- Batch-fetch fallback rates to avoid N+1 queries ---
-        # Collect all unique (company_id, date) pairs that may need a rate lookup
-        rate_lookup_keys = set()
+        try_rate_keys = set()
+        inv_rate_keys = set()
         for rec in summary_recs:
-            if rec.currency_id and rec.currency_id != try_currency:
-                tcmb_rate = 0.0
-                if has_tcmb_rate and rec.move_id:
-                    tcmb_rate = rec.move_id.l10n_tr_tcmb_rate or 0.0
-                if not tcmb_rate and rec.date and rec.company_id:
-                    rate_lookup_keys.add((rec.company_id.id, str(rec.date)))
+            if not (rec.currency_id and rec.currency_id != try_currency):
+                continue
+            if not (rec.date and rec.company_id):
+                continue
+            # Highest priority: direct TRY rate — no cache lookup needed
+            try_rate_field = 0.0
+            if has_try_rate and rec.move_id:
+                try_rate_field = rec.move_id.l10n_tr_tcmb_try_rate or 0.0
+            if try_rate_field:
+                continue
+            is_third = rec.currency_id != rec.company_currency_id
+            tcmb_rate = 0.0
+            if has_tcmb_rate and rec.move_id:
+                tcmb_rate = rec.move_id.l10n_tr_tcmb_rate or 0.0
+            # USD lines: add to cache only when no TCMB rate (they use tcmb_rate otherwise).
+            # 3rd-currency lines: always add — cross-rate fallback is required even with TCMB.
+            if not tcmb_rate or is_third:
+                try_rate_keys.add((rec.company_id.id, str(rec.date)))
+            if is_third:
+                inv_rate_keys.add((rec.company_id.id, str(rec.date), rec.currency_id.id))
+        return try_rate_keys, inv_rate_keys
 
-        rate_cache = {}
-        if rate_lookup_keys and try_currency:
-            # Build a VALUES list for the lateral join
-            values_list = ", ".join(
-                self.env.cr.mogrify("(%s, %s::date)", (cid, dt)).decode()
-                for cid, dt in rate_lookup_keys
-            )
-            self.env.cr.execute(f"""
-                SELECT v.company_id, v.dt, r.rate
-                FROM (VALUES {values_list}) AS v(company_id, dt)
-                LEFT JOIN LATERAL (
-                    SELECT rate
-                    FROM res_currency_rate
-                    WHERE currency_id = %s
-                      AND company_id = v.company_id
-                      AND name <= v.dt
-                    ORDER BY name DESC
-                    LIMIT 1
-                ) r ON TRUE
-            """, (try_currency.id,))
-            for company_id, dt, rate in self.env.cr.fetchall():
-                rate_cache[(company_id, str(dt))] = rate or 0.0
+    def _fetch_try_rate_cache(self, try_rate_keys, try_currency):
+        """Batch-fetch TRY rates for the given (company_id, date) key set.
 
-        # --- Assign values ---
-        for rec in summary_recs:
-            if rec.currency_id == try_currency:
-                # Already in TRY — no conversion needed
-                rec.amount_tr_currency = rec.amount_currency
-                rec.tr_rate_display = "1.0000"
-            elif rec.currency_id:
-                # Non-TRY: check for invoice TCMB rate first
-                tcmb_rate = 0.0
-                if has_tcmb_rate and rec.move_id:
-                    tcmb_rate = rec.move_id.l10n_tr_tcmb_rate or 0.0
+        Returns a dict: {(company_id, date_str): rate}
+        Rates are stored as units-of-currency per 1 USD in res_currency_rate.
+        """
+        try_rate_cache = {}
+        if not (try_rate_keys and try_currency):
+            return try_rate_cache
+        values_list = ", ".join(
+            self.env.cr.mogrify("(%s, %s::date)", (cid, dt)).decode()
+            for cid, dt in try_rate_keys
+        )
+        self.env.cr.execute(f"""
+            SELECT v.company_id, v.dt, r.rate
+            FROM (VALUES {values_list}) AS v(company_id, dt)
+            LEFT JOIN LATERAL (
+                SELECT rate
+                FROM res_currency_rate
+                WHERE currency_id = %s
+                  AND company_id = v.company_id
+                  AND name <= v.dt
+                ORDER BY name DESC
+                LIMIT 1
+            ) r ON TRUE
+        """, (try_currency.id,))
+        for company_id, dt, rate in self.env.cr.fetchall():
+            try_rate_cache[(company_id, str(dt))] = rate or 0.0
+        return try_rate_cache
 
-                if tcmb_rate:
-                    # Use the user-selected TCMB rate from the invoice
-                    rec.tr_rate_display = f"{tcmb_rate:.4f}"
-                    rec.amount_tr_currency = float_round(
-                        rec.balance * tcmb_rate,
-                        precision_digits=2
-                    )
-                else:
-                    # Fallback: batch-fetched daily rate from res.currency.rate
-                    cached_rate = rate_cache.get(
-                        (rec.company_id.id, str(rec.date)), 0.0
-                    )
-                    if cached_rate:
-                        rec.tr_rate_display = f"{cached_rate:.4f}"
+    def _fetch_inv_rate_cache(self, inv_rate_keys):
+        """Batch-fetch rates for 3rd currencies (e.g. EUR) for cross-rate calculation.
+
+        Returns a dict: {(company_id, date_str, currency_id): rate}
+        Cross rate formula: EUR/TRY = try_rate / eur_rate (both units per 1 USD).
+        """
+        inv_rate_cache = {}
+        if not inv_rate_keys:
+            return inv_rate_cache
+        values_list = ", ".join(
+            self.env.cr.mogrify("(%s, %s::date, %s)", (cid, dt, cur_id)).decode()
+            for cid, dt, cur_id in inv_rate_keys
+        )
+        self.env.cr.execute(f"""
+            SELECT v.company_id, v.dt, v.currency_id, r.rate
+            FROM (VALUES {values_list}) AS v(company_id, dt, currency_id)
+            LEFT JOIN LATERAL (
+                SELECT rate
+                FROM res_currency_rate
+                WHERE currency_id = v.currency_id
+                  AND company_id = v.company_id
+                  AND name <= v.dt
+                ORDER BY name DESC
+                LIMIT 1
+            ) r ON TRUE
+        """)
+        for company_id, dt, currency_id, rate in self.env.cr.fetchall():
+            inv_rate_cache[(company_id, str(dt), currency_id)] = rate or 0.0
+        return inv_rate_cache
+
+    def _apply_tr_value(self, rec, try_currency, has_tcmb_rate, try_rate_cache, inv_rate_cache, has_try_rate=False):
+        """Assign amount_tr_currency and tr_rate_display for a single record.
+
+        Branch logic:
+        - TRY line: amount_currency is already TRY, rate = "1.0000"
+        - Non-TRY, direct TRY rate set (l10n_tr_tcmb_try_rate): amount_currency × try_rate
+        - Non-TRY, TCMB rate set, USD line: balance × tcmb_rate (tcmb_rate is USD/TRY)
+        - Non-TRY, TCMB rate set, 3rd-currency (EUR): amount_currency × tcmb_rate × try_rate
+          (tcmb_rate is EUR/USD official; try_rate is TRY/USD from daily rates → EUR/TRY)
+        - Non-TRY, no TCMB rate: pure daily cross-rate from res_currency_rate
+        - No currency: 0.0, "N/A"
+        """
+        if rec.currency_id == try_currency:
+            rec.amount_tr_currency = rec.amount_currency
+            rec.tr_rate_display = "1.0000"
+            return
+
+        if rec.currency_id:
+            # Highest priority: user-supplied direct TRY rate
+            try_rate_field = 0.0
+            if has_try_rate and rec.move_id:
+                try_rate_field = rec.move_id.l10n_tr_tcmb_try_rate or 0.0
+            if try_rate_field:
+                rec.tr_rate_display = f"{try_rate_field:.4f}"
+                rec.amount_tr_currency = float_round(
+                    rec.amount_currency * try_rate_field,
+                    precision_digits=2
+                )
+                return
+
+            is_third_currency = rec.currency_id != rec.company_currency_id
+            tcmb_rate = 0.0
+            if has_tcmb_rate and rec.move_id:
+                tcmb_rate = rec.move_id.l10n_tr_tcmb_rate or 0.0
+
+            if tcmb_rate:
+                if is_third_currency:
+                    # tcmb_rate is EUR/USD (official TCMB rate on the invoice).
+                    # try_rate is TRY/USD from res_currency_rate.
+                    # EUR/TRY = tcmb_rate × try_rate
+                    try_rate = try_rate_cache.get((rec.company_id.id, str(rec.date)), 0.0)
+                    if try_rate:
+                        eur_try_rate = tcmb_rate * try_rate
+                        rec.tr_rate_display = f"{eur_try_rate:.4f}"
                         rec.amount_tr_currency = float_round(
-                            rec.balance * cached_rate,
+                            rec.amount_currency * eur_try_rate,
                             precision_digits=2
                         )
                     else:
                         rec.amount_tr_currency = rec.balance or 0.0
                         rec.tr_rate_display = "0.0000"
+                else:
+                    # tcmb_rate is USD/TRY for company-currency (USD) lines.
+                    rec.tr_rate_display = f"{tcmb_rate:.4f}"
+                    rec.amount_tr_currency = float_round(
+                        rec.balance * tcmb_rate,
+                        precision_digits=2
+                    )
             else:
-                rec.amount_tr_currency = 0.0
-                rec.tr_rate_display = "N/A"
+                # Fallback: batch-fetched daily rates from res_currency_rate.
+                # For 3rd currencies compute cross rate: EUR/TRY = try_rate / eur_rate
+                # (both stored as units-of-currency per 1 USD in res_currency_rate).
+                try_rate = try_rate_cache.get((rec.company_id.id, str(rec.date)), 0.0)
+                if is_third_currency:
+                    inv_rate = inv_rate_cache.get(
+                        (rec.company_id.id, str(rec.date), rec.currency_id.id), 0.0
+                    )
+                    if try_rate and inv_rate:
+                        cross_rate = try_rate / inv_rate
+                        rec.tr_rate_display = f"{cross_rate:.4f}"
+                        rec.amount_tr_currency = float_round(
+                            rec.amount_currency * cross_rate,
+                            precision_digits=2
+                        )
+                    else:
+                        rec.amount_tr_currency = rec.balance or 0.0
+                        rec.tr_rate_display = "0.0000"
+                else:
+                    if try_rate:
+                        rec.tr_rate_display = f"{try_rate:.4f}"
+                        rec.amount_tr_currency = float_round(
+                            rec.balance * try_rate,
+                            precision_digits=2
+                        )
+                    else:
+                        rec.amount_tr_currency = rec.balance or 0.0
+                        rec.tr_rate_display = "0.0000"
+        else:
+            rec.amount_tr_currency = 0.0
+            rec.tr_rate_display = "N/A"
+
+    @api.depends('currency_id', 'amount_currency', 'balance', 'date', 'company_id', 'move_id')
+    def _compute_amount_tr_currency(self):
+        """Compute TRY equivalent value for the transaction.
+
+        - TRY document: amount_tr_currency = amount_currency (already TRY)
+        - Non-TRY, company-currency line with TCMB rate: balance × tcmb_rate (USD/TRY)
+        - Non-TRY, 3rd-currency line (e.g. EUR): cross-rate fallback (TCMB is not EUR/TRY)
+        - Non-TRY other: balance × res.currency.rate for TRY (batch-fetched)
+        """
+        try_currency = self._get_try_currency()
+        has_tcmb_rate = 'l10n_tr_tcmb_rate' in self.env['account.move']._fields
+        has_try_rate = 'l10n_tr_tcmb_try_rate' in self.env['account.move']._fields
+        summary_recs = self._zero_product_fields('amount_tr_currency', 'tr_rate_display')
+
+        try_rate_keys, inv_rate_keys = self._collect_rate_keys(
+            summary_recs, try_currency, has_tcmb_rate, has_try_rate=has_try_rate
+        )
+        try_rate_cache = self._fetch_try_rate_cache(try_rate_keys, try_currency)
+        inv_rate_cache = self._fetch_inv_rate_cache(inv_rate_keys)
+
+        for rec in summary_recs:
+            self._apply_tr_value(rec, try_currency, has_tcmb_rate, try_rate_cache, inv_rate_cache, has_try_rate=has_try_rate)
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_tr_currency')
     @api.depends_context('date_from', 'skip_opening')
@@ -521,4 +647,3 @@ class AccountMoveLineReport(models.Model):
                 'debit': debit, 'credit': credit,
             }
         return result
-
