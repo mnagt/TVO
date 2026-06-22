@@ -14,6 +14,7 @@ class AgedBalanceSummaryListController extends ListController {
         super.setup();
         this.orm = useService("orm");
         this.action = useService("action");
+        this.companyService = useService("company");
 
         this.userConfig = useState({
             show_tl: false,
@@ -31,9 +32,14 @@ class AgedBalanceSummaryListController extends ListController {
     }
 
     async onExcelExport() {
+        const domain = this.model.root.domain;
+        const allowedCompanyIds = this.companyService.activeCompanyIds;
         await download({
             url: "/web/aged_balance_summary_export/xlsx",
-            data: {},
+            data: { data: JSON.stringify({
+                domain: domain,
+                allowed_company_ids: allowedCompanyIds,
+            }) },
         });
     }
 

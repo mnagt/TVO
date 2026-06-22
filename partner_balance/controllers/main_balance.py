@@ -338,14 +338,25 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         )
 
     @http.route('/web/aged_balance_summary_export/xlsx', type='http', auth="user")
-    def aged_balance_summary_export(self):
+    def aged_balance_summary_export(self, data='{}'):
         import io
+        import json
         import datetime
         import xlsxwriter
 
-        records = request.env['account.aged.balance.summary'].search([
-            ('company_id', 'in', request.env.companies.ids)
-        ])
+
+        params = json.loads(data)
+        allowed_company_ids = params.get('allowed_company_ids') or request.env.companies.ids
+        domain = [('company_id', 'in', allowed_company_ids)]
+        domain.extend(params.get('domain', []))
+
+
+        try:
+            records = request.env['account.aged.balance.summary'].search(domain)
+        except Exception as e:
+            _logger.error("aged_balance_summary_export | search FAILED: %s", e)
+            raise
+
         currency = request.env.company.currency_id
 
         output = io.BytesIO()
