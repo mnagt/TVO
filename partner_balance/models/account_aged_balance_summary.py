@@ -30,6 +30,9 @@ class AccountAgedBalanceSummary(models.Model):
     amount_older_try    = fields.Monetary(string='>120',    readonly=True, currency_field='try_currency_id')
     amount_total_try    = fields.Monetary(string='Total',   readonly=True, currency_field='try_currency_id')
 
+    is_customer = fields.Boolean(string='Customer', readonly=True)
+    is_vendor   = fields.Boolean(string='Vendor',   readonly=True)
+
     @api.depends_context('company')
     def _compute_try_currency_id(self):
         try_currency = self.env['res.currency'].search([('name', '=', 'TRY')], limit=1)
@@ -65,25 +68,28 @@ class AccountAgedBalanceSummary(models.Model):
         self.env.cr.execute("""
             CREATE VIEW account_aged_balance_summary AS (
                 SELECT
-                    ROW_NUMBER() OVER (ORDER BY company_id, partner_id) AS id,
-                    partner_id,
-                    company_id,
-                    SUM(CASE WHEN bucket = 'current'  THEN amount_residual ELSE 0 END) AS amount_current,
-                    SUM(CASE WHEN bucket = '1_30'     THEN amount_residual ELSE 0 END) AS amount_1_30,
-                    SUM(CASE WHEN bucket = '31_60'    THEN amount_residual ELSE 0 END) AS amount_31_60,
-                    SUM(CASE WHEN bucket = '61_90'    THEN amount_residual ELSE 0 END) AS amount_61_90,
-                    SUM(CASE WHEN bucket = '91_120'   THEN amount_residual ELSE 0 END) AS amount_91_120,
-                    SUM(CASE WHEN bucket = 'older'    THEN amount_residual ELSE 0 END) AS amount_older,
-                    SUM(amount_residual) AS amount_total,
-                    SUM(CASE WHEN bucket = 'current'  THEN amount_residual_try ELSE 0 END) AS amount_current_try,
-                    SUM(CASE WHEN bucket = '1_30'     THEN amount_residual_try ELSE 0 END) AS amount_1_30_try,
-                    SUM(CASE WHEN bucket = '31_60'    THEN amount_residual_try ELSE 0 END) AS amount_31_60_try,
-                    SUM(CASE WHEN bucket = '61_90'    THEN amount_residual_try ELSE 0 END) AS amount_61_90_try,
-                    SUM(CASE WHEN bucket = '91_120'   THEN amount_residual_try ELSE 0 END) AS amount_91_120_try,
-                    SUM(CASE WHEN bucket = 'older'    THEN amount_residual_try ELSE 0 END) AS amount_older_try,
-                    SUM(amount_residual_try) AS amount_total_try
-                FROM account_aged_balance_line
-                WHERE line_type = 'summary'
-                GROUP BY partner_id, company_id
+                    ROW_NUMBER() OVER (ORDER BY abal.company_id, abal.partner_id) AS id,
+                    abal.partner_id,
+                    abal.company_id,
+                    SUM(CASE WHEN abal.bucket = 'current'  THEN abal.amount_residual ELSE 0 END) AS amount_current,
+                    SUM(CASE WHEN abal.bucket = '1_30'     THEN abal.amount_residual ELSE 0 END) AS amount_1_30,
+                    SUM(CASE WHEN abal.bucket = '31_60'    THEN abal.amount_residual ELSE 0 END) AS amount_31_60,
+                    SUM(CASE WHEN abal.bucket = '61_90'    THEN abal.amount_residual ELSE 0 END) AS amount_61_90,
+                    SUM(CASE WHEN abal.bucket = '91_120'   THEN abal.amount_residual ELSE 0 END) AS amount_91_120,
+                    SUM(CASE WHEN abal.bucket = 'older'    THEN abal.amount_residual ELSE 0 END) AS amount_older,
+                    SUM(abal.amount_residual)                                                    AS amount_total,
+                    SUM(CASE WHEN abal.bucket = 'current'  THEN abal.amount_residual_try ELSE 0 END) AS amount_current_try,
+                    SUM(CASE WHEN abal.bucket = '1_30'     THEN abal.amount_residual_try ELSE 0 END) AS amount_1_30_try,
+                    SUM(CASE WHEN abal.bucket = '31_60'    THEN abal.amount_residual_try ELSE 0 END) AS amount_31_60_try,
+                    SUM(CASE WHEN abal.bucket = '61_90'    THEN abal.amount_residual_try ELSE 0 END) AS amount_61_90_try,
+                    SUM(CASE WHEN abal.bucket = '91_120'   THEN abal.amount_residual_try ELSE 0 END) AS amount_91_120_try,
+                    SUM(CASE WHEN abal.bucket = 'older'    THEN abal.amount_residual_try ELSE 0 END) AS amount_older_try,
+                    SUM(abal.amount_residual_try)                                                    AS amount_total_try,
+                    BOOL_OR(aa.account_type = 'asset_receivable')  AS is_customer,
+                    BOOL_OR(aa.account_type = 'liability_payable') AS is_vendor
+                FROM account_aged_balance_line abal
+                JOIN account_account aa ON aa.id = abal.account_id
+                WHERE abal.line_type = 'summary'
+                GROUP BY abal.partner_id, abal.company_id
             )
         """)

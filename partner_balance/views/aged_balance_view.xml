@@ -102,6 +102,18 @@
         }</field>
     </record>
 
+    <!-- Aged Balance Summary Search View -->
+    <record id="view_aged_balance_summary_search" model="ir.ui.view">
+        <field name="name">account.aged.balance.summary.search</field>
+        <field name="model">account.aged.balance.summary</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="customers" string="Customers" domain="[('is_customer', '=', True)]"/>
+                <filter name="vendors"   string="Vendors"   domain="[('is_vendor',   '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
     <record id="view_aged_balance_summary_tree" model="ir.ui.view">
         <field name="name">account.aged.balance.summary.tree</field>
         <field name="model">account.aged.balance.summary</field>
@@ -147,6 +159,7 @@
         <field name="res_model">account.aged.balance.summary</field>
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_aged_balance_summary_tr_tree"/>
+        <field name="search_view_id" ref="view_aged_balance_summary_search"/>
         <field name="domain">[]</field>
         <field name="context">{'action_name': 'Aged Balance in TRY'}</field>
     </record>
@@ -156,6 +169,7 @@
         <field name="res_model">account.aged.balance.summary</field>
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_aged_balance_summary_tree"/>
+        <field name="search_view_id" ref="view_aged_balance_summary_search"/>
         <field name="domain">[]</field>
         <field name="context">{}</field>
     </record>
