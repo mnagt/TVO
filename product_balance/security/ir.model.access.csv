@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_balance_report_account_user,product.balance.report.account.user,model_product_balance_report,account.group_account_user,1,0,0,0
+access_product_balance_report_account_manager,product.balance.report.account.manager,model_product_balance_report,account.group_account_manager,1,0,0,0
+access_product_balance_report_salesman,product.balance.report.salesman,model_product_balance_report,sales_team.group_sale_salesman,1,0,0,0

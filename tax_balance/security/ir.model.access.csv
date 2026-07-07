@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_account_tax_balance_user,account.tax.balance user,model_account_tax_balance,account.group_account_user,1,0,0,0
+access_account_tax_balance_manager,account.tax.balance manager,model_account_tax_balance,account.group_account_manager,1,0,0,0
+access_account_tax_balance_line_user,account.tax.balance.line user,model_account_tax_balance_line,account.group_account_user,1,0,0,0
+access_account_tax_balance_line_manager,account.tax.balance.line manager,model_account_tax_balance_line,account.group_account_manager,1,0,0,0

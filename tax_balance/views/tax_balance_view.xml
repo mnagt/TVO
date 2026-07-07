@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Search View -->
+        <record id="view_tax_balance_search" model="ir.ui.view">
+            <field name="name">account.tax.balance.search</field>
+            <field name="model">account.tax.balance</field>
+            <field name="arch" type="xml">
+                <search string="Tax Balance">
+                    <field name="partner_id"/>
+                    <field name="name" string="Number"/>
+                    <field name="ref" string="Reference"/>
+                    <filter name="customers" string="Customers"
+                            domain="[('move_type', 'in', ['out_invoice', 'out_refund'])]"/>
+                    <filter name="vendors" string="Vendors"
+                            domain="[('move_type', 'in', ['in_invoice', 'in_refund'])]"/>
+                    <separator/>
+                    <filter name="filter_date" string="Date" date="date"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_tax_balance_tree" model="ir.ui.view">
+            <field name="name">account.tax.balance.tree</field>
+            <field name="model">account.tax.balance</field>
+            <field name="arch" type="xml">
+                <list string="Tax Balance"
+                      create="false" delete="false" edit="false"
+                      js_class="tax_balance">
+                    <field name="name" string="Number"/>
+                    <field name="partner_id" string="Partner"/>
+                    <field name="date" string="Date"/>
+                    <field name="ref" string="Reference"/>
+                    <field name="amount_untaxed" string="Tax Excluded"
+                           widget="monetary"
+                           options="{'currency_field': 'company_currency_id'}"
+                           sum="Tax Excl. Total"/>
+                    <!-- dynamic tax columns injected by JS after this column -->
+                    <field name="amount_total" string="Total"
+                           widget="monetary"
+                           options="{'currency_field': 'company_currency_id'}"
+                           sum="Grand Total"/>
+                    <field name="company_currency_id" column_invisible="True"/>
+                    <field name="tax_amounts" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                    <field name="move_type" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- TRY list view -->
+        <record id="view_tax_balance_tr_tree" model="ir.ui.view">
+            <field name="name">account.tax.balance.tr.tree</field>
+            <field name="model">account.tax.balance</field>
+            <field name="arch" type="xml">
+                <list string="Tax Balance TL"
+                      create="false" delete="false" edit="false"
+                      js_class="tax_balance">
+                    <field name="name" string="Number"/>
+                    <field name="partner_id" string="Partner"/>
+                    <field name="date" string="Date"/>
+                    <field name="ref" string="Reference"/>
+                    <field name="amount_untaxed_try" string="Tax Excluded"
+                           widget="monetary"
+                           options="{'currency_field': 'try_currency_id'}"
+                           sum="Tax Excl. Total"/>
+                    <!-- dynamic TRY tax columns injected by JS after this column -->
+                    <field name="amount_total_try" string="Total"
+                           widget="monetary"
+                           options="{'currency_field': 'try_currency_id'}"
+                           sum="Grand Total"/>
+                    <field name="try_currency_id" column_invisible="True"/>
+                    <field name="tax_amounts_try" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                    <field name="move_type" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- TRY action -->
+        <record id="action_tax_balance_tr" model="ir.actions.act_window">
+            <field name="name">Tax Balance TL</field>
+            <field name="res_model">account.tax.balance</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_tax_balance_tr_tree"/>
+            <field name="domain">[]</field>
+            <field name="context">{'action_name': 'Tax Balance TL'}</field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_tax_balance" model="ir.actions.act_window">
+            <field name="name">Tax Balance</field>
+            <field name="res_model">account.tax.balance</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_tax_balance_tree"/>
+            <field name="search_view_id" ref="view_tax_balance_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <!-- Menu under Accounting > Reporting -->
+        <menuitem
+            id="menu_tax_balance"
+            name="Tax Balance"
+            parent="account.account_reports_partners_reports_menu"
+            action="action_tax_balance"
+            groups="account.group_account_manager,account.group_account_user"
+            sequence="30"/>
+
+    </data>
+</odoo>

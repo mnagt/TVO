@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.rule" id="rule_account_tax_balance_company">
+            <field name="name">Tax Balance: Multi-Company</field>
+            <field name="model_id" ref="model_account_tax_balance"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record model="ir.rule" id="rule_account_tax_balance_line_company">
+            <field name="name">Tax Balance Line: Multi-Company</field>
+            <field name="model_id" ref="model_account_tax_balance_line"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>

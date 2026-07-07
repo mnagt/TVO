@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="tax_balance.TaxBalanceListView" t-inherit="web.ListView" t-inherit-mode="primary">
+        <xpath expr="//t[@t-component='props.Renderer']" position="before">
+            <div class="d-flex align-items-center px-3 py-2 border-bottom position-relative" style="background:#f8f9fa;">
+                <div class="d-flex align-items-center gap-3">
+                    <button t-if="!isGroupedReport"
+                            class="btn btn-outline-success btn-sm"
+                            type="button"
+                            title="Export to Excel"
+                            t-on-click="onExcelExport">
+                        <i class="fa fa-file-excel-o"/>
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm"
+                            type="button"
+                            title="Toggle grouping by tax"
+                            t-on-click="onToggleGroupByTax">
+                        <i class="fa fa-object-group"/>
+                        <t t-esc="isGroupedReport ? 'Ungroup' : 'Group by Tax'"/>
+                    </button>
+                </div>
+                <!-- Center: TL / USD -->
+                <div class="d-flex align-items-center gap-3 position-absolute start-50 translate-middle-x">
+                    <button t-if="!isTrReport and userConfig.show_tl"
+                            class="btn btn-outline-secondary btn-sm"
+                            type="button"
+                            title="Switch to TL Report"
+                            t-on-click="onTrReport">
+                        <i class="fa fa-try"/> TL
+                    </button>
+                    <button t-if="isTrReport and userConfig.show_usd"
+                            class="btn btn-outline-secondary btn-sm"
+                            type="button"
+                            title="Switch to USD Report"
+                            t-on-click="onUsdReport">
+                        <i class="fa fa-usd"/> USD
+                    </button>
+                </div>
+            </div>
+            <hr class="m-0"/>
+        </xpath>
+    </t>
+</templates>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- List view opened from Accounting > Reporting: click row -> account.move -->
+        <record id="view_product_balance_report_move_list" model="ir.ui.view">
+            <field name="name">product.balance.report.move.list</field>
+            <field name="model">product.balance.report</field>
+            <field name="arch" type="xml">
+                <list string="Product Balance" create="false" edit="false" delete="false"
+                      js_class="product_balance_move_list" decoration-danger="type == 'return'">
+                    <field name="invoice_date"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                    <field name="categ_id" column_invisible="True"/>
+                    <field name="salesperson_id" column_invisible="True"/>
+                    <field name="type" column_invisible="True"/>
+                    <field name="sale_id" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                    <field name="company_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- List view opened from Sale > Reporting: click row -> sale.order -->
+        <record id="view_product_balance_report_sale_list" model="ir.ui.view">
+            <field name="name">product.balance.report.sale.list</field>
+            <field name="model">product.balance.report</field>
+            <field name="arch" type="xml">
+                <list string="Product Balance" create="false" edit="false" delete="false"
+                      js_class="product_balance_sale_list" decoration-danger="type == 'return'">
+                    <field name="invoice_date"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                    <field name="categ_id" column_invisible="True"/>
+                    <field name="salesperson_id" column_invisible="True"/>
+                    <field name="type" column_invisible="True"/>
+                    <field name="sale_id" column_invisible="True"/>
+                    <field name="move_id" column_invisible="True"/>
+                    <field name="company_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Shared search view -->
+        <record id="view_product_balance_report_search" model="ir.ui.view">
+            <field name="name">product.balance.report.search</field>
+            <field name="model">product.balance.report</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="product_id"/>
+                    <field name="salesperson_id"/>
+                    <field name="partner_id"/>
+                    <field name="categ_id"/>
+                    <filter string="Sales" name="filter_type_sale" domain="[('type', '=', 'sale')]"/>
+                    <filter string="Returns" name="filter_type_return" domain="[('type', '=', 'return')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Product" name="group_product" context="{'group_by': 'product_id'}"/>
+                        <filter string="Product Category" name="group_category" context="{'group_by': 'categ_id'}"/>
+                        <filter string="Salesperson" name="group_salesperson" context="{'group_by': 'salesperson_id'}"/>
+                        <filter string="Date" name="group_date" context="{'group_by': 'invoice_date'}"/>
+                        <filter string="Customer" name="group_customer" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Accounting action -->
+        <record id="action_product_balance_report_account" model="ir.actions.act_window">
+            <field name="name">Product Balance</field>
+            <field name="res_model">product.balance.report</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_product_balance_report_move_list"/>
+            <field name="search_view_id" ref="view_product_balance_report_search"/>
+        </record>
+
+        <menuitem id="menu_product_balance_report_account"
+            name="Product Balance"
+            parent="account.account_reports_partners_reports_menu"
+            action="action_product_balance_report_account"
+            groups="account.group_account_manager,account.group_account_user"
+            sequence="20"/>
+
+        <!-- Sale action -->
+        <record id="action_product_balance_report_sale" model="ir.actions.act_window">
+            <field name="name">Product Balance</field>
+            <field name="res_model">product.balance.report</field>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_product_balance_report_sale_list"/>
+            <field name="search_view_id" ref="view_product_balance_report_search"/>
+            <field name="context">{'search_default_group_salesperson': 1}</field>
+        </record>
+
+        <menuitem id="menu_product_balance_report_sale"
+            name="Product Balance"
+            parent="sale.menu_sale_report"
+            action="action_product_balance_report_sale"
+            groups="account.group_account_manager,account.group_account_user,sales_team.group_sale_salesman"
+            sequence="50"/>
+
+    </data>
+</odoo>
