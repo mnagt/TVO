@@ -20,15 +20,12 @@ class LogisticsContainerLine(models.Model):
         'logistics.container', string='Container', ondelete='cascade',
     )
     product_id = fields.Many2one('product.product', string='Product', tracking=True)
-    transit_trip_id = fields.Many2one(
-        'logistics.transit.trip', string='Transit Trip', tracking=True,
-    )
     bill_lading_id = fields.Many2one(
         'logistics.bill.lading', string='Bill of Lading',
         related='container_id.bill_lading_id', store=True,
     )
     requisition_id = fields.Many2one(
-        'purchase.requisition', string='Import Deal',
+        'purchase.requisition', string='Purchase Agreement',
         store=True, tracking=True,
     )
     purchase_order_id = fields.Many2one(

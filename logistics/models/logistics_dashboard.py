@@ -7,38 +7,55 @@ class LogisticsDashboard(models.AbstractModel):
 
     @api.model
     def get_dashboard_data(self):
-        today = fields.Date.today()
-        BL = self.env['logistics.bill.lading']
-        Container = self.env['logistics.container']
-        Req = self.env['purchase.requisition']
+        Req = self.env['purchase.requisition'].sudo()
+        Container = self.env['logistics.container'].sudo()
+        Line = self.env['logistics.container.line'].sudo()
+        BL = self.env['logistics.bill.lading'].sudo()
 
         deals_by_state = {
-            state: Req.search_count([('logistics_state', '=', state)])
-            for state in ('purchasing', 'oversea', 'at_port', 'arrived', 'completed')
+            state: Req.search_count([('state', '=', state)])
+            for state in ('draft', 'confirmed', 'done', 'cancel')
         }
 
-        upcoming = BL.search([
-            ('state', 'in', ['shipped', 'in_transit']),
+        containers_by_state = {
+            state: Container.search_count([('state', '=', state)])
+            for state in ('purchase', 'oversea', 'at_port', 'arrived', 'antrepo')
+        }
+
+        bl_has_number = [('number', '!=', False), ('number', '!=', '')]
+        bl_docs_pending = BL.search_count(bl_has_number + [
+            ('docs_draft', '=', False), ('docs_original', '=', False),
+        ])
+        bl_docs_draft = BL.search_count(bl_has_number + [
+            ('docs_draft', '=', True), ('docs_original', '=', False),
+        ])
+        bl_docs_original = BL.search_count(bl_has_number + [
+            ('docs_draft', '=', True), ('docs_original', '=', True),
+        ])
+
+        upcoming = Line.search([
+            ('state', 'not in', ['arrived', 'antrepo']),
             ('arrival_date', '!=', False),
-        ], order='arrival_date asc', limit=10)
+        ], order='arrival_date desc', limit=10)
 
         return {
             'kpis': {
-                'deals_purchasing': deals_by_state['purchasing'],
-                'deals_oversea': deals_by_state['oversea'],
-                'deals_at_port': deals_by_state['at_port'],
-                'deals_arrived': deals_by_state['arrived'],
-                'deals_completed': deals_by_state['completed'],
-                'containers_in_transit': Container.search_count(
-                    [('state', 'in', ['shipped', 'in_transit'])]
-                ),
-                'overdue_arrivals': BL.search_count([
-                    ('arrival_date', '<', today),
-                    ('state', 'in', ['shipped', 'in_transit']),
-                ]),
+                'deals_draft': deals_by_state['draft'],
+                'deals_confirmed': deals_by_state['confirmed'],
+                'deals_closed': deals_by_state['done'],
+                'deals_cancelled': deals_by_state['cancel'],
+                'containers_purchase': containers_by_state['purchase'],
+                'containers_oversea': containers_by_state['oversea'],
+                'containers_at_port': containers_by_state['at_port'],
+                'containers_arrived': containers_by_state['arrived'],
+                'containers_antrepo': containers_by_state['antrepo'],
+                'bl_docs_pending': bl_docs_pending,
+                'bl_docs_draft': bl_docs_draft,
+                'bl_docs_original': bl_docs_original,
             },
-            'upcoming_arrivals': upcoming.read(
-                ['name', 'number', 'vessel', 'arrival_date',
-                 'container_count', 'forwarder_id', 'port_of_discharge_id']
-            ),
+            'upcoming_arrivals': upcoming.read([
+                'requisition_id', 'vendor_id', 'product_id', 'product_qty',
+                'sku_price', 'total_weight', 'subtotal', 'container_id',
+                'bill_lading_id', 'mt_price', 'arrival_date', 'currency_id',
+            ]),
         }

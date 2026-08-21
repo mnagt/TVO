@@ -2,6 +2,7 @@
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { formatCurrency } from "@web/core/currency";
 
 export class LogisticsDashboard extends Component {
     static template = "logistics.LogisticsDashboard";
@@ -20,31 +21,52 @@ export class LogisticsDashboard extends Component {
         });
     }
 
-    openDeals(logisticsState) {
+    openDeals(state) {
         this.action.doAction({
             type: "ir.actions.act_window",
-            name: "Import Deals",
+            name: "Purchase Agreements",
             res_model: "purchase.requisition",
             views: [[false, "list"], [false, "form"]],
-            domain: logisticsState ? [["logistics_state", "=", logisticsState]] : [],
+            domain: state ? [["state", "=", state]] : [],
         });
     }
 
-    openOverdue() {
-        const today = new Date().toISOString().split("T")[0];
+    openContainers(state) {
         this.action.doAction({
             type: "ir.actions.act_window",
-            name: "Overdue Arrivals",
+            name: "Containers",
+            res_model: "logistics.container",
+            views: [[false, "list"], [false, "form"]],
+            domain: state ? [["state", "=", state]] : [],
+        });
+    }
+
+    openBillLadings(docsDraft, docsOriginal) {
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "Bills of Lading",
             res_model: "logistics.bill.lading",
             views: [[false, "list"], [false, "form"]],
-            domain: [["arrival_date", "<", today], ["state", "in", ["shipped", "in_transit"]]],
+            domain: [
+                ["number", "!=", false],
+                ["number", "!=", ""],
+                ["docs_draft", "=", docsDraft],
+                ["docs_original", "=", docsOriginal],
+            ],
         });
     }
 
-    openBillLading(id) {
+    fmtCurrency(amount, currencyTuple) {
+        if (!currencyTuple) {
+            return amount;
+        }
+        return formatCurrency(amount, currencyTuple[0]);
+    }
+
+    openContainerLine(id) {
         this.action.doAction({
             type: "ir.actions.act_window",
-            res_model: "logistics.bill.lading",
+            res_model: "logistics.container.line",
             res_id: id,
             views: [[false, "form"]],
         });

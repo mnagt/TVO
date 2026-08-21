@@ -7,6 +7,8 @@ class LogisticsBillLading(models.Model):
     _description = 'Bill of Lading'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'bl_date desc, id desc'
+    _rec_name = 'number'
+    _rec_names_search = ['name', 'number']
     _sql_constraints = [
         ('number_unique', 'UNIQUE(number)',
          'B/L Number must be unique.'),
@@ -38,7 +40,7 @@ class LogisticsBillLading(models.Model):
     custom_declaration = fields.Boolean(string='Custom Declaration', tracking=True)
 
     requisition_ids = fields.Many2many(
-        'purchase.requisition', string='Import Deals',
+        'purchase.requisition', string='Purchase Agreements',
     )
     container_ids = fields.One2many(
         'logistics.container', 'bill_lading_id', string='Containers',
@@ -46,20 +48,6 @@ class LogisticsBillLading(models.Model):
     company_id = fields.Many2one(
         'res.company', string='Company', required=True,
         default=lambda self: self.env.company,
-    )
-
-    state = fields.Selection(
-        selection=[
-            ('draft', 'Draft'),
-            ('confirmed', 'Confirmed'),
-            ('shipped', 'Shipped'),
-            ('in_transit', 'In Transit'),
-            ('arrived', 'Arrived'),
-            ('delivered', 'Delivered'),
-            ('closed', 'Closed'),
-        ],
-        string='Status', default='draft', required=True,
-        copy=False, tracking=True,
     )
 
     # --- Computed counts ---
@@ -78,41 +66,6 @@ class LogisticsBillLading(models.Model):
             rec.display_name = rec.number or rec.name
 
 
-    def action_confirm(self):
-        self.write({'state': 'confirmed'})
-
-    def action_ship(self):
-        self.write({'state': 'shipped'})
-        containers = self.container_ids.filtered(lambda c: c.state == 'draft')
-        if containers:
-            containers.write({'state': 'shipped'})
-
-    def action_in_transit(self):
-        self.write({'state': 'in_transit'})
-        containers = self.container_ids.filtered(
-            lambda c: c.state in ('draft', 'shipped')
-        )
-        if containers:
-            containers.write({'state': 'in_transit'})
-
-    def action_arrived(self):
-        self.write({'state': 'arrived'})
-        today = fields.Date.today()
-        for rec in self:
-            if not rec.arrival_date:
-                rec.arrival_date = today
-        containers = self.container_ids.filtered(
-            lambda c: c.state in ('draft', 'shipped', 'in_transit')
-        )
-        if containers:
-            containers.write({'state': 'arrived'})
-
-    def action_deliver(self):
-        self.write({'state': 'delivered'})
-
-    def action_close(self):
-        self.write({'state': 'closed'})
-
     @api.depends('container_ids')
     def _compute_container_count(self):
         for rec in self:
@@ -129,5 +82,19 @@ class LogisticsBillLading(models.Model):
             'context': {
                 'default_bill_lading_id': self.id,
                 'default_requisition_ids': [(6, 0, self.requisition_ids.ids)],
+            },
+        }
+
+    def action_link_existing_container(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'logistics.container.link.wizard',
+            'view_mode': 'form',
+            'view_id': self.env.ref(
+                'logistics.view_logistics_container_link_wizard_form').id,
+            'target': 'new',
+            'context': {
+                'default_bill_lading_id': self.id,
             },
         }

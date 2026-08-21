@@ -4,23 +4,16 @@
     <!-- ===== Actions ===== -->
 
     <record id="action_logistics_container_line_all" model="ir.actions.act_window">
-        <field name="name">All Lines</field>
+        <field name="name">Container Lines</field>
         <field name="res_model">logistics.container.line</field>
         <field name="view_mode">list,pivot,form</field>
         <field name="context">{}</field>
     </record>
 
     <record id="action_logistics_requisition" model="ir.actions.act_window">
-        <field name="name">Import Deals</field>
+        <field name="name">Purchase Agreements</field>
         <field name="res_model">purchase.requisition</field>
         <field name="view_mode">list,pivot,form</field>
-    </record>
-
-    <record id="action_logistics_requisition_zer" model="ir.actions.act_window">
-        <field name="name">Zer Contracts</field>
-        <field name="res_model">purchase.requisition</field>
-        <field name="view_mode">list,pivot,form</field>
-        <field name="domain">[('vendor_id.name', 'ilike', 'ZER')]</field>
     </record>
 
     <record id="action_logistics_bill_lading" model="ir.actions.act_window">
@@ -35,12 +28,6 @@
         <field name="view_mode">kanban,list,pivot,form</field>
     </record>
 
-    <record id="action_logistics_transit_trip" model="ir.actions.act_window">
-        <field name="name">Transit Trips</field>
-        <field name="res_model">logistics.transit.trip</field>
-        <field name="view_mode">list,pivot,form</field>
-    </record>
-
     <record id="action_logistics_shipping_line" model="ir.actions.act_window">
         <field name="name">Shipping Lines</field>
         <field name="res_model">logistics.shipping.line</field>
@@ -50,18 +37,6 @@
     <record id="action_logistics_port" model="ir.actions.act_window">
         <field name="name">Ports</field>
         <field name="res_model">logistics.port</field>
-        <field name="view_mode">list,form</field>
-    </record>
-
-    <record id="action_product_registration" model="ir.actions.act_window">
-        <field name="name">Product Registrations</field>
-        <field name="res_model">product.registration</field>
-        <field name="view_mode">list,form</field>
-    </record>
-
-    <record id="action_logistics_pre_notification" model="ir.actions.act_window">
-        <field name="name">Pre-notifications</field>
-        <field name="res_model">logistics.pre.notification</field>
         <field name="view_mode">list,form</field>
     </record>
 
@@ -89,29 +64,16 @@
 
     <!-- Level 1 items -->
     <menuitem id="menu_logistics_all_lines"
-              name="All Lines"
+              name="Container Lines"
               parent="menu_logistics_root"
               action="action_logistics_container_line_all"
               sequence="10"/>
 
     <menuitem id="menu_logistics_deals"
-              name="Import Deals"
+              name="Purchase Agreements"
               parent="menu_logistics_root"
               action="action_logistics_requisition"
               sequence="30"/>
-
-    <!-- Sub-menu under Import Deals -->
-    <menuitem id="menu_logistics_deals_all"
-          name="All Deals"
-          parent="menu_logistics_deals"
-          action="action_logistics_requisition"
-          sequence="1"/>
-          
-    <menuitem id="menu_logistics_zer"
-              name="Zer Contracts"
-              parent="menu_logistics_deals"
-              action="action_logistics_requisition_zer"
-              sequence="10"/>
 
     <menuitem id="menu_logistics_bill_lading"
               name="Bills of Lading"
@@ -123,48 +85,6 @@
               name="Containers"
               parent="menu_logistics_root"
               action="action_logistics_container"
-              sequence="50"/>
-
-    <menuitem id="menu_logistics_transit"
-              name="Transit Trips"
-              parent="menu_logistics_root"
-              action="action_logistics_transit_trip"
-              sequence="70"/>
-
-    <!-- Reports -->
-    <menuitem id="menu_logistics_reports"
-              name="Reports"
-              parent="menu_logistics_root"
-              sequence="90"/>
-
-    <menuitem id="menu_logistics_report_trends"
-              name="Purchase Trends"
-              parent="menu_logistics_reports"
-              action="action_report_purchase_trends"
-              sequence="10"/>
-
-    <menuitem id="menu_logistics_report_pipeline"
-              name="SKU Pipeline"
-              parent="menu_logistics_reports"
-              action="action_report_sku_pipeline"
-              sequence="20"/>
-
-    <menuitem id="menu_logistics_report_departures"
-              name="Supplier Departures"
-              parent="menu_logistics_reports"
-              action="action_report_supplier_departures"
-              sequence="30"/>
-
-    <menuitem id="menu_logistics_report_oils"
-              name="Oils Summary"
-              parent="menu_logistics_reports"
-              action="action_report_oils_summary"
-              sequence="40"/>
-
-    <menuitem id="menu_logistics_report_oleochem"
-              name="Oleochemicals Summary"
-              parent="menu_logistics_reports"
-              action="action_report_oleochem_summary"
               sequence="50"/>
 
     <!-- Configuration submenu -->
@@ -192,16 +112,5 @@
               action="action_logistics_declaration_type"
               sequence="5"/>
 
-    <menuitem id="menu_logistics_product_reg"
-              name="Product Registrations"
-              parent="menu_logistics_config"
-              action="action_product_registration"
-              sequence="20"/>
-
-    <menuitem id="menu_logistics_pre_notif"
-              name="Pre-notifications"
-              parent="menu_logistics_config"
-              action="action_logistics_pre_notification"
-              sequence="30"/>
 
 </odoo>
