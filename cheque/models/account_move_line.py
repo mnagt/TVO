@@ -1,9 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-import logging
-
 from odoo import fields, models
-
-_logger = logging.getLogger(__name__)
 
 
 class AccountMoveLine(models.Model):
@@ -12,35 +8,41 @@ class AccountMoveLine(models.Model):
 
     cheque_ids = fields.One2many('account.cheque', 'outstanding_line_id', string='Checks')
 
-    def reconcile(self):
-        result = super().reconcile()
-        for line in self:
-            cheques = line.cheque_ids.filtered(lambda c: c.state == 'deposit')
-            if not cheques or not line.full_reconcile_id:
+    def _reconcile_plan(self, reconciliation_plan):
+        """Auto-advance deposited cheques to 'cashed' when their collection-account
+        line becomes fully reconciled.
+
+        Overridden here (instead of `reconcile()`) because Odoo core also finalizes
+        reconciliation through this method directly for internal settlements (e.g.
+        currency exchange-difference, cash-basis tax) that never call the public
+        `reconcile()` API - those paths must trigger the same auto-cash logic.
+
+        Any full reconciliation of the line counts (not just a match against a real
+        bank/cash account): per confirmed real-world usage, reconciling a deposited
+        cheque's collection line - whatever it's matched against - is how the
+        accountant marks the cheque as cashed. Scope is intentionally limited to the
+        deposit -> cashed transition; no other cheque state is touched here.
+        """
+        result = super()._reconcile_plan(reconciliation_plan)
+        all_lines = self.env['account.move.line']
+        for group in reconciliation_plan:
+            all_lines |= group
+        for line in all_lines:
+            all_cheques = line.cheque_ids
+            if not all_cheques:
                 continue
-            counterpart = line.full_reconcile_id.reconciled_line_ids - line
-            # Bank account line is in the same move as the counterpart (suspense line),
-            # not directly in reconciled_line_ids.
-            # Exclude EXCH moves and the collection account itself to avoid
-            # picking the wrong line (e.g. an exchange-difference line).
-            collection_account = line.account_id
-            bank_line = counterpart.move_id.line_ids.filtered(
-                lambda l: l.account_id != collection_account
-                          and not (l.move_id.name or '').startswith('EXCH/')
-                          and l.account_id.account_type == 'asset_cash'
-            )[:1]
-            _logger.info(
-                "CHEQUE AUTO-CASH [reconcile hook] cheque=%s "
-                "reconciled_line_ids=%s counterpart_accounts=%s bank_line=%s",
-                cheques.mapped('name'),
-                line.full_reconcile_id.reconciled_line_ids.ids,
-                counterpart.mapped('account_id.name'),
-                bank_line.id or 'none',
-            )
-            if bank_line:
-                cheques.write({
-                    'state': 'cashed',
-                    'cashed_date': bank_line.date or fields.Date.today(),
-                    'outstanding_line_id': bank_line.id,
-                })
+            cheques = all_cheques.filtered(lambda c: c.state == 'deposit')
+            if not cheques or not line.reconciled:
+                continue
+            # full_reconcile_id can stay empty even when the line is fully closed
+            # (e.g. closed via separate partial reconciles) - matched_debit_ids /
+            # matched_credit_ids is the reliable source of the counterpart lines.
+            partials = line.matched_debit_ids | line.matched_credit_ids
+            counterparts = (partials.mapped('debit_move_id') | partials.mapped('credit_move_id')) - line
+            counterpart_dates = counterparts.mapped('date')
+            cashed_date = max(counterpart_dates) if counterpart_dates else fields.Date.today()
+            cheques.write({
+                'state': 'cashed',
+                'cashed_date': cashed_date,
+            })
         return result
