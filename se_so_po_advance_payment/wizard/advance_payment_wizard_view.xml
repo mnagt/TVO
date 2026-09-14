@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_advance_payment_wizard_form" model="ir.ui.view">
+        <field name="name">advance.payment.wizard.form</field>
+        <field name="model">advance.payment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Advance Payment">
+                <div class="oe_title">
+                    <h2>PAYMENT DETAILS</h2>
+                </div>
+                <group>
+                    <group>
+                        <field name="order_type" invisible="1"/>
+                        <field name="sale_order_id" invisible="1"/>
+                        <field name="purchase_order_id" invisible="1"/>
+                        <field name="partner_id" invisible="1"/>
+                        <field name="origin"/>
+                        <label for="amount" string="Advance Paid Amount"/>
+                        <div class="o_row">
+                            <field name="amount" class="oe_inline"/>
+                            <field name="currency_id" options="{'no_open': True, 'no_create': True}" class="oe_inline"/>
+                        </div>
+                        <field name="total_amount"/>
+                        <field name="paid_amount"/>
+                        <field name="payment_difference"/>
+                    </group>
+                    <group>
+                        <field name="payment_method_line_id" string="Method" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="journal_id" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="payment_date"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Advance Payment" name="action_create_advance_payment" type="object" class="btn-primary" icon="fa-money"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

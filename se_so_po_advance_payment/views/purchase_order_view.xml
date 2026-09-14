@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_form_inherit_advance_payment" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.advance.payment</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_rfq_send']" position="after">
+                <button name="action_open_advance_payment_wizard"
+                        string="Advance Payment"
+                        type="object"
+                        class="btn-secondary"
+                        groups="se_so_po_advance_payment.group_advance_payment_purchase"
+                        invisible="state not in ['draft', 'sent', 'purchase']"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Advance Payment Information" groups="se_so_po_advance_payment.group_advance_payment_purchase">
+                    <field name="advance_payment_ids" readonly="1">
+                        <list string="Advance Payments" create="false" edit="false" delete="false">
+                            <field name="memo" string="Name"/>
+                            <field name="date" string="Payment Date"/>
+                            <field name="partner_id" string="Partner"/>
+                            <field name="journal_id" string="Payment (Journal)"/>
+                            <field name="currency_id" string="Currency"/>
+                            <field name="amount" string="Advance Paid Amount" sum="Total Advance Paid"/>
+                        </list>
+                    </field>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_total" string="Total Amount" readonly="1"/>
+                    </group>
+                    <div class="clearfix"/>
+                </page>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_advance_payments"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        groups="se_so_po_advance_payment.group_advance_payment_purchase"
+                        invisible="advance_payment_count == 0">
+                    <field name="advance_payment_count" widget="statinfo" string="Advance Payments"/>
+                </button>
+                <button name="action_view_advance_journal_items"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-list"
+                        groups="se_so_po_advance_payment.group_advance_payment_purchase"
+                        invisible="advance_journal_item_count == 0">
+                    <field name="advance_journal_item_count" widget="statinfo" string="Journal Items"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

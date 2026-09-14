@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_inherit_advance_payment" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.advance.payment</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']/group" position="inside">
+                <group string="Advance Payment Configuration">
+                    <field name="groups_id" eval="[(4, ref('se_so_po_advance_payment.group_advance_payment_sale'))]" widget="boolean_toggle" string="Advance Payment (Sale)"/>
+                    <field name="groups_id" eval="[(4, ref('se_so_po_advance_payment.group_advance_payment_purchase'))]" widget="boolean_toggle" string="Advance Payment (Purchase)"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
