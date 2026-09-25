@@ -1,6 +1,6 @@
 {
     'name': 'Logistics',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.5',
     'category': 'Logistics',
     'summary': 'Import operations tracking: containers, B/L, customs',
     'description': """
@@ -11,9 +11,13 @@
     'depends': [
         'base',
         'mail',
+        'purchase',
         'purchase_requisition',
+        'purchase_requisition_totals',
         'product',
+        'stock',
         'account',
+        'sale',
     ],
     'data': [
         'security/logistics_security.xml',
@@ -23,21 +27,29 @@
         'views/logistics_port_views.xml',
         'views/logistics_shipping_line_views.xml',
         'wizards/logistics_container_link_wizard_views.xml',
+        'wizards/logistics_container_line_qty_override_wiz_views.xml',
         'views/logistics_bill_lading_views.xml',
         'views/logistics_container_views.xml',
         'views/logistics_container_line_views.xml',
         'views/purchase_requisition_views.xml',
         'views/logistics_dashboard.xml',
         'views/logistics_declaration_type_views.xml',
+        'views/logistics_container_child_state_views.xml',
         'views/actions_menus.xml',
+        'views/logistics_requisition_mismatch_report_views.xml',
+        'views/logistics_container_line_report_views.xml',
+        'views/logistics_arrival_report_views.xml',
+        'views/sale_container_line_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
             'logistics/static/src/components/logistics_dashboard/logistics_dashboard.js',
             'logistics/static/src/components/logistics_dashboard/logistics_dashboard.xml',
+            'logistics/static/src/components/logistics_dashboard/logistics_dashboard.scss',
         ],
     },
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
+    'post_init_hook': 'post_init_hook',
 }
