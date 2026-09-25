@@ -5,6 +5,20 @@ from odoo.fields import Command
 
 _logger = logging.getLogger(__name__)
 
+CONTAINER_STATE_SELECTION = [
+    ('purchase', 'Purchasing'),
+    ('oversea', 'Oversea'),
+    ('at_port', 'At Port'),
+    ('arrived', 'Arrived'),
+    ('antrepo', 'Antrepo'),
+]
+
+TRANSPORT_UNIT_SELECTION = [
+    ('container', 'Container'),
+    ('truck', 'Truck'),
+    ('bulk_vessel', 'Bulk Vessel'),
+]
+
 
 class LogisticsContainer(models.Model):
     _name = 'logistics.container'
@@ -21,12 +35,16 @@ class LogisticsContainer(models.Model):
         string='Reference', required=True, copy=False,
         readonly=True, default='New',
     )
+    transport_unit = fields.Selection(
+        selection=TRANSPORT_UNIT_SELECTION,
+        string='Transport Unit', tracking=True,
+    )
     container_number = fields.Char(string='Container No.', tracking=True, copy=False)
     container_type = fields.Selection(
         selection=[
             ('20', '20ft'),
             ('40', '40ft'),
-            ('truck', 'Truck'),
+            ('other', 'Other'),
         ],
         string='Container Type', tracking=True,
     )
@@ -115,15 +133,14 @@ class LogisticsContainer(models.Model):
     )
 
     state = fields.Selection(
-        selection=[
-            ('purchase', 'Purchasing'),
-            ('oversea', 'Oversea'),
-            ('at_port', 'At Port'),
-            ('arrived', 'Arrived'),
-            ('antrepo', 'Antrepo'),
-        ],
+        selection=CONTAINER_STATE_SELECTION,
         string='Status', default='purchase', required=True,
         copy=False, tracking=True,
+    )
+    child_state_id = fields.Many2one(
+        'logistics.container.child.state', string='Child State',
+        required=True, tracking=True,
+        default=lambda self: self._first_child_state('purchase'),
     )
 
     # --- Computed counts ---
@@ -147,6 +164,18 @@ class LogisticsContainer(models.Model):
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = rec.container_number or rec.name
+
+    @api.model
+    def _first_child_state(self, state):
+        """First child state (in the model's _order) for the given parent state."""
+        return self.env['logistics.container.child.state'].search(
+            [('parent_state', '=', state)], limit=1,
+        )
+
+    @api.onchange('state')
+    def _onchange_state(self):
+        if self.child_state_id.parent_state != self.state:
+            self.child_state_id = self._first_child_state(self.state)
 
     @api.onchange('requisition_ids')
     def _onchange_requisition_ids(self):
@@ -198,19 +227,18 @@ class LogisticsContainer(models.Model):
                     )
                     continue
                 remaining = line.product_qty - used_qty.get(pid, 0.0)
-                if remaining <= 0:
-                    _logger.info(
-                        "[container %s] req=%s product=%s remaining=%.2f skip",
-                        self.name or 'NEW', req.name, line.product_id.name, remaining,
-                    )
-                    continue
+                # Still add the line even when fully (or over) allocated elsewhere —
+                # it starts at 0 so the user can knowingly raise it via the
+                # container.line "Confirm Over Quantity" action instead of the
+                # product silently never appearing on this container.
+                qty = max(remaining, 0.0)
                 _logger.info(
-                    "[container %s] req=%s product=%s ADDING qty=%.2f",
-                    self.name or 'NEW', req.name, line.product_id.name, remaining,
+                    "[container %s] req=%s product=%s ADDING qty=%.2f (remaining=%.2f)",
+                    self.name or 'NEW', req.name, line.product_id.name, qty, remaining,
                 )
                 new_lines |= self.env['logistics.container.line'].new({
                     'product_id': pid,
-                    'product_qty': remaining,
+                    'product_qty': qty,
                     'product_uom_id': line.product_uom_id.id,
                     'sku_price': line.price_unit,
                     'requisition_id': req_id,
@@ -250,6 +278,9 @@ class LogisticsContainer(models.Model):
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code(
                     'logistics.container') or 'New'
+            if not vals.get('child_state_id'):
+                vals['child_state_id'] = self._first_child_state(
+                    vals.get('state') or 'purchase').id
         records = super().create(vals_list)
         bls = records.mapped('bill_lading_id').filtered(bool)
         records._sync_bl_requisitions(bls)

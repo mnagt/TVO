@@ -1,5 +1,4 @@
 from odoo import api, fields, models
-from odoo.exceptions import ValidationError
 
 
 class LogisticsContainerLine(models.Model):
@@ -16,6 +15,10 @@ class LogisticsContainerLine(models.Model):
     old_sku = fields.Char(string='Old SKU')
 
     # === RELATIONS ===
+    transport_unit = fields.Selection(
+        string='Transport Type',
+        related='container_id.transport_unit', store=True,
+    )
     container_id = fields.Many2one(
         'logistics.container', string='Container', ondelete='cascade',
     )
@@ -63,13 +66,25 @@ class LogisticsContainerLine(models.Model):
         store=True,
         readonly=True,
     )
+    child_state_id = fields.Many2one(
+        related='container_id.child_state_id',
+        string='Child State',
+        store=True,
+        readonly=True,
+    )
 
     # === PRODUCT RELATED ===
     product_template = fields.Char(
         string='Product Template', related='product_id.product_tmpl_id.name',
+        store=True, translate=False,
     )
     category_id = fields.Many2one(
         'product.category', string='Category', related='product_id.categ_id',
+        store=True,
+    )
+    description_picking = fields.Text(
+        string='Description on Picking',
+        compute='_compute_description_picking', store=True, readonly=True,
     )
 
     # === COMPUTED HELPERS ===
@@ -82,6 +97,12 @@ class LogisticsContainerLine(models.Model):
         'purchase.requisition',
         compute='_compute_allowed_requisition_ids',
         string='Allowed Requisitions',
+    )
+    agreement_remaining_qty = fields.Float(
+        string='Agreement Remaining',
+        compute='_compute_agreement_remaining_qty',
+        help='Quantity still available on the related agreement line, '
+             'excluding this line, before it is considered over-allocated.',
     )
 
     # === QUANTITIES & PRICES ===
@@ -205,7 +226,9 @@ class LogisticsContainerLine(models.Model):
                 ], limit=1)
                 if req_line:
                     vals['sku_price'] = req_line.price_unit
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        records._log_qty_exceeded()
+        return records
 
     def _req_line(self):
         """Return the matching requisition line for the current product."""
@@ -274,7 +297,7 @@ class LogisticsContainerLine(models.Model):
     @api.onchange('product_qty')
     def _onchange_product_qty(self):
         remaining = self._remaining_qty()
-        if remaining is None:
+        if remaining is None or self.product_qty <= 0:
             return
         if self.product_qty > remaining:
             req_line = self._req_line()
@@ -289,63 +312,85 @@ class LogisticsContainerLine(models.Model):
                 }
             }
 
-    @api.constrains('product_qty', 'requisition_id', 'product_id')
-    def _check_product_qty(self):
+    def write(self, vals):
+        result = super().write(vals)
+        if {'product_qty', 'requisition_id', 'product_id'} & set(vals):
+            self._log_qty_exceeded()
+        return result
+
+    def _log_qty_exceeded(self):
+        """Post a chatter trail (on the line and the agreement) whenever a
+        saved quantity exceeds what the agreement has left. Never blocks —
+        the entered quantity is always kept; this only records it."""
         for line in self:
-            if not line.requisition_id or not line.product_id:
+            if line.product_qty <= 0:
                 continue
-            req_line = line.requisition_id.line_ids.filtered(
-                lambda l: l.product_id == line.product_id
-            )[:1]
+            req_line = line._req_line()
             if not req_line:
                 continue
-            domain = [
-                ('requisition_id', '=', line.requisition_id.id),
-                ('product_id', '=', line.product_id.id),
-                ('id', '!=', line.id),
-            ]
-            used = sum(
-                self.env['logistics.container.line'].search(domain).mapped('product_qty')
-            )
-            remaining = req_line.product_qty - used
-            if line.product_qty > remaining:
-                raise ValidationError(
-                    f'Quantity {line.product_qty:.2f} for '
-                    f'"{line.product_id.display_name}" exceeds the remaining '
-                    f'{remaining:.2f} {req_line.product_uom_id.name} '
-                    f'in deal "{line.requisition_id.name}".'
-                )
+            remaining = line._remaining_qty()
+            if remaining is None or line.product_qty <= remaining:
+                continue
+            excess = line.product_qty - remaining
+            uom = req_line.product_uom_id.name
+            line.message_post(body=(
+                f'Quantity over agreement: {line.product_qty:.2f} {uom} for '
+                f'"{line.product_id.display_name}" exceeds the remaining {remaining:.2f} {uom} '
+                f'by {excess:.2f}, entered by {self.env.user.name}.'
+            ))
+            if line.requisition_id:
+                line.requisition_id.message_post(body=(
+                    f'Container "{line.container_id.display_name}" line "{line.internal_ref}" '
+                    f'was set to {line.product_qty:.2f} {uom} for '
+                    f'"{line.product_id.display_name}", exceeding the agreed quantity by '
+                    f'{excess:.2f} {uom}, entered by {self.env.user.name}.'
+                ))
+
+    def action_open_qty_exceeded_detail(self):
+        self.ensure_one()
+        req_line = self._req_line()
+        remaining = self._remaining_qty() or 0.0
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Quantity Over Agreement',
+            'res_model': 'logistics.container.line.qty.override.wiz',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_container_line_id': self.id,
+                'default_current_qty': self.product_qty,
+                'default_remaining_qty': remaining,
+                'default_excess_qty': max(self.product_qty - remaining, 0.0),
+                'default_uom_name': req_line.product_uom_id.name if req_line else '',
+            },
+        }
 
     @api.depends(
         'requisition_id',
         'requisition_id.line_ids.product_id',
-        'requisition_id.line_ids.product_qty',
     )
     def _compute_allowed_product_ids(self):
-        ContainerLine = self.env['logistics.container.line']
         for line in self:
-            if not line.requisition_id:
-                line.allowed_product_ids = self.env['product.product']
-                continue
+            # All products on the deal stay selectable even once fully
+            # allocated elsewhere — over-allocating is never blocked, just
+            # logged. See _log_qty_exceeded / action_open_qty_exceeded_detail.
+            line.allowed_product_ids = line.requisition_id.line_ids.mapped('product_id')
 
-            allowed = self.env['product.product']
-            for req_line in line.requisition_id.line_ids:
-                domain = [
-                    ('requisition_id', '=', line.requisition_id.id),
-                    ('product_id', '=', req_line.product_id.id),
-                ]
-                if line._origin.id:
-                    domain.append(('id', '!=', line._origin.id))
-                used = sum(ContainerLine.search(domain).mapped('product_qty'))
-                if req_line.product_qty - used > 0:
-                    allowed |= req_line.product_id
-
-            line.allowed_product_ids = allowed
+    @api.depends('requisition_id', 'product_id')
+    def _compute_agreement_remaining_qty(self):
+        for line in self:
+            remaining = line._remaining_qty()
+            line.agreement_remaining_qty = remaining if remaining is not None else 0.0
 
     @api.depends('container_id', 'container_id.requisition_ids')
     def _compute_allowed_requisition_ids(self):
         for line in self:
             line.allowed_requisition_ids = line.container_id.requisition_ids
+
+    @api.depends('product_id.product_tmpl_id.description_picking')
+    def _compute_description_picking(self):
+        for line in self:
+            line.description_picking = line.product_id.description_picking
 
     @api.depends('sku_weight', 'product_qty')
     def _compute_total_weight(self):

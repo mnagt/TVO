@@ -7,8 +7,13 @@
         <field name="arch" type="xml">
             <form string="Container">
                 <header>
-                    <field name="state"
-                           statusbar_visible="purchase,oversea,at_port,arrived"/>
+                    <div class="d-flex align-items-center gap-2 ms-auto">
+                        <field name="state"
+                               statusbar_visible="purchase,oversea,at_port,arrived"/>
+                        <field name="child_state_id"
+                               domain="[('parent_state', '=', state)]"
+                               options="{'no_create': True}"/>
+                    </div>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -24,11 +29,11 @@
                     </div>
                     <group>
                         <group>
+                            <field name="transport_unit" />
                             <field name="container_number" />
                             <field name="container_type" />
                             <field name="bill_lading_id" />
-                            <field name="requisition_ids" widget="many2many_tags"
-                                 domain="[('remaining_qty', '>', 0)]"/>
+                            <field name="requisition_ids" widget="many2many_tags"/>
                             <field name="purchase_order_id"
                                 domain="[('requisition_id', 'in', requisition_ids)]"/>
                             <field name="invoice_no"/>
@@ -76,6 +81,12 @@
                                          domain="[('id', 'in', allowed_product_ids)]"
                                          options="{'no_create': True, 'no_create_edit': True}"/>
                                     <field name="product_qty"/>
+                                    <field name="agreement_remaining_qty" readonly="1"
+                                           optional="show"/>
+                                    <button name="action_open_qty_exceeded_detail"
+                                            type="object" icon="fa-exclamation-triangle"
+                                            title="Quantity exceeds the agreement — click for detail"
+                                            invisible="product_qty &lt;= agreement_remaining_qty or product_qty &lt;= 0"/>
                                     <field name="sku_price" readonly="1"/>
                                     <field name="subtotal" readonly="1"/>
                                     <field name="total_weight" readonly="1"/>
@@ -111,6 +122,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="transport_unit"/>
                 <field name="container_number"/>
                 <field name="container_type"/>
                 <field name="bill_lading_id"/>
@@ -125,6 +137,7 @@
                        decoration-warning="state in ('oversea', 'at_port')"
                        decoration-danger="state == 'arrived'"
                        decoration-success="state == 'antrepo'"/>
+                <field name="child_state_id" optional="show"/>
             </list>
         </field>
     </record>
@@ -136,6 +149,7 @@
         <field name="arch" type="xml">
             <pivot string="Containers">
                 <field name="destination_country_id" type="row"/>
+                <field name="child_state_id" type="row"/>
                 <field name="container_type" type="col"/>
                 <field name="amount_subtotal" type="measure"/>
                 <field name="ship_fee_amount" type="measure"/>
@@ -155,6 +169,7 @@
                 <field name="bill_lading_id"/>
                 <field name="requisition_ids"/>
                 <field name="dest_city_id"/>
+                <field name="child_state_id"/>
                 <separator/>
                 <filter name="state_purchase" string="Purchasing"
                         domain="[('state','=','purchase')]"/>
@@ -176,6 +191,8 @@
                             context="{'group_by': 'requisition_ids'}"/>
                         <filter name="group_dest_city" string="Destination City"
                             context="{'group_by': 'dest_city_id'}"/>
+                        <filter name="group_child_state" string="Child State"
+                            context="{'group_by': 'child_state_id'}"/>
                 </group>
             </search>
         </field>
@@ -189,6 +206,7 @@
             <kanban default_group_by="state">
                 <field name="state"/>
                 <field name="name"/>
+                <field name="transport_unit"/>
                 <field name="container_number"/>
                 <field name="container_type"/>
                 <field name="bill_lading_id"/>
@@ -196,6 +214,10 @@
                 <templates>
                     <t t-name="card">
                         <field name="name" class="fw-bold"/>
+                        <div class="row">
+                            <span class="col-5 text-muted">Transport Unit</span>
+                            <span class="col-7"><field name="transport_unit"/></span>
+                        </div>
                         <div class="row">
                             <span class="col-5 text-muted">Number</span>
                             <span class="col-7"><field name="container_number"/></span>
