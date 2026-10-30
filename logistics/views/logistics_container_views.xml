@@ -34,16 +34,16 @@
                             <field name="container_type" />
                             <field name="bill_lading_id" />
                             <field name="requisition_ids" widget="many2many_tags"/>
+                            <field name="readiness_date"/>
+                            <field name="eeta_date"/>
                             <field name="purchase_order_id"
                                 domain="[('requisition_id', 'in', requisition_ids)]"/>
                             <field name="invoice_no"/>
                             <field name="invoice_date"/>
+                            <field name="port_exiting_date"/>
+                            <field name="antrepo_arrival_date"/>
                             <field name="wh_arriving_date"/>
-                                <field name="readiness_date"/>
-                                <field name="eeta_date"/>
-                                <field name="port_exiting_date"/>
-                                <field name="antrepo_arrival_date"/>
-                                <field name="declaration_type_id"/>
+                            <field name="declaration_type_id"/>
                         </group>
                         <group>
                             <field name="ship_fee_amount" />
@@ -134,6 +134,7 @@
                 <field name="amount_total" sum="Total"/>
                 <field name="destination_country_id" optional="hide" readonly="1"/>
                 <field name="dest_city_id" optional="hide" readonly="1"/>
+                <field name="port_exiting_date" optional="show" readonly="1"/>
                 <field name="state"
                        decoration-muted="state == 'purchase'"
                        decoration-warning="state in ('oversea', 'at_port')"
